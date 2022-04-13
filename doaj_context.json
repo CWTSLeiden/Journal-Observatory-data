@@ -1,0 +1,143 @@
+{
+    "@vocab": "https://doaj.org/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "job": "https://job.org/schema#",
+    "cc": "https://creativecommons.org/licenses/",
+    "id": "@id",
+    "created_date": { "@id": "schema:dateCreated", "@type": "schema:DateTime" },
+    "last_updated": { "@id": "schema:dateModified", "@type": "schema:DateTime" },
+    "last_manual_update": { "@type": "schema:DateTime" },
+    "es_type": "@type",
+    "bibjson": {
+        "@context": {
+            "boai": { "@type": "xsd:boolean" },
+            "eissn": "schema:issn",
+            "publication_time_weeks": { "@type": "xsd:number" },
+            "title": "schema:name",
+            "oa_start": { "@type": "schema:DateTime" },
+            "apc": {
+                "@id": "job:articlePublishingCharges",
+                "@context": {
+                    "has_apc": { "@type": "xsd:boolean" },
+                    "url": "@id",
+                    "max": "schema:maxPrice",
+                    "currency": "schema:currency",
+                    "price": "schema:price"
+                }
+            },
+            "article": {
+                "@id": "@nest",
+                "@context": {
+                    "license_display_example_url": "licenseDisplayExample",
+                    "license_display": "@type"
+                }
+            },
+            "copyright": {
+                "@id": "schema:copyright",
+                "@context": {
+                    "author_retains": { "@type": "xsd:boolean", "@nest": "copyright" },
+                    "url": { "@type": "@id", "@nest": "copyright" }
+                }
+            },
+            "deposit_policy": {
+                "@id": "@nest",
+                "@context": {
+                    "has_policy": { "@id": "hasDepositPolicy", "@type": "xsd:boolean", "@nest": "deposit_policy" },
+                    "service": "@type"
+                }
+            },
+            "editorial": {
+                "@id": "@nest",
+                "@context": {
+                    "review_url": "editorialReviewUrl",
+                    "board_url": "editorialBoardUrl",
+                    "review_process": "reviewProcess"
+                }
+            },
+            "institution": {
+                "@id": "organization",
+                "@context": {
+                    "name": { "@id": "schema:name", "@nest": "institution" }
+                }
+            },
+            "other_charges": {
+                "@id": "@nest",
+                "@context": {
+                    "has_other_charges": { "@nest": "other_charges", "@type": "xsd:boolean" },
+                    "url": { "@nest": "other_charges", "@type": "@id" }
+                }
+            },
+            "pid_scheme": {
+                "@id": "@nest",
+                "@context": {
+                    "has_pid_scheme": { "@nest": "pid_scheme", "@type": "xsd:boolean" },
+                    "scheme": { "@nest": "pid_scheme", "@id": "pidScheme" }
+                }
+            },
+            "plagiarism": {
+                "@id": "@nest",
+                "@context": {
+                    "detection": {
+                        "@id": "hasPlagiarismDetection",
+                        "@type": "xsd:boolean"
+                    }
+                }
+            },
+            "preservation": {
+                "@id": "@nest",
+                "@context": {
+                    "has_preservation": { "@nest": "preservation", "@type": "xsd:boolean" },
+                    "url": { "@nest": "preservation", "@type": "@id" }
+                }
+            },
+            "publisher": {
+                "@id": "schema:publisher",
+                "@context": {
+                    "name": { "@nest": "publisher", "@id": "schema:name" },
+                    "country": { "@nest": "publisher", "@id": "schema:country" }
+                }
+            },
+            "ref": {
+                "@id": "@nest",
+                "@context": {
+                    "oa_statement": { "@type": "@id" },
+                    "journal": { "@type": "@id" },
+                    "aims_scope": { "@type": "@id" },
+                    "author_instructions": { "@type": "@id" },
+                    "license_terms": { "@type": "@id" }
+                }
+            },
+            "waiver": {
+                "@id": "@nest",
+                "@context": {
+                    "has_waiver": { "@id": "hasWaiver", "@type": "xsd:boolean" }
+                }
+            },
+            "keywords": "schema:keywords",
+            "language": "schema:language",
+            "license": {
+                "@id": "@nest",
+                "@context": {
+                    "BY": { "@nest": "license", "@id": "cc:by", "@type": "xsd:boolean" },
+                    "NC": { "@nest": "license", "@id": "cc:by-nc", "@type": "xsd:boolean" },
+                    "ND": { "@nest": "license", "@id": "cc:by-nd", "@type": "xsd:boolean" },
+                    "SA": { "@nest": "license", "@id": "cc:by-sa", "@type": "xsd:boolean" }
+                }
+            },
+            "subject": {
+                "@id": "@nest",
+                "@context": {
+                    "code": { "@nest": "subject", "@id": "subjectCode" },
+                    "scheme": { "@nest": "subject", "@id": "subjectScheme" },
+                    "term": { "@nest": "subject", "@id": "schema:subject" }
+                }
+            }
+        },
+        "@id": "@nest"
+    },
+    "admin": { "@type": "object" }, 
+    "in_doaj": { "@type": "xsd:boolean" },
+    "ticked": { "@type": "xsd:boolean" },
+    "seal": { "@type": "xsd:boolean" }
+}
