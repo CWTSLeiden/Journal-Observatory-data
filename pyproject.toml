@@ -5,10 +5,11 @@ description = ""
 authors = ["Bram van den Boomen <b.van.den.boomen@cwts.leidenuniv.nl>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "3.9.13"
 PyLD = "^2.0.3"
 jupyter = "^1.0.0"
 ipykernel = "^6.12.1"
+SPARQLWrapper = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 
