@@ -1,0 +1,12 @@
+* Reading
+
+** Change tracking
+
+- [[file:docs/Drift-a-LOD2016_paper_4.pdf][RDF provenance and change tracking introduction]]
+- [[file:docs/swj2969.pdf][RDF Provenance]]
+- [[file:docs/oc_ocdm_eswc2022.pdf][RDF provenance (implementation)]]
+  
+** SHACL
+- [[https://www.w3.org/TR/shacl/][W3 Documentation]]
+- [[https://www.youtube.com/watch?v=apG5K3zc4V0][One Ontology, One Data Set, Multiple Shapes with SHACL]]
+
