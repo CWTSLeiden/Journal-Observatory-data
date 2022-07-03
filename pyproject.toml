@@ -10,6 +10,7 @@ PyLD = "^2.0.3"
 jupyter = "^1.0.0"
 ipykernel = "^6.12.1"
 SPARQLWrapper = "^2.0.0"
+requests = "^2.28.1"
 
 [tool.poetry.dev-dependencies]
 
