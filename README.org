@@ -1,3 +1,6 @@
+#+title: JournalObservatory
+#+author: Bram van den Boomen
+
 * Reading
 
 ** Change tracking
@@ -9,4 +12,53 @@
 ** SHACL
 - [[https://www.w3.org/TR/shacl/][W3 Documentation]]
 - [[https://www.youtube.com/watch?v=apG5K3zc4V0][One Ontology, One Data Set, Multiple Shapes with SHACL]]
+
+* Modules
+
+** SPARQL
+- [[https://sparql-anything.readthedocs.io/][Anything]]
+
+* Sources
+
+- [[https://github.com/internetarchive/fatcat][FatCat]]
+- [[https://github.com/internetarchive/chocula][Chocula]]
+
+* SPARQL patterns
+
+** Mapping
+
+Use the =VALUES= keyword to match variables to new types.
+In this case we translate =schema:eissn= to =job:hasEISSN= and =schema:pissn= to =job:hasPISSN=.
+
+#+begin_src sparql
+construct {
+    ?journal ?hasissn ?issn .
+where {
+    ?journal ?issntype ?issn .
+    values (?issntype ?hasissn) {
+        (schema:eissn job:hasEISSN)
+        (schema:pissn job:hasPISSN)
+    }
+}
+#+end_src
+
+** Preference
+
+Use the =OPTIONAL=, =COALESCE= and =FILTER= keywords in tandem to define an order of preference for specific terms.
+
+In this case, we define a preference for the eissn of a journal to the pissn. We use the =OPTIONAL= keyword to make sure that records are not duplicated when both eissn and pissn exist (they will both be matched to the same record). We use the =COALESCE= keyword to obtain the first defined term in order of preference. Even though both issn types are optional, we do want to match on either of them, for this we use the =FILTER= keyword.
+
+#+begin_src sparql
+construct {
+    ?journal job:hasISSN ?issn .
+}
+where {
+    optional { ?journal schema:pissn ?pissn } .
+    optional { ?journal schema:eissn ?eissn } .
+    bind(coalesce(?eissn, ?pissn) as ?issn)
+    ?journal ?issntype ?issn .
+    filter (?issntype in (schema:eissn, schema:pissn))
+}
+#+end_src
+
 
