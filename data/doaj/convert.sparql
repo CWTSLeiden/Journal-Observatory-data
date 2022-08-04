@@ -1,0 +1,31 @@
+construct {
+    _:jobmap a job:JobMap ;
+        job:hasDataLicense cc0:1.0 ;
+        job:hasCreationDate ?date ;
+        job:hasISSN ?issn ;
+        job:hasIdentifier ?pissnid ;
+        job:hasIdentifier ?eissnid ;
+        job:hasAssertion _:assertion .
+
+    _:assertion a job:ArticlePublishingCharges ;
+        job:hasMaxPrice ?price ;
+        job:hasPriceCurrency ?currency .
+    
+    ?pissnid schema:pissn ?pissn .
+    ?eissnid schema:eissn ?eissn .
+}
+where {
+    ?journal job:ArticlePublishingCharges ?apc .
+    ?apc schema:PriceSpecification ?ps .
+    ?ps schema:MaxPrice ?_price .
+    ?ps schema:priceCurrency ?_currency .
+    bind(strdt(str(?_currency), xsd:string) as ?currency)
+    ?journal schema:dateModified ?date .
+
+    optional { ?journal schema:pissn ?pissn . bind(bnode() as ?pissnid) } .
+    optional { ?journal schema:eissn ?eissn . bind(bnode() as ?eissnid) } .
+    bind(coalesce(?eissn, ?pissn) as ?issnstr)
+    ?journal ?issntype ?issnstr .
+    bind (iri(concat("https://issn.org/", str(?issnstr))) as ?issn)
+    filter (?issntype in (schema:eissn, schema:pissn))
+}

@@ -1,0 +1,179 @@
+{
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "job": "https://job.org/",
+    "doaj": "https://doaj.org/schema#",
+    "cc": "https://creativecommons.org/licenses/",
+    "id": {
+      "@id": "https://doaj.org/identifier"
+    },
+    "created_date": { 
+      "@id": "schema:dateCreated",
+      "@type": "schema:DateTime"
+    },
+    "last_updated": {
+      "@id": "schema:dateModified",
+      "@type": "schema:DateTime"
+    },
+    "last_manual_update": {
+      "@id": "schema:dateModified",
+      "@type": "schema:DateTime"
+    },
+    "es_type": {
+      "@id": "https://doaj.org/es_type"
+    },
+    "bibjson": {
+      "@id": "@nest"
+    },
+    "boai": {
+      "@id": "https://www.budapestopenaccessinitiative.org",
+      "@type": "xsd:boolean" 
+    },
+    "eissn": {
+      "@id": "schema:issn"
+    },
+    "publication_time_weeks": {
+      "@id": "job:publicationTime",
+      "@type": "xsd:number"
+    },
+    "title": {
+      "@id": "schema:name"
+    },
+    "oa_start": {
+      "@id": "job:openAccessStart",
+      "@type": "schema:DateTime"
+    },
+    "apc": {
+        "@id": "job:articlePublishingCharges",
+        "@context": {
+            "has_apc": {
+              "@id": "job:hasArticlePublishingCharges",
+              "@type": "xsd:boolean"
+            },
+            "url": "@id",
+            "max": {
+              "@id": "schema:maxPrice"
+            },
+            "currency": {
+              "@id": "schema:currency"
+            },
+            "price": {
+              "@id": "schema:price"
+            }
+        }
+    },
+    "article": {
+        "@id": "doaj:article",
+        "@context": {
+            "license_display_example_url": {
+              "@id": "job:licenseDisplayExample"
+            },
+            "license_display": {
+              "@id": "job:licenceDisplayType"
+            }
+        }
+    },
+    "copyright": {
+        "@id": "schema:copyright",
+        "@context": {
+            "author_retains": {
+              "@id": "job:authorRetainsCopyright",
+              "@type": "xsd:boolean"
+            },
+            "url": {
+              "@id": "job:copyrightUrl",
+              "@type": "@id"
+            }
+        }
+    },
+    "deposit_policy": {
+        "@id": "job:depositPolicy",
+        "@context": {
+            "has_policy": { 
+              "@id": "job:hasDepositPolicy",
+              "@type": "xsd:boolean"
+            },
+            "service": {
+              "@id": "job:depositPolicyService"
+            }
+        }
+    },
+    "editorial": {
+        "@id": "job:editorial",
+        "@context": {
+            "review_url": {
+              "@id": "job:editorialReviewUrl"
+            },
+            "board_url": {
+              "@id": "job:editorialBoardUrl"
+            },
+            "review_process": {
+              "@id": "job:reviewProcess"
+            }
+        }
+    },
+    "institution": {
+        "@id": "schema:organization",
+        "@context": {
+            "name": { 
+              "@id": "schema:name"
+            }
+        }
+    },
+    "pid_scheme": {
+        "@id": "@nest",
+        "@context": {
+            "has_pid_scheme": {
+              "@id": "job:hasPidScheme",
+              "@type": "xsd:boolean" 
+            },
+            "scheme": { 
+              "@id": "job:pidScheme" 
+            }
+        }
+    },
+    "plagiarism": {
+        "@id": "@nest",
+        "@context": {
+            "detection": {
+                "@id": "job:hasPlagiarismDetection",
+                "@type": "xsd:boolean"
+            }
+        }
+    },
+    "publisher": {
+        "@id": "schema:publisher",
+        "@context": {
+            "name": {
+              "@id": "schema:name"
+            },
+            "country": { 
+              "@id": "schema:country" 
+            }
+        }
+    },
+    "waiver": {
+        "@id": "@nest",
+        "@context": {
+            "has_waiver": { 
+              "@id": "job:hasWaiver",
+              "@type": "xsd:boolean"
+            }
+        }
+    },
+    "keywords": {
+      "@id": "schema:keywords"
+    },
+    "language": {
+      "@id": "schema:language"
+    },
+    "license": {
+        "@id": "@nest",
+        "@context": {
+            "BY": { "@id": "cc:by", "@type": "xsd:boolean" },
+            "NC": { "@id": "cc:by-nc", "@type": "xsd:boolean" },
+            "ND": { "@id": "cc:by-nd", "@type": "xsd:boolean" },
+            "SA": { "@id": "cc:by-sa", "@type": "xsd:boolean" }
+        }
+    }
+}

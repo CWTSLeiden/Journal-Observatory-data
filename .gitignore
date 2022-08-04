@@ -1,3 +1,5 @@
 *.lock
 /.ipynb_checkpoints/
 *.bkp
+__pycache__
+*.db
