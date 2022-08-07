@@ -13,7 +13,7 @@ config = ConfigParser()
 config.read("doaj_bulk.conf")
 
 bulk_import_directory = config.get("import", "dir", fallback="~/")
-import_dir = f"{bulk_import_directory}/20220703_doaj"
+import_dir = f"{bulk_import_directory}/20220804_doaj"
 data_dir = f"{import_dir}/data"
 context_file = config.get("rdf", "context", fallback="context.json")
 store_file = config.get("rdf", "raw_store", fallback="store.db")
@@ -60,7 +60,8 @@ def print_graph(graph):
 
 def store(max=(2**32)):
     n = 0
-    graph = Graph(store="BerkeleyDB", namespace_manager=nm, identifier="doaj")
+    # graph = Graph(store="BerkeleyDB", namespace_manager=nm, identifier="doaj")
+    graph = Graph(namespace_manager=nm, identifier="doaj")
     if os.path.exists(store_file):
         shutil.rmtree(store_file)
     graph.open(store_file, create=True)

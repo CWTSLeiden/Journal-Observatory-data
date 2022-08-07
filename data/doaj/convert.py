@@ -21,8 +21,9 @@ def init_store(store_path, id, clear=False):
     
 
 def query():
-    job_graph = init_store(store, id="job", clear=True)
+    # job_graph = init_store(store, id="job", clear=True)
     # doaj_graph = init_store(raw_store, id="doaj", clear=False)
+    job_graph = Graph(namespace_manager=JobNamespace)
     doaj_graph = Graph(namespace_manager=JobNamespace)
     doaj_graph.parse("apc.ttl")
     with open("convert.sparql", "r") as sparql_query:

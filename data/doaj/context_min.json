@@ -27,19 +27,52 @@
     "issn": {
         "@id": "schema:issn"
     },
+    "title": {
+        "@id": "schema:name"
+    },
+    "alternative_title": {
+        "@id": "schema:alternateName"
+    },
     "price": {
         "@id": "schema:price",
         "@type": "xsd:integer"
     },
     "currency": {
         "@id": "schema:priceCurrency",
-        "@type": "schema:text"
+        "@type": "xsd:string"
+    },
+    "country": {
+        "@id": "schema:addressCountry",
+        "@type": "xsd:string"
+    },
+    "copyright": {
+        "@id": "doaj:AuthorCopyright",
+        "@context": {
+            "author_retains": {
+                "@id": "doaj:authorRetainsCopyright",
+                "@type": "xsd:boolean"
+            },
+            "url": {
+                "@id": "doaj:copyrightPolicy"
+            }
+        }
+    },
+    "keywords": {
+        "@id": "doaj:keyword"
+    },
+    "publisher": {
+        "@id": "doaj:Publisher",
+        "@context": {
+            "name": {
+                "@id": "schema:name"
+            }
+        }
     },
     "apc": {
-        "@id": "job:ArticlePublishingCharges",
+        "@id": "doaj:ArticlePublishingCharges",
         "@context": {
             "has_apc": {
-                "@id": "job:hasArticlePublishingCharges",
+                "@id": "doaj:hasArticlePublishingCharges",
                 "@type": "xsd:boolean"
             },
             "max": {

@@ -1,25 +1,35 @@
 construct {
-    _:jobmap a job:JobMap ;
+    ?issn a job:JobMap ;
         job:hasDataLicense cc0:1.0 ;
         job:hasCreationDate ?date ;
         job:hasISSN ?issn ;
-        job:hasIdentifier ?pissnid ;
-        job:hasIdentifier ?eissnid ;
-        job:hasAssertion _:assertion .
+        job:hasAssertion _:apc_assertion ;
+        job:hasAssertion _:metadata_assertion .
 
-    _:assertion a job:ArticlePublishingCharges ;
+    _:apc_assertion a job:ArticlePublishingCharges ;
         job:hasMaxPrice ?price ;
         job:hasPriceCurrency ?currency .
-    
+
+    _:metadata_assertion a job:MetaDataAssertion ;
+        job:hasIdentifier ?pissnid ;
+        job:hasIdentifier ?eissnid ;
+        job:hasTitle ?title ;
+        job:hasPublisher _:publisher .
+
+    _:publisher a job:Publisher ;
+        schema:name ?publisher_name ;
+        schema:addressCountry ?publisher_country .
+
     ?pissnid schema:pissn ?pissn .
     ?eissnid schema:eissn ?eissn .
 }
 where {
-    ?journal job:ArticlePublishingCharges ?apc .
-    ?apc schema:PriceSpecification ?ps .
-    ?ps schema:MaxPrice ?_price .
-    ?ps schema:priceCurrency ?_currency .
-    bind(strdt(str(?_currency), xsd:string) as ?currency)
+    ?journal doaj:ArticlePublishingCharges ?apc .
+    optional { ?apc schema:PriceSpecification ?ps } .
+    optional { ?ps schema:MaxPrice ?_price } .
+    bind(coalesce(?_price, 0) as ?price)
+    optional { ?ps schema:priceCurrency ?_currency } .
+    bind(if(bound(?_currency), strdt(str(?_currency), xsd:string), ?_) as ?currency)
     ?journal schema:dateModified ?date .
 
     optional { ?journal schema:pissn ?pissn . bind(bnode() as ?pissnid) } .
@@ -28,4 +38,9 @@ where {
     ?journal ?issntype ?issnstr .
     bind (iri(concat("https://issn.org/", str(?issnstr))) as ?issn)
     filter (?issntype in (schema:eissn, schema:pissn))
+
+    ?journal schema:name ?title .
+    ?journal doaj:Publisher ?publisher .
+    ?publisher schema:addressCountry ?publisher_country .
+    ?publisher schema:name ?publisher_name .
 }
