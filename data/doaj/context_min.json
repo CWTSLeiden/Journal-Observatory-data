@@ -1,12 +1,11 @@
 {
+    "@base": "https://doaj.org/",
     "job": "https://job.org/",
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
-    "doaj": "https://doaj.org/schema#",
+    "doaj": "https://doaj.org/",
     "cc": "https://creativecommons.org/licenses/",
-    "id": {
-        "@id": "@id"
-    },
+    "id": "@id",
     "created_date": {
         "@id": "schema:dateCreated",
         "@type": "schema:DateTime"
@@ -69,10 +68,10 @@
         }
     },
     "apc": {
-        "@id": "doaj:ArticlePublishingCharges",
+        "@id": "doaj:hasArticlePublishingCharges",
         "@context": {
             "has_apc": {
-                "@id": "doaj:hasArticlePublishingCharges",
+                "@id": "doaj:ArticlePublishingChargesApply",
                 "@type": "xsd:boolean"
             },
             "max": {
