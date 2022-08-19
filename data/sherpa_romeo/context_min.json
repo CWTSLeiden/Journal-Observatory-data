@@ -1,0 +1,128 @@
+{
+    "@base": "https://v2.sherpa.ac.uk/id/",
+    "job": "https://job.org/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "romeo": "https://v2.sherpa.ac.uk/id/",
+    "cc": "https://creativecommons.org/licenses/",
+    "type": "romeo:type",
+    "uri": "@id",
+    "url": "schema:url",
+    "system_metadata": {
+        "@id": "romeo:hasMetadata",
+        "@context": {
+            "date_created": {
+                "@id": "schema:dateCreated",
+                "@type": "schema:DateTime"
+            },
+            "date_updated": {
+                "@id": "schema:dateModified",
+                "@type": "schema:DateTime"
+            }
+        }
+    },
+    "issns": {
+        "@id": "romeo:hasIssns",
+        "@context": {
+            "issn": "schema:issn",
+            "type": "romeo:issn_type"
+        }
+    },
+    "title": {
+        "@id": "romeo:hasTitle",
+        "@context": {
+            "title": "romeo:title",
+            "language": "romeo:titleLanguage"
+        }
+    },
+    "publisher_policy": {
+        "@id": "romeo:hasPublisherPolicy",
+        "@context": {
+            "internal_moniker": "romeo:internalMoniker",
+            "open_access_prohibited": "romeo:oaProhibited",
+            "permitted_oa": {
+                "@id": "romeo:hasPermittedOA",
+                "@context": {
+                    "additional_oa_fee": "romeo:hasAdditionalFee",
+                    "article_version": "romeo:articleVersion",
+                    "conditions": "romeo:condition",
+                    "copyright_owner": "romeo:copyrightOwner",
+                    "embargo": {
+                        "@id": "romeo:hasEmbargo",
+                        "@context": {
+                            "amount": "romeo:embargoAmount",
+                            "units": "romeo:embargoUnits"
+                        }
+                    },
+                    "license": {
+                        "@id": "romeo:hasPermittedLicense",
+                        "@context": {
+                            "license": "romeo:PermittedLicense"
+                        }
+                    },
+                    "location": {
+                        "@id": "romeo:hasPermittedLocation",
+                        "@context": {
+                            "location": "romeo:PermittedLocation"
+                        }
+                    },
+                    "prerequisites": {
+                        "@id": "romeo:hasPrerequisite",
+                        "@context": {
+                            "prerequisite_funders": "romeo:PrerequisiteFunder",
+                            "funder_metadata": {
+                                "@id": "romeo:hasPrerequisitFunderMetadata",
+                                "@context": {
+                                    "country": "romeo:FunderCountry",
+                                    "id": "romeo:FunderID",
+                                    "name": {
+                                        "@id": "romeo:hasPrerequisitFunderMetadataName",
+                                        "@context": {
+                                            "name": "romeo:PrerequisitFunderMetadataName"
+                                        }
+                                    }
+                                }
+                            },
+                            "system_metadata": {
+                                "@id": "romeo:hasPrerequisitSystemMetadata"
+                            }
+                        }
+                    },
+                    "publisher_deposit": {
+                        "@id": "romeo:hasPublisherDeposit",
+                        "@context": {
+                            "repository_metadata": "romeo:DepositRepositoryMetadata",
+                            "name": {
+                                "@id": "romeo:hasDepositRepositoryName",
+                                "@context": {
+                                    "name": "romeo:DepositRepositoryName",
+                                    "preferred": "romeo:DepositRepositoryNamePreferred",
+                                    "language": "romeo:DepositRepositoryNameLanguage"
+                                }
+                            },
+                            "type": "romeo:DepositRepositoryType",
+                            "url": "romeo:DepositRepositoryUrl",
+                            "system_metadata": "romeo:DepositMetadata"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "publishers": {
+        "@id": "romeo:hasPublisher",
+        "@context": {
+            "publisher": "romeo:Publisher",
+            "country": "romeo:PublisherCountry",
+            "name": {
+                "@id": "romeo:hasPublisherName",
+                "@context": {
+                    "name": "romeo:PublisherName",
+                    "preferred": "romeo:PublisherNamePreferred",
+                    "language": "romeo:PublisherNameLanguage"
+                }
+            },
+            "publication_count": "romeo:PublisherPublicationCount"
+        }
+    }
+}
