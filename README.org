@@ -62,3 +62,197 @@ where {
 #+end_src
 
 
+* TODO Design decisions
+
+** Jobmap ID
+
+Jobmaps are not designed to be used independently of each other, as they describe some aspects of a journal. This journal has an identifier, which we picked as the ISSN-L. However, there can be multiple jobmaps that describe a single journal, therefore the ISSN-L is not suitable for identifying a Jobmap. There are a few options for Jobmap ids:
+
+1. Blank nodes
+In RDF, an object or subject in a triple can be a 'blank node', this is a unique identifier that is only usable within the context of that triple store. Most serialization formats obfuscate the actual identifier. Blank nodes are mostly used for the purposes of nesting and ordering of items.
+
+*Pros*:
+Blank nodes can be generated within the SPARQL query that converts the data into Jobmaps. The query stays relatively simple.
+*Cons*:
+Because identifiers are generated at random at each step of the query, poorly defined queries can lead to duplication of data. Queries can get relatively complex when trying to work around this duplication.
+When serializing, the data can become hard to read.
+Identifiers do not carry over outside of linked data. There is no url-scheme to refer to the Jobmap outside of the RDF store.
+
+2. UUIDs
+A UUID is a random string of letters and numbers, which is extremely unlikely to produce collisions. Combining this with an url-scheme like <https://job.org/[UUID]> gives us both a proper identifier and a url to incorporate into the JOB API.
+
+*Pros*:
+The UUID carries over outside of the context of RDF. The identifier can be used in other data formats.
+The identifier can be generated using SPARQL.
+*Cons*:
+The UUID has no semantic value.
+The UUID needs to be generated before constructing the Jobmap and injected during the SPARQL query. This can be done using prefixes, but makes constructing the RDF store slightly problematic. Alternatively, the UUID can be generated within the SPARQL query, but this makes constructing the query properly more complex.
+
+3. Identifier scheme
+When converting the data, we have some properties that are mandatory for creating a jobmap: The ISSN-L of the journal that is being asserted, the name of the data-source of the assertion and the timestamp at which moment the assertion was created. Combining this in the following url-schema: <https://job.org/[issn-l]/[data-source]/[timestamp]> gives us a proper identifier.
+
+*Pros*:
+The identifier has a semantic value.
+The identifier creates an hierarchical schema for the JOB API.
+The identifier can be generated using SPARQL.
+*Cons*:
+There is a chance of identifier collisions.
+The identifier is dependent on the quality of its parts (malformed timestamps/issn/etc).
+Adds complexity to the SPARQL query.
+** =@context=
+
+To transform JSON into RDF, generally the only thing that is needed is to add a context. In JSON-LD, this context is just syntactic sugar, it provides short names for identifiers. We can use it to transform JSON into JSON-LD by defining the JSON keys as shortcuts for proper identifiers.
+
+There are some issues with this approach. For one, it can be hard to find identifiers for some keys, because the original designers did not need to think about this. Keys like ="name"= can be simple enough (for instance: <https://schema.org/name>), but for =publisher_policy.permitted_oa.embargo= it can be difficult to find an ontology which already describes this key. It would be the most efficient if data-providers themselves describe the keys in their JSON data (and provide identifiers). Another solution can be to provide an ad-hoc dummy identifier, and just prefix the key with the website of the data-provider. =publisher_policy.permitted_oa.embargo= will become <https://v2.sherpa.ac.uk/id/publisher_policy_permitted_oa_embargo> or =romeo:publisher_policy_permitted_oa_embargo=. This can be done by constructing the =@context= by hand, or providing the =@vocab= JSON-LD keyword.
+
+Adding the =@vocab= keyword can have unintended side effects like key-collisions so it is not recommended. A On the other hand, failing to define keys while not providing the =@vocab= keyword leads to omission of that key when converting the JSON-LD to RDF.
+
+On of the main uses for JSON is defining nested data. RDF does support nesting, but as it is built on the idea of triples, nesting can be unintuitive. In RDF nested data structures need an intermediate node.
+
+See the following example:
+
+#+name: jld-to-ttl
+#+begin_src python :results output :wrap example ttl :var record=approach1
+import json
+from rdflib import Graph
+from pyld import jsonld
+record = json.loads(record)
+record = jsonld.compact(record, record["@context"])
+g = Graph().parse(data=record, format="json-ld")
+print(g.serialize(format="turtle").strip())
+#+end_src
+
+#+name: approach1
+#+begin_example json
+{
+  "@context": {
+    "ex": "https://example.org/",
+    "@vocab": "https://example.org/",
+    "@base": "https://example.org/",
+    "id": "@id"
+  },
+  "id": "example",
+  "nest": {
+    "key1": "value1",
+    "key2": "value2"
+  }
+}
+#+end_example
+#+call: jld-to-ttl(approach1)
+#+RESULTS:
+#+begin_example ttl
+@prefix ex: <https://example.org/> .
+
+ex:example ex:nest [ ex:key1 "value1" ;
+            ex:key2 "value2" ] .
+#+end_example
+
+In theory, we do not need the "nest" key from the example. It has no actual value, so the "key1" and "key2" properties could be properties of =ex:example= as well:
+
+#+name: approach2
+#+begin_example json
+{
+  "@context": {
+    "ex": "https://example.org/",
+    "@base": "https://example.org/",
+    "nest": "@nest",
+    "key1": "ex:nest_key1",
+    "key2": "ex:nest_key2"
+  },
+  "@graph": {
+    "@id": "example",
+    "nest": {
+      "key1": "value1",
+      "key2": "value2"
+    }
+  }
+}
+ #+end_example
+#+call: jld-to-ttl(approach2)
+
+#+RESULTS:
+#+begin_example ttl
+@prefix ex: <https://example.org/> .
+
+ex:example ex:nest_key1 "value1" ;
+    ex:nest_key2 "value2" .
+#+end_example
+
+However, because there is no ambiguity using the same key name in a different nested structure in JSON, this can lead to ambiguity in RDF:
+
+#+name: approach3
+#+begin_example json
+{
+  "@context": {
+    "ex": "https://example.org/",
+    "@base": "https://example.org/",
+    "nest1": "@nest",
+    "nest2": "@nest",
+    "key": "ex:key"
+  },
+  "@graph": {
+    "@id": "example",
+    "nest1": {
+      "key": "value1"
+    },
+    "nest2": {
+      "key": "value2"
+    }
+  }
+}
+#+end_example
+#+call: jld-to-ttl(approach3)
+
+#+RESULTS:
+#+begin_example ttl
+@prefix ex: <https://example.org/> .
+
+ex:example ex:key "value1",
+        "value2" .
+#+end_example
+
+The "key" property of "nest1" and the key property of "nest2" might have different meanings in the JSON structure, but this meaning is lost in the conversion to RDF. A better way to deal with this is to use 'scoped contexts' to mirror the nested structure of the JSON:
+
+#+name: approach4
+#+begin_example json
+{
+  "@context": {
+    "ex": "https://example.org/",
+    "@base": "https://example.org/",
+    "nest1": {
+      "@id": "ex:nest1",
+      "@context": {
+        "key": "ex:nest1_key"
+      }
+    },
+    "nest2": {
+      "@id": "ex:nest2",
+      "@context": {
+        "key": "ex:nest2_key"
+      }
+    }
+  },
+  "@graph": {
+    "@id": "example",
+    "nest1": {
+      "key": "value1"
+    },
+    "nest2": {
+      "key": "value2"
+    }
+  }
+}
+ #+end_example
+#+call: jld-to-ttl(approach4)
+
+#+RESULTS:
+#+begin_example ttl
+@prefix ex: <https://example.org/> .
+
+ex:example ex:nest1 [ ex:nest1_key "value1" ] ;
+    ex:nest2 [ ex:nest2_key "value2" ] .
+#+end_example
+
+Note that we cannot use the =@nest= keyword to get rid of the blank nodes that are introduced this way as the scoped context of =@nest= objects is ignored during conversion, meaning the "key" properties are not included in the resulting RDF graph.
+
+To minimize the use of blank nodes, as they can complicate the data-structure, it is recommended to use [[approach2]] or [[approach3]] when it does not lead to ambiguity an to use [[approach4]] otherwise.
