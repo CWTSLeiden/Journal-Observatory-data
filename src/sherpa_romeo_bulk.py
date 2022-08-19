@@ -1,44 +1,23 @@
 import requests
 import json
 import tarfile as tar
-from os import path, makedirs, walk
+import os
 from threading import Thread
-from configparser import ConfigParser
 from datetime import date
 
-# Parse config file
-# The config file should have 2 sections
-# [api]
-# url={base url of the api}
-# key={personal API key}
-# [import]
-# dir={base directory for bulk import}
-#     (A new subdirectory will be created in which the data will be deposited)
-# compress={create an archive of the bulk data if true}
-
-config = ConfigParser()
-config.read("sherpa_romeo.conf")
-
-api_base = config.get("api", "url", fallback="https://v2.sherpa.ac.uk/cgi")
-api_key = config.get("api", "key", fallback="")
-bulk_import_directory = config.get("import", "dir", fallback="~/")
-bulk_import_compress = config.getboolean("import", "compress", fallback=False)
-
-datestamp = date.today().strftime("%Y%m%d")
-import_dir = f"{bulk_import_directory}/{datestamp}_sherpa_romeo"
-data_archive = f"{import_dir}.tgz"
-data_dir = f"{import_dir}/data"
-log_file = f"{import_dir}/bulk_import.log"
-
-
-def write_log(url, limit, offset, code):
+def write_log(bulk_dir, url, limit, offset, code):
     """
     Write a line in the log_file in tsv format.
     """
-    if not path.exists(log_file):
-        with open(log_file, "a") as f:
+    datestamp = date.today().strftime("%Y%m%d")
+    log_file = f"sherpa_romeo_bulk_{datestamp}.tsv"
+    log_dir = os.path.join(bulk_dir, "log")
+    os.makedirs(log_dir, exist_ok=True)
+    log_path = os.path.join(log_dir, log_file)
+    if not os.path.exists(log_path):
+        with open(log_path, "a") as f:
             f.write(f"return_code\toffset\tlimit\turl\n")
-    with open(log_file, "a") as f:
+    with open(log_path, "a") as f:
         f.write(f"{code}\t{offset}\t{limit}\t{url}\n")
 
 
@@ -46,37 +25,50 @@ def dump_file(file_path, content):
     """
     Write results to file, creating a unique name if the path already exists.
     """
-    file_name, extension = path.splitext(file_path)
+    file_name, extension = os.path.splitext(file_path)
     counter = 0
-    while path.exists(file_path):
+    while os.path.exists(file_path):
         counter += 1
         file_path = f"{file_name}_{counter}{extension}"
     with open(file_path, "w") as f:
         json.dump(content, f)
 
 
-def sherpa_romeo_api_issn(issn):
+def sherpa_romeo_write_records_to_file(destination, records):
+    """
+    Write the results of a query to a file with the preferred issn as file name.
+    """
+    for record in records:
+        issn, _ = sherpa_romeo_get_issns(record.get("issns"))
+        dump_file(f"{destination}/{issn}.json", record)
+            
+
+def sherpa_romeo_api_issn(api_conf, issn):
     """
     Query the Sherpa Romeo API for a single record by ISSN.
     """
-    api_url = (
+    api_base = api_conf.get("url")
+    api_key = api_conf.get("key")
+    api_conf = (
         f"{api_base}/retrieve_by_id"
         f"?api-key={api_key}"
         f"&item-type=publication"
         f"&format=Json"
         f"&identifier={issn}"
     )
-    result = requests.get(api_url)
+    result = requests.get(api_conf)
     if result.status_code == 200:
         return json.loads(result.content)
 
 
-def sherpa_romeo_api_bulk(limit=100, offset=0):
+def sherpa_romeo_api_bulk(api_conf, limit=100, offset=0):
     """
     Query the Sherpa Romeo API for a number of records.
     limit:  Number of records ber batch. Maximum is 100.
     offset: Query starting at record number {offset}
     """
+    api_base = api_conf.get("url")
+    api_key = api_conf.get("key")
     limit = min(limit, 100)
     api_url = (
         f"{api_base}/retrieve"
@@ -88,11 +80,11 @@ def sherpa_romeo_api_bulk(limit=100, offset=0):
     )
     result = requests.get(api_url)
     if result.status_code == 200:
-        return api_url, result.status_code, json.loads(result.content)
-    return api_url, result.status_code, None
+        return api_conf, result.status_code, json.loads(result.content)
+    return api_conf, result.status_code, {}
 
 
-def sherpa_romeo_import_bulk_file_thread(limit, offset, offset_multiplier, max=-1):
+def sherpa_romeo_import_bulk_file_thread(api_conf, destination, limit, offset, offset_multiplier, max=-1):
     """
     Create a loop to obtain multiple batches of records from the Sherpa Romeo API
     limit:  Number of records ber batch. Maximum is 100.
@@ -104,12 +96,12 @@ def sherpa_romeo_import_bulk_file_thread(limit, offset, offset_multiplier, max=-
     records = [True]
     while records and (max < 0 or max > offset):
         print(f"get   items {offset} - {offset + limit}")
-        url, code, content = sherpa_romeo_api_bulk(limit, offset)
+        url, code, content = sherpa_romeo_api_bulk(api_conf, limit, offset)
         records = content.get("items")
-        write_log(url, limit, offset, code)
+        write_log(bulk_dir, url, limit, offset, code)
         if code == 200 and records:
             print(f"write items {offset} - {offset + limit}")
-            sherpa_romeo_write_records_to_file(records)
+            sherpa_romeo_write_records_to_file(destination, records)
         if code != 200 and not records:
             print(f"Return code error")
             records = [True]
@@ -117,7 +109,7 @@ def sherpa_romeo_import_bulk_file_thread(limit, offset, offset_multiplier, max=-
     print(f"Finished")
 
 
-def sherpa_romeo_import_bulk_file(limit=100, offset=0, max=-1, thread_count=1):
+def sherpa_romeo_import_bulk_file(api_conf, destination, limit=100, offset=0, max=-1, thread_count=1):
     """
     Create {thread_count} threads to query the Sherpa Romeo API simultaneously.
     limit:  Number of records ber batch. Maximum is 100.
@@ -125,11 +117,13 @@ def sherpa_romeo_import_bulk_file(limit=100, offset=0, max=-1, thread_count=1):
     max:    Maximum number of records to query in total. Rounds to a multiple of limit.
     thread_count: number of simultaneous queries to perform.
     """
+    data_dir = os.path.join(destination, "data")
+    os.makedirs(data_dir, exist_ok=True)
     threads = []
     for i in range(thread_count):
         max_thread = max / thread_count
         threads.append(Thread(target=sherpa_romeo_import_bulk_file_thread,
-                              args=(limit, offset, thread_count, max_thread),
+                              args=(api_conf, data_dir, limit, offset, thread_count, max_thread),
                               name=f"thread_{i}"))
         offset = offset + limit
     for t in threads:
@@ -164,29 +158,32 @@ def sherpa_romeo_get_issns(sherpa_romeo_issns):
 
 def compress_data_files(data_path, archive):
     with tar.open(archive, "w:gz") as t:
-        for root, _, files in walk(data_path):
+        for root, _, files in os.walk(data_path):
             for file in files:
-                t.add(path.join(root, file))
+                t.add(os.path.join(root, file))
 
-
-def sherpa_romeo_write_records_to_file(records):
-    """
-    Write the results of a query to a file with the preferred issn as file name.
-    """
-    for record in records:
-        issn, _ = sherpa_romeo_get_issns(record.get("issns"))
-        dump_file(f"{data_dir}/{issn}.json", record)
-            
 
 if __name__ == "__main__":
+    from configparser import ConfigParser
+    from utils import ROOT_DIR
+
+    config = ConfigParser()
+    config.read(f"{ROOT_DIR}/config/job.conf")
+
+    api_base = config.get("sherpa_romeo", "bulk_url", fallback="https://v2.sherpa.ac.uk/cgi")
+    api_key = config.get("sherpa_romeo", "bulk_key", fallback="")
+    bulk_dir = config.get("sherpa_romeo", "bulk_path", fallback="~/")
+    bulk_import_compress = config.getboolean("sherpa_romeo", "bulk_compress", fallback=False)
+    verbose = config.getboolean("main", "verbose", fallback=False)
+
     if not api_key:
         print(f"No API key set.")
-        input("Press [Enter] to continue anyway.")
-    if path.exists(import_dir):
-        print(f"Import directory {import_dir} exists")
-        input("Press [Enter] to continue anyway.")
-    makedirs(import_dir, exist_ok=True)
-    makedirs(data_dir, exist_ok=True)
-    sherpa_romeo_import_bulk_file(limit=100, offset=0, max=-1, thread_count=10)
+    if os.path.exists(bulk_dir):
+        print(f"Import directory {bulk_dir} exists")
+    os.makedirs(bulk_dir, exist_ok=True)
+    api_conf = {"url": api_base, "key": api_key}
+    sherpa_romeo_import_bulk_file(api_conf, bulk_dir, limit=100, offset=0, max=-1, thread_count=10)
     if bulk_import_compress:
-        compress_data_files(data_dir, data_archive)
+        datestamp = date.today().strftime("%Y%m%d")
+        data_archive = os.path.join(bulk_dir, f"sherpa_romeo_{datestamp}.tgz")
+        compress_data_files(bulk_dir, data_archive)
