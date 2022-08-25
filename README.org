@@ -13,11 +13,6 @@
 - [[https://www.w3.org/TR/shacl/][W3 Documentation]]
 - [[https://www.youtube.com/watch?v=apG5K3zc4V0][One Ontology, One Data Set, Multiple Shapes with SHACL]]
 
-* Modules
-
-** SPARQL
-- [[https://sparql-anything.readthedocs.io/][Anything]]
-
 * Sources
 
 - [[https://github.com/internetarchive/fatcat][FatCat]]
@@ -61,8 +56,7 @@ where {
 }
 #+end_src
 
-
-* TODO Design decisions
+* Design decisions
 
 ** Jobmap ID
 
@@ -256,3 +250,115 @@ ex:example ex:nest1 [ ex:nest1_key "value1" ] ;
 Note that we cannot use the =@nest= keyword to get rid of the blank nodes that are introduced this way as the scoped context of =@nest= objects is ignored during conversion, meaning the "key" properties are not included in the resulting RDF graph.
 
 To minimize the use of blank nodes, as they can complicate the data-structure, it is recommended to use [[approach2]] or [[approach3]] when it does not lead to ambiguity an to use [[approach4]] otherwise.
+* Database comparison
+** Apache Jena/Fuseki
+
+Apache Jena is a set of tools to work with semantic data. Fuseki is the packaged tool to serve a SPARQL endpoint. Jena has its own database-backend, called TDB.
+
+Pros:
+- Free and Open Source
+- Active development
+- Extensive Documentation
+- Web-interface
+- Flexible Tooling
+
+Cons:
+- Almost no configuration via web-interface
+- Cumbersome setup
+- No first-class integration with rdflib (parsing a graph with SPARQLStore backend is very slow)
+- Bulk import can be difficult
+
+** blazegraph
+
+Blazegraph is a performant SPARQL store. It has been acquired by Amazon.
+
+Pros:
+- Free and Open Source
+- Performant
+- Fairly easy setup
+
+Cons:
+- Very little development
+- Little documentation
+- No first-class integration with rdflib
+
+** virtuoso
+
+Virtuoso is a Graph database that offers SPARQL and SQL endpoints.
+
+Pros:
+- Open Source
+- Flexible, not constrained to SPARQL
+
+Cons:
+- Not free
+- Difficult setup
+- No first-class integration with rdflib
+
+** Neo4j/n10s
+
+Neo4j is a popular Graph database. n10s is an extension that adds semantic technologies to the Neo4j database.
+
+Pros:
+- Open Source
+- Flexible, not constrained to SPARQL
+- Popular, active development
+- Extensive documentation
+- First class integration with rdflib
+
+Cons:
+- No real support for SPARQL
+- n10s is not core functionality
+
+* Fuseki Setup
+
+To deploy the server, we use Docker/Podman.
+
+Build the container:
+#+begin_src sh
+podman build -t fuseki ./jena
+#+end_src
+
+Run the container in server mode:
+#+begin_src sh :var DB_DIR="/home/bram/CWTS/Apps/fuseki" :var DATA_DIR="/home/bram/CWTS/data/doaj/rdf" :results none
+echo "${DB_DIR}"
+podman run -d \
+    -p 3030:3030 \
+    -v "${DB_DIR}/databases":/fuseki/databases \
+    -v "${DB_DIR}/configuration":/fuseki/configuration \
+    -v "${DATA_DIR}":/data \
+    --name fuseki \
+    fuseki
+#+end_src
+
+Importing data can be a little difficult, as data cannot be imported in an existing database while Fuseki is running. To import data into an existing database, stop the fuseki-server and run the bulk_import script. Data can be imported in a new graph. After the import in a new graph, the graph can be added in the web-interface by providing the same name as the data dump:
+#+begin_src sh :var DB_DIR="/home/bram/CWTS/Apps/fuseki" DATA_DIR="/home/bram/CWTS/data/doaj/rdf" data_dump_name="doaj_import_20220823"
+podman run \
+    -v ${DB_DIR}/databases:/fuseki/databases \
+    -v ${DB_DIR}/configuration:/fuseki/configuration \
+    -v ${DATA_DIR}:/data \
+    --name fuseki \
+    fuseki \
+    ./bulk_import.sh ${data_dump_name} /data
+#+end_src
+
+Databases can contain multiple graphs. To make sure that the default graph returns results from all other graphs edit the corresponding =.ttl= file in =${DB_DIR}/configuration/=:
+
+#+begin_src ttl
+...
+:tdb_dataset_readwrite
+        tdb2:unionDefaultGraph true ; 
+...
+#+end_src
+
+To delete a database remove its =.ttl= configuration from =${DB_DIR}/configuration=. 
+
+#+begin_src sh :var DB_DIR="/home/bram/CWTS/Apps/fuseki" DATA_DIR="/home/bram/CWTS/data/doaj/rdf" data_dump_name="doaj_import_20220823"
+rm "${DB_DIR}/configuration/${data_dump_name}.ttl"
+#+end_src
+
+To delete a databases contents, remove its folder from =${DB_DIR}/databases=.
+
+#+begin_src sh :var DB_DIR="/home/bram/CWTS/Apps/fuseki" DATA_DIR="/home/bram/CWTS/data/doaj/rdf" data_dump_name="doaj_import_20220823"
+rm -r "${DB_DIR}/databases/${data_dump_name}"
+#+end_src
