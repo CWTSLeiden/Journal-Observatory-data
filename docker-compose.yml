@@ -1,36 +1,14 @@
 version: '3'
 services:
-  neo4j:
-    image: neo4j
-    container_name: neo4j
-    environment:
-      - NEO4JLABS_PLUGINS=["apoc", "n10s"]
-      - NEO4J_AUTH=neo4j/test
-    volumes:
-      - $HOME/CWTS/Apps/neo4j/data:/data
-      - $HOME/CWTS/Apps/neo4j/logs:/logs
-      - $HOME/CWTS/Apps/neo4j/import:/var/lib/neo4j/import
-      - $HOME/CWTS/Apps/neo4j/plugins:/plugins
-    ports:
-      - 7474:7474
-      - 7687:7687
   fuseki:
     user: root
-    image: secoresearch/fuseki
+    image: fuseki
+    build: ./jena
     container_name: fuseki
-    environment:
-      - ADMIN_PASSWORD=test
-      - ENABLE_DATA_WRITE=true
-      - ENABLE_UPDATE=true
-      - ENABLE_UPLOAD=true
     volumes:
-      - $HOME/CWTS/Apps/fuseki/databases:/fuseki-base/databases
-      - $HOME/CWTS/Apps/fuseki/configuration:/fuseki-base/configuration
+      - $HOME/CWTS/data:/data
+      - $HOME/CWTS/Apps/fuseki/databases:/fuseki/databases
+      - $HOME/CWTS/Apps/fuseki/configuration:/fuseki/configuration
     ports:
       - 3030:3030
-  blazegraph:
-    user: root
-    image: metaphacts/blazegraph-basic
-    ports:
-      - 9999:9999
-      - 8999:8080
+    
