@@ -35,7 +35,9 @@ def bnode_to_sparql(node):
    return sparqlstore._node_to_sparql(node)
 
 
-def init_graph(db_type="", id=None, db_path=None, clear=True, nm=JobNamespace()):
+def init_graph(db_type="", id=None, db_path=None, clear=True, nm=None):
+    if not nm:
+        nm = JobNamespace()
     if db_type in ["BerkeleyDB"] and db_path:
         db = path.join(db_path, f"{id}.berkeleydb")
         if clear and path.exists(db):
@@ -47,7 +49,8 @@ def init_graph(db_type="", id=None, db_path=None, clear=True, nm=JobNamespace())
         db = sparqlstore.SPARQLUpdateStore(
             query_endpoint=f"{db_path}/query",
             update_endpoint=f"{db_path}/update",
-            node_to_sparql=bnode_to_sparql
+            node_to_sparql=bnode_to_sparql,
+            auth=('admin','test')
         )
         graph = Graph(store=db, namespace_manager=nm, identifier=id)
         return graph
@@ -62,9 +65,34 @@ def init_graph(db_type="", id=None, db_path=None, clear=True, nm=JobNamespace())
     return Graph(namespace_manager=nm, identifier=id)
 
 
+def print_graph(graph, max=10):
+    print("-" * 80)
+    for n, (s, p, o) in enumerate(graph):
+        if n > max: break
+        print(f"sub: {s}")
+        print(f"rel: {p}")
+        print(f"obj: {o}")
+        print("-" * 80)
+
+
 def ext_to_format(ext):
     formats = {
         "ttl": "ttl",
         "jsonld": "json-ld"
     }
     return formats.get(ext) or ext
+
+
+def print_this(graph, pre=""):
+    for n, uri in graph.namespaces():
+        if n == "this":
+            print(f"{pre}{uri}")
+            return uri
+    print(f"{pre}not found")
+
+
+def add_to_graph(graph, subgraph):
+    for s, p, o in subgraph:
+        graph.add((s, p, o))
+    return graph
+

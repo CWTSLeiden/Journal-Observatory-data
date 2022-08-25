@@ -24,7 +24,7 @@ construct {
 where {
     ?journal schema:dateModified ?date .
 
-    ?journal doaj:ArticlePublishingCharges ?apc .
+    ?journal doaj:hasArticlePublishingCharges ?apc .
     optional { ?apc schema:PriceSpecification ?ps } .
     optional { ?ps schema:MaxPrice ?_price } .
     bind(coalesce(?_price, 0) as ?price)
