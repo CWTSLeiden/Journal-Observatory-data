@@ -3,32 +3,38 @@ from configparser import ConfigParser
 from glob import glob
 from utils import ROOT_DIR, init_graph, ext_to_format
 from tqdm import tqdm as progress
-from store import *
 from rdflib.plugins.stores import sparqlstore
+from doaj_convert import convert
+from issnl_store import ISSNL_Store
+from utils import print_graph
 
 
 config = ConfigParser()
 config.read(f"{ROOT_DIR}/config/job.conf")
-bulk_dir = config.get("doaj", "bulk_path", fallback="~/")
+doaj_dir = config.get("doaj", "bulk_path")
+issnl_db = config.get("issnl", "db_path")
+convert_file = config.get("doaj", "convert_file")
+db_type = config.get("job", "db_type")
+db_path = config.get("job", "db_path")
 context_file = config.get("doaj", "context_file", fallback="")
 db_max = 10
  
-endpoint = "http://localhost:8999/blazegraph/namespace/kb/sparql"
-db = sparqlstore.SPARQLUpdateStore(
-    query_endpoint=endpoint,
-    update_endpoint=endpoint,
-    node_to_sparql=bnode_to_sparql
-)
-graph = Graph(store=db)
+issnl_store = ISSNL_Store(db=issnl_db)
 
-files = glob(f"{bulk_dir}/rdf/*.ttl")
+job_graph = init_graph(db_type=db_type, db_path=db_path, id="job")
 
-for f in progress(files[:30]):
-    graph.parse(f)
+files = glob(f"{doaj_dir}/rdf/*.ttl")
 
-graph.commit()
-graph.close()
+# for f in progress(files[:db_max]):
+#     doaj_graph = init_graph()
+#     doaj_graph.parse(f)
+#     job_graph += convert(doaj_graph, convert_file, issnl_store)
+#     job_graph.commit()
 
+# job_graph.close()
 
-# for s in g.query("select ?s where { ?s <https://schema.org/eissn> ?o }"):
-#     print(s)
+doaj_graph = None
+doaj_graph = init_graph()
+doaj_graph.parse(files[3])
+assertion = convert(doaj_graph, convert_file, issnl_store)
+print_graph(assertion.query("construct {?s job:hasISSNL ?o } where { ?s job:hasISSNL ?o }"))
