@@ -1,0 +1,49 @@
+# Jobmap
+construct {
+    this: a job:JobMap ;
+        cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+        schema:dateCreated ?date ;
+        job:hasDataSource <https://openalex.org> .
+}
+where {
+    ?journal a job:record .
+    ?journal schema:dateModified ?date .
+}
+
+# Metadata Assertion
+construct {
+    this: job:hasAssertion sub:metadata .
+    
+    sub:metadata a job:MetadataAssertion ;
+        schema:name ?name .
+}
+where {
+    ?journal a job:record .
+    ?journal openalex:name ?name .
+}
+
+# Publisher Assertion
+construct {
+    this: job:hasAssertion sub:publisher .
+
+    sub:publisher a job:PublisherAssertion ;
+      job:hasPublisher [ schema:name ?publisher ] .
+}
+where {
+    ?journal a job:record .
+    ?journal openalex:publisher_name ?publisher . 
+}
+
+# Identifier Assertion
+construct {
+    this: job:hasAssertion sub:identifier .
+
+    sub:identifier a job:IdentifierAssertion ;
+        ?hasissn ?issn ;
+        openalex:id ?journal .
+}
+where {
+    ?journal a job:record .
+    ?journal ?hasissn ?issn . 
+    filter ( ?hasissn in (fabio:issn, fabio:hasIssnL) ) .
+}

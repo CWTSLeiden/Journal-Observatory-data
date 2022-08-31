@@ -1,0 +1,113 @@
+# JobMap
+construct {
+    this: a job:JobMap ;
+        cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+        schema:dateCreated ?date ;
+        job:hasDatasource <https://doaj.org> .
+}
+where {
+    ?journal a job:record .
+    ?journal schema:dateModified ?date .
+}
+
+# Metadata Assertion
+construct {
+    this: job:hasAssertion sub:metadata .
+
+    sub:metadata a job:MetadataAssertion ;
+        schema:name ?journal_title ;
+        job:hasKeyword ?keyword .
+}
+where {
+    ?journal a job:record .
+    ?journal schema:name ?journal_title .
+    optional { ?journal doaj:keyword ?keyword . } 
+}
+
+# Identifier Assertion
+construct {
+    this: job:hasAssertion sub:identifier .
+
+    sub:identifier a job:IdentifierAssertion ;
+        ?hasissn ?issn .
+}
+where {
+    ?journal a job:record .
+    ?journal ?hasissn ?issn . 
+    filter ( ?hasissn in (fabio:issn, fabio:eIssn) ) .
+}
+
+# Publisher Assertion
+construct {
+    this: job:hasAssertion sub:publisher .
+
+    sub:publisher a job:PublisherAssertion ;
+        job:hasPublisher ?publisher .
+
+    ?publisher schema:name ?publisher_name ;
+        schema:addressCountry ?publisher_country ;
+        schema:url ?publisher_url .
+}
+where {
+    ?journal a job:record .
+    ?journal doaj:Publisher ?publisher .
+    optional { ?publisher schema:addressCountry ?publisher_country } .
+    optional { ?publisher schema:url ?publisher_url } .
+    optional { ?publisher schema:name ?publisher_name } .
+}
+
+# ArticlePublishingCharges Assertion
+construct {
+    this: job:hasAssertion sub:apc .
+
+    sub:apc a job:ArticlePublishingChargesAssertion ;
+        schema:url ?url ;
+        job:hasMaxPrice ?price ;
+        job:hasPriceCurrency ?currency .
+}
+where {
+    ?journal a job:record .
+    ?journal doaj:hasArticlePublishingCharges ?apc .
+    optional { ?apc schema:PriceSpecification [ schema:MaxPrice ?_price ;
+                                                schema:priceCurrency ?_currency ] } .
+    optional { ?apc schema:url ?url } .
+    bind(coalesce(?_price, 0) as ?price)
+    bind(if(bound(?_currency), strdt(str(?_currency), xsd:string), ?_) as ?currency)
+}
+
+# OpenAccessPolicy assertion
+construct {
+    this: job:hasAssertion sub:policy .
+
+    sub:policy a job:OpenAccessPolicyAssertion ;
+        job:hasPolicy ?_oa_policy .
+    ?_oa_policy dcterms:license ?license ;
+        job:hasCopyrightOwner ?copyright_owner ;
+        job:appliesToVersion "published" ;
+}
+where {
+    ?journal a job:record .
+    bind(bnode() as ?_oa_policy) .
+    optional { ?journal doaj:Copyright ?oa_copyright } .
+    optional {
+        ?oa_copyright doaj:authorRetainsCopyright ?copyright_author_bool .
+        bind(if(?copyright_author_bool, "authors", ?_) as ?copyright_owner) .
+    }
+    optional { ?oa_copyright schema:url ?copyright_url } .
+    
+    optional {
+        ?oa_license doaj:licenseType ?license_type .
+        optional {
+            ?oa_license schema:url ?license_url .
+            bind(IRI(?license_url) as ?license_iri) .
+        }
+        bind(if(?license_type = "CC0", IRI("https://creativecommons.org/publicdomain/zero/1.0/"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY", IRI("https://creativecommons.org/licenses/by/4.0"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-NC", IRI("https://creativecommons.org/licenses/by-nc/4.0"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-NC-ND", IRI("https://creativecommons.org/licenses/by-nc-nd/4.0"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-NC-SA", IRI("https://creativecommons.org/licenses/by-nc-sa/4.0"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-ND", IRI("https://creativecommons.org/licenses/by-nd/4.0"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-SA", IRI("https://creativecommons.org/licenses/by-sa/4.0"), ?_) as ?cc_license)
+        bind(coalesce(?license_iri, ?cc_license) as ?license)
+    } .
+}

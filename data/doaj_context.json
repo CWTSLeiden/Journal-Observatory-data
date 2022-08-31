@@ -4,7 +4,8 @@
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "doaj": "https://doaj.org/",
-    "cc": "https://creativecommons.org/licenses/",
+    "fabio": "http://purl.org/spar/fabio/",
+    "dcterms": "http://purl.org/dc/terms/",
     "id": "@id",
     "created_date": {
         "@id": "schema:dateCreated",
@@ -14,6 +15,12 @@
         "@id": "schema:dateModified",
         "@type": "schema:DateTime"
     },
+    "name": {
+        "@id": "schema:name"
+    },
+    "url": {
+        "@id": "schema:url"
+    },
     "bibjson": {
         "@id": "@nest"
     },
@@ -21,7 +28,7 @@
         "@id": "fabio:eIssn"
     },
     "pissn": {
-        "@id": "fabio:Issn"
+        "@id": "fabio:issn"
     },
     "title": {
         "@id": "schema:name"
@@ -42,14 +49,11 @@
         "@type": "xsd:string"
     },
     "copyright": {
-        "@id": "doaj:AuthorCopyright",
+        "@id": "doaj:Copyright",
         "@context": {
             "author_retains": {
                 "@id": "doaj:authorRetainsCopyright",
                 "@type": "xsd:boolean"
-            },
-            "url": {
-                "@id": "doaj:copyrightPolicy"
             }
         }
     },
@@ -57,12 +61,7 @@
         "@id": "doaj:keyword"
     },
     "publisher": {
-        "@id": "doaj:Publisher",
-        "@context": {
-            "name": {
-                "@id": "schema:name"
-            }
-        }
+        "@id": "doaj:Publisher"
     },
     "apc": {
         "@id": "doaj:hasArticlePublishingCharges",
@@ -80,6 +79,12 @@
                     }
                 }
             }
+        }
+    },
+    "license": {
+        "@id": "dcterms:license",
+        "@context": {
+            "type": "doaj:licenseType"
         }
     }
 }
