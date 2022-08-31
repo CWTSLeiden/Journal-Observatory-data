@@ -1,3 +1,4 @@
+---  # Apache Jena & Fuseki triple store
 version: '3'
 services:
   fuseki:
@@ -11,4 +12,3 @@ services:
       - $HOME/CWTS/Apps/fuseki/configuration:/fuseki/configuration
     ports:
       - 3030:3030
-    

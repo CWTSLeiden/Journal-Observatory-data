@@ -26,7 +26,7 @@ ENV LANG C.UTF-8
 RUN apk --no-cache add bash curl ca-certificates
 
 
-ENV JENA_SOURCE https://dlcdn.apache.org/jena/binaries/
+ENV JENA_SOURCE http://archive.apache.org/dist/jena/binaries
 ENV VERSION 4.5.0
 ENV JENA_SHA512 84e23ca41e8e38b286abf769d3ccdfe069f6157d58e0bb24e78d98ed5f8d598e06ededc16dd5bde0a494d5ee7c49ab9c4f5335cf63727a302e6b8b929d47457f
 ENV FUSEKI_SHA512 1d60d596a4aa6f3c786e0da86190e406152ed2f5e0698960c6065a0b85bef5bde9844771ddb7cb22aefd95e38c1510ae4ac4d089a484211edc167080ec3af452
