@@ -57,7 +57,8 @@
                     "license": {
                         "@id": "romeo:hasPermittedLicense",
                         "@context": {
-                            "license": "romeo:PermittedLicense"
+                            "license": "romeo:PermittedLicense",
+                            "version": "romeo:PermittedLicenseVersion"
                         }
                     },
                     "location": {
