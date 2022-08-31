@@ -1,0 +1,18 @@
+{
+    "job": "https://job.org/",
+    "schema": "https://schema.org/",
+    "openalex": "https://openalex.org/",
+    "id": "@id",
+    "created_date": {
+        "@id": "schema:dateCreated",
+        "@type": "schema:Date"
+    },
+    "updated_date": {
+        "@id": "schema:dateModified",
+        "@type": "schema:DateTime"
+    },
+    "issn_l": "fabio:hasIssnL",
+    "issn": "fabio:issn",
+    "display_name": "openalex:name",
+    "publisher": "openalex:publisher_name"
+}
