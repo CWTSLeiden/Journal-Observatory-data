@@ -4,6 +4,7 @@ from rdflib import Graph
 from tqdm import tqdm as progress
 import json
 import os
+from utils.utils import file_to_json
 
 
 def issn_from_bulk(issn, data_dir):
@@ -23,18 +24,20 @@ def add_context(record, context={}):
     return context_record
 
 
-def jsonld_to_graph(record, graph=Graph()):
+def jsonld_to_graph(record, graph=None):
     """
     Convert a json-ld record to an rdf graph
     If graph is provided, add to the existing graph
     """
+    if not graph: graph = Graph()
     record = jsonld.compact(record, record["@context"])
     graph.parse(data=json.dumps(record), format='json-ld')
     return graph
 
 
-def json_to_graph(journal_json, context={}, graph=Graph(), serialize=None):
+def json_to_graph(journal_json, context={}, graph=None, serialize=None):
     "Convert a json record to a graph."
+    if not graph: graph = Graph()
     journal_jsonld = add_context(journal_json, context)
     graph = jsonld_to_graph(journal_jsonld, graph)
     if serialize:
@@ -42,14 +45,14 @@ def json_to_graph(journal_json, context={}, graph=Graph(), serialize=None):
     return graph
 
 
-def json_file_to_graph(file, context={}, graph=Graph(), serialize=None):
+def json_file_to_graph(file, context={}, graph=None, serialize=None):
     "Convert a json file to a graph."
-    with open(file, "rb") as f:
-        journal_json = json.load(f)
-    return(json_to_graph(journal_json, context, graph, serialize))
+    if not graph: graph = Graph()
+    journal_json = file_to_json(file)
+    return json_to_graph(journal_json, context, graph, serialize)
 
 
-def bulk_to_graph(files, context_file, graph=Graph(), max=None):
+def bulk_to_graph(files, context_file, graph=None, max=None):
     """
     Convert a list of json files into a single graph
     parameters:
@@ -58,8 +61,8 @@ def bulk_to_graph(files, context_file, graph=Graph(), max=None):
         max         : convert a maximum number of files
         serialize   : location to store graph as file
     """
-    with open(context_file, "r") as c:
-        context = json.load(c)
+    if not graph: graph = Graph()
+    context = file_to_json(context_file)
     if context.get("@context"):
         context = context.get("@context")
     max = min(max or (2**32), len(files))
@@ -69,7 +72,7 @@ def bulk_to_graph(files, context_file, graph=Graph(), max=None):
     return graph
 
 
-def bulk_to_rdf(files, destination, context_file, graph=Graph(), max=(2**32), ext="ttl"):
+def bulk_to_rdf(files, destination, context_file, graph=None, max=(2**32), ext="ttl"):
     """
     Convert a list of json files into separate serialized files:
     parameters:
@@ -79,8 +82,8 @@ def bulk_to_rdf(files, destination, context_file, graph=Graph(), max=(2**32), ex
         max         : convert a maximum number of files
         ext         : extension for the serialized files
     """
-    with open(context_file, "r") as c:
-        context = json.load(c)
+    if not graph: graph = Graph()
+    context = file_to_json(context_file)
     if context.get("@context"):
         context = context.get("@context")
     max = min(max, len(files))

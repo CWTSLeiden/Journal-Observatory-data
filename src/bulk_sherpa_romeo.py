@@ -1,9 +1,10 @@
 import requests
 import json
-import tarfile as tar
 import os
 from threading import Thread
 from datetime import date
+from bulk import compress_data_files, dump_file
+
 
 def write_log(bulk_dir, url, limit, offset, code):
     """
@@ -19,19 +20,6 @@ def write_log(bulk_dir, url, limit, offset, code):
             f.write(f"return_code\toffset\tlimit\turl\n")
     with open(log_path, "a") as f:
         f.write(f"{code}\t{offset}\t{limit}\t{url}\n")
-
-
-def dump_file(file_path, content):
-    """
-    Write results to file, creating a unique name if the path already exists.
-    """
-    file_name, extension = os.path.splitext(file_path)
-    counter = 0
-    while os.path.exists(file_path):
-        counter += 1
-        file_path = f"{file_name}_{counter}{extension}"
-    with open(file_path, "w") as f:
-        json.dump(content, f)
 
 
 def sherpa_romeo_write_records_to_file(destination, records):
@@ -102,11 +90,11 @@ def sherpa_romeo_import_bulk_file_thread(api_conf, destination, limit, offset, o
         if code == 200 and records:
             print(f"write items {offset} - {offset + limit}")
             sherpa_romeo_write_records_to_file(destination, records)
-        if code != 200 and not records:
-            print(f"Return code error")
+        elif code != 200 and not records:
+            print("Return code error")
             records = [True]
         offset = offset + (limit * offset_multiplier)
-    print(f"Finished")
+    print("Finished")
 
 
 def sherpa_romeo_import_bulk_file(api_conf, destination, limit=100, offset=0, max=-1, thread_count=1):
@@ -156,16 +144,9 @@ def sherpa_romeo_get_issns(sherpa_romeo_issns):
     return issn, issns
 
 
-def compress_data_files(data_path, archive):
-    with tar.open(archive, "w:gz") as t:
-        for root, _, files in os.walk(data_path):
-            for file in files:
-                t.add(os.path.join(root, file))
-
-
 if __name__ == "__main__":
     from configparser import ConfigParser
-    from utils import ROOT_DIR
+    from utils.utils import ROOT_DIR
 
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")

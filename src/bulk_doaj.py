@@ -84,7 +84,7 @@ def compress_data_files(source, archive):
 
 if __name__ == "__main__":
     from configparser import ConfigParser
-    from utils import ROOT_DIR
+    from utils.utils import ROOT_DIR
 
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")

@@ -2,7 +2,7 @@ import os
 from rdflib import Namespace
 from namespace import JobNamespace, ROMEO
 from store import bulk_to_graph
-from utils import ext_to_format
+from utils.utils import ext_to_format
 
 ROMEO_PUBLISHER = Namespace(f"{ROMEO}publisher/")
 ROMEO_POLICY = Namespace(f"{ROMEO}publisher_policy/")
@@ -20,7 +20,8 @@ class SherpaRomeoNamespace(JobNamespace):
 if __name__ == "__main__":
     from configparser import ConfigParser
     from glob import glob
-    from utils import ROOT_DIR, init_graph
+    from utils.utils import ROOT_DIR
+    from utils.graph import init_graph
 
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     db_path = config.get("sherpa_romeo", "db_path")
     os.makedirs(db_path, exist_ok=True)
 
-    db_max = int(config.get("sherpa_romeo", "db_max"))
+    db_max = int(config.get("sherpa_romeo", "db_max", fallback=1))
 
     graph = init_graph(db_type=db_type,
                        id="sherpa_romeo",

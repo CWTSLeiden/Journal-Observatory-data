@@ -1,12 +1,12 @@
 import os
-from rdflib import Literal, URIRef
-from store import bulk_to_graph, bulk_to_rdf
+from store import bulk_to_graph
 
 
 if __name__ == "__main__":
     from configparser import ConfigParser
     from glob import glob
-    from utils import ROOT_DIR, init_graph, ext_to_format
+    from utils.utils import ROOT_DIR, ext_to_format
+    from utils.graph import init_graph
 
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
