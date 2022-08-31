@@ -56,6 +56,10 @@ where {
 }
 #+end_src
 
+** Assertions in SPARQL
+
+It is advisable to split up SPARQL queries that construct a jobmap to have a query for each individual assertion. Not only does this simplify the query and lead to better readability, it also makes sure that there are no empty assertions and it minimizes the "explosive growth of BNodes".
+
 * Design decisions
 
 ** Jobmap ID
