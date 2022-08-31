@@ -1,25 +1,19 @@
-# Local variables:
-# eval: (general-normal :keymaps 'local "C-c C-c" '(lambda () (interactive) (execute-project-file "src/doaj_convert.py")))
-# End:
-
 construct {
     this: a job:JobMap ;
-        job:hasISSNL ?issnl ;
         job:hasDataLicense cc0:1.0 ;
         job:hasCreationDate ?date ;
-        job:hasDatasource <https://doaj.org/> ;
-        job:hasAssertion sub:apc_assertion ;
-        job:hasAssertion sub:metadata_assertion .
+        job:hasDatasource <https://doaj.org> ;
+        job:hasAssertion sub:apc ;
+        job:hasAssertion sub:metadata .
 
-    sub:apc_assertion a job:ArticlePublishingCharges ;
+    sub:apc a job:ArticlePublishingChargesAssertion ;
         job:hasMaxPrice ?price ;
         job:hasPriceCurrency ?currency .
 
-    sub:metadata_assertion a job:Metadata ;
+    sub:metadata a job:MetadataAssertion ;
         job:hasKeyword ?keyword ;
-        job:hasISSNL ?issnl ;
-        job:hasPISSN ?pissn ;
-        job:hasEISSN ?eissn .
+        fabio:issn ?pissn ;
+        fabio:eIssn ?eissn .
 }
 where {
     ?journal schema:dateModified ?date .
@@ -31,18 +25,7 @@ where {
     optional { ?ps schema:priceCurrency ?_currency } .
     bind(if(bound(?_currency), strdt(str(?_currency), xsd:string), ?_) as ?currency)
 
-    optional {
-        ?journal schema:pissn ?pissn_str .
-        bind (iri(concat("https://issn.org/", str(?pissn_str))) as ?pissn)
-    } .
-    optional {
-        ?journal schema:eissn ?eissn_str .
-        bind (iri(concat("https://issn.org/", str(?eissn_str))) as ?eissn)
-    } .
-    bind (coalesce(?eissn, ?pissn) as ?issn)
-    ?issnl issn:ISSNLof ?issn .
-
-    optional {
-        ?journal doaj:keyword ?keyword
-    }
+    optional { ?journal schema:pissn ?pissn . }
+    optional { ?journal schema:eissn ?eissn . }
+    # optional { ?journal doaj:keyword ?keyword . } 
 }

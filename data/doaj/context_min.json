@@ -18,13 +18,10 @@
         "@id": "@nest"
     },
     "eissn": {
-        "@id": "schema:eissn"
+        "@id": "fabio:eIssn"
     },
     "pissn": {
-        "@id": "schema:pissn"
-    },
-    "issn": {
-        "@id": "schema:issn"
+        "@id": "fabio:Issn"
     },
     "title": {
         "@id": "schema:name"
