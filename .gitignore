@@ -3,3 +3,4 @@
 *.bkp
 __pycache__
 *.db
+/test/

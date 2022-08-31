@@ -1,5 +1,5 @@
 import os
-from store import bulk_to_graph
+from store import bulk_to_graph, bulk_to_rdf
 
 
 if __name__ == "__main__":
@@ -21,11 +21,10 @@ if __name__ == "__main__":
 
     graph = init_graph(db_type=db_type, id="doaj", db_path=db_path, clear=True)
     files = glob(f"{bulk_dir}/data/*.json")
-    graph = bulk_to_graph(files=files,
-                          context_file=context_file,
-                          graph=graph,
-                          max=db_max)
-    if db_type in ["ttl", "jsonld"]:
-        graph.serialize(os.path.join(db_path, f"doaj.{db_type}"),
-                        format=ext_to_format(db_type))
-    graph.close()
+    print(files[0])
+    graph = bulk_to_rdf(files=files,
+                        destination=db_path,
+                        context_file=context_file,
+                        graph=graph,
+                        max=db_max,
+                        ext=db_type)

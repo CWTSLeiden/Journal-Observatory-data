@@ -1,5 +1,3 @@
-from sys import stdout
-
 def print_graph(graph, max=10):
     print("-" * 80)
     for n, (s, p, o) in enumerate(graph):
