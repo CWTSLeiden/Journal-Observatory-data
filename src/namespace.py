@@ -1,7 +1,6 @@
 import os
 from rdflib import Graph, Namespace
 from rdflib.namespace import NamespaceManager
-from rdflib.namespace._RDF import RDF as rdf
 from uuid import uuid4 as uuid
 
 

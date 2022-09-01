@@ -62,8 +62,8 @@ construct {
 
     sub:apc a job:ArticlePublishingChargesAssertion ;
         schema:url ?url ;
-        job:hasMaxPrice ?price ;
-        job:hasPriceCurrency ?currency .
+        schema:maxPrice ?price ;
+        schema:priceCurrency ?currency .
 }
 where {
     ?journal a job:record .
