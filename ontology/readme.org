@@ -1,0 +1,110 @@
+* Namespaces
+
+** Creative Commons
+- prefix :: cc
+- url :: http://creativecommons.org/ns#
+** DOAJ
+- prefix :: doaj
+- url :: https://doaj.org/
+** FABIO
+- prefix :: fabio
+- url :: http://purl.org/spar/fabio/
+** Journal Observatory
+- prefix :: job
+- url :: https://job.org/
+** Journal Observatory (jobmap)
+- prefix :: jobmap
+- url :: https://job.org/jobmap/
+** Library of Congress
+- prefix :: loc
+- url :: http://id.loc.gov/ontologies/bibframe/
+** OpenAlex
+- prefix :: openalex
+- url :: https://openalex.org/
+** Prismstandard
+- prefix :: prism
+- url :: http://prismstandard.org/namespaces/basic/2.0/
+** Sherpa Romeo
+- prefix :: romeo
+- url :: https://v2.sherpa.ac.uk/id/
+** Schema
+- prefix :: schema
+- url :: https://schema.org/
+** XSD
+- prefix :: xsd
+- url :: http://www.w3.org/2001/XMLSchema#
+** Dublin Core terms
+- prefix :: dcterms
+- url :: http://purl.org/dc/terms/
+
+* Classes
+** job:JobMap
+** job:Assertion
+** job:MetadataAssertion
+
+- rdfs:subClassOf :: job:Assertion
+  
+** job:IdentifierAssertion
+
+- rdfs:subClassOf :: job:Assertion
+  
+** job:PolicyAssertion
+
+- rdfs:subClassOf :: job:Assertion
+  
+** job:OpenAccessPolicyAssertion
+
+- rdfs:subClassOf :: job:PolicyAssertion
+  
+** job:ArticlePublishingChargesAssertion
+
+- rdfs:subClassOf :: job:Assertion
+  
+** job:record
+only used during conversion of data
+** dcterms:Policy
+* Object Properties
+** job:hasAssertion
+
+- rdfs:domain :: job:JobMap
+- rdfs:range :: job:Assertion
+
+** job:hasPolicy                                                           :replace:
+** cc:license
+
+- rdfs:subPropertyOf :: dcterms:license
+  
+** dcterms:license
+** dcterms:publisher
+* Data Properties
+** job:hasKeyword                                                          :replace:
+** job:hasDatasource                                                       :replace:
+** job:hasEmbargo                                                          :replace:
+** job:hasPublishingLocation                                               :replace:
+** job:hasCondition                                                        :replace:
+** job:hasCopyrightOwner                                                   :replace:
+** job:appliesToVersion                                                    :replace:
+** romeo:id                                                              :undefined:
+
+- rdfs:subPropertyOf :: dcterms:identifier
+
+** openalex:venueId                                                      :undefined:
+
+- rdfs:subPropertyOf :: dcterms:identifier
+
+** fabio:hasIssnL
+
+- rdfs:subPropertyOf :: dcterms:identifier
+
+** schema:addressCountry
+** schema:dateCreated
+** schema:name
+** schema:url
+** prism:issn
+
+- rdfs:subPropertyOf :: dcterms:identifier
+
+** prism:eIssn
+
+- rdfs:subPropertyOf :: dcterms:identifier
+

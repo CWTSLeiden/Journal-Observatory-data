@@ -12,7 +12,7 @@
         "@type": "schema:DateTime"
     },
     "issn_l": "fabio:hasIssnL",
-    "issn": "fabio:issn",
+    "issn": "prism:issn",
     "display_name": "openalex:name",
     "publisher": "openalex:publisher_name"
 }

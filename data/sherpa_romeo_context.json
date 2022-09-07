@@ -24,7 +24,7 @@
     "issns": {
         "@id": "romeo:hasIssns",
         "@context": {
-            "issn": "schema:issn",
+            "issn": "prism:issn",
             "type": "romeo:issn_type"
         }
     },

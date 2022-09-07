@@ -24,10 +24,10 @@ where {
 
 # Publisher Assertion
 construct {
-    this: job:hasAssertion sub:publisher .
-
-    sub:publisher a job:PublisherAssertion ;
-      job:hasPublisher [ schema:name ?publisher ] .
+    this: job:hasAssertion sub:metadata .
+    
+    sub:metadata a job:MetadataAssertion ;
+        job:hasPublisher [ schema:name ?publisher ] .
 }
 where {
     ?journal a job:record .
@@ -40,10 +40,10 @@ construct {
 
     sub:identifier a job:IdentifierAssertion ;
         ?hasissn ?issn ;
-        openalex:id ?journal .
+        openalex:venueId ?journal .
 }
 where {
     ?journal a job:record .
     ?journal ?hasissn ?issn . 
-    filter ( ?hasissn in (fabio:issn, fabio:hasIssnL) ) .
+    filter ( ?hasissn in (prism:issn, fabio:hasIssnL) ) .
 }

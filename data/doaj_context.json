@@ -25,10 +25,10 @@
         "@id": "@nest"
     },
     "eissn": {
-        "@id": "fabio:eIssn"
+        "@id": "prism:eIssn"
     },
     "pissn": {
-        "@id": "fabio:issn"
+        "@id": "prism:issn"
     },
     "title": {
         "@id": "schema:name"

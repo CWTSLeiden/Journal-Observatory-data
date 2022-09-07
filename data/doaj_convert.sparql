@@ -34,15 +34,15 @@ construct {
 where {
     ?journal a job:record .
     ?journal ?hasissn ?issn . 
-    filter ( ?hasissn in (fabio:issn, fabio:eIssn) ) .
+    filter ( ?hasissn in (prism:issn, prism:eIssn) ) .
 }
 
 # Publisher Assertion
 construct {
-    this: job:hasAssertion sub:publisher .
+    this: job:hasAssertion sub:metadata .
 
-    sub:publisher a job:PublisherAssertion ;
-        job:hasPublisher ?publisher .
+    sub:metadata a job:MetadataAssertion ;
+        dcterms:publisher ?publisher .
 
     ?publisher schema:name ?publisher_name ;
         schema:addressCountry ?publisher_country ;
@@ -81,7 +81,8 @@ construct {
 
     sub:policy a job:OpenAccessPolicyAssertion ;
         job:hasPolicy ?_oa_policy .
-    ?_oa_policy dcterms:license ?license ;
+    ?_oa_policy a dcterms:Policy ;
+        dcterms:license ?license ;
         job:hasCopyrightOwner ?copyright_owner ;
         job:appliesToVersion "published" ;
 }
