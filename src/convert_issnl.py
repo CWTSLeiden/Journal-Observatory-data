@@ -2,8 +2,9 @@ import glob
 import csv
 from tqdm import tqdm as progress
 from namespace import *
-from utils.graph import init_graph
+from utils.graph import job_graph, fuseki_graph, sparql_insert_graph
 from rdflib import Literal, URIRef
+from rdflib.namespace._RDF import RDF
 
 def load_issnl_file(bulk_dir):
     "Obtain the right file from the bulk import directory."
@@ -45,17 +46,16 @@ def issnl_parse_bulk_file(bulk_dir, filter=None):
 
 def issnl_tuple_to_jobmap(issnl, issn, date):
     jobnamespace = JobNamespace(uuid=True)
-    jobmap = init_graph(nm=jobnamespace)
+    jobmap = job_graph(nm=jobnamespace)
     THIS = jobnamespace.THIS
     SUB = jobnamespace.SUB
-    creationdate = Literal(date, datatype=SCHEMA.Date)
     jobmap.add((THIS.self, RDF.type, JOB.JobMap))
-    jobmap.add((THIS.self, JOB.hasDataLicense, CC0["1.0"]))
-    jobmap.add((THIS.self, JOB.hasCreationDate, creationdate))
+    jobmap.add((THIS.self, CC.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/")))
+    jobmap.add((THIS.self, SCHEMA.dateCreated, Literal(date, datatype=SCHEMA.Date)))
     jobmap.add((THIS.self, JOB.hasDataSource, URIRef("https://issn.org")))
     jobmap.add((THIS.self, JOB.hasAssertion, SUB.identifier))
     jobmap.add((SUB.identifier, RDF.type, JOB.IdentifierAssertion))
-    jobmap.add((SUB.identifier, FABIO.issn, Literal(issn)))
+    jobmap.add((SUB.identifier, PRISM.issn, Literal(issn)))
     jobmap.add((SUB.identifier, FABIO.hasIssnL, Literal(issnl)))
     return jobmap
 
@@ -67,23 +67,22 @@ if __name__ == "__main__":
 
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
-    db_type = config.get("job", "db_type")
-    db_path = config.get("job", "db_path")
+    endpoint = config.get("job", "endpoint")
 
     bulk_dir = config.get("issnl", "bulk_path", fallback="~/issnl")
     file = path.basename(load_issnl_file(bulk_dir))
     date = f"{file[:4]}-{file[4:6]}-{file[6:8]}"
 
-    jobmap_graph = init_graph(db_type, db_path, id=URIRef("https://job.org/jobmap/issnl"))
-    try:
-        jobmap_graph.clear()
-    except:
-        pass
+    if config.getboolean("main", "test", fallback=False):
+        raise(Exception("No test function for convert_issnl"))
+
+    graph_id = "https://job.org/jobmap/issnl"
+    jobmap_graph = fuseki_graph(type="write", endpoint=endpoint, id=graph_id, clear=True)
 
     batchsize = 500
     bulk = issnl_parse_bulk_file(bulk_dir)
     for n in progress(range(0, len(bulk), batchsize), unit_scale=batchsize):
-        jobmap = init_graph()
+        jobmap = job_graph()
         for issnl, issn in bulk[n:n+batchsize]:
             jobmap += issnl_tuple_to_jobmap(issnl, issn, date)
-        jobmap_graph.insert_graph(jobmap)
+        sparql_insert_graph(jobmap_graph, jobmap)

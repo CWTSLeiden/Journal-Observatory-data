@@ -1,4 +1,3 @@
-import os
 from rdflib import Graph, Namespace
 from rdflib.namespace import NamespaceManager
 from uuid import uuid4 as uuid
@@ -12,6 +11,7 @@ JOB = Namespace("https://job.org/")
 JOBMAP = Namespace("https://job.org/jobmap/")
 LOC = Namespace("http://id.loc.gov/ontologies/bibframe/")
 OPENALEX = Namespace("https://openalex.org/")
+PRISM = Namespace("http://prismstandard.org/namespaces/basic/2.0/")
 ROMEO = Namespace("https://v2.sherpa.ac.uk/id/")
 SCHEMA = Namespace("https://schema.org/")
 
@@ -26,6 +26,7 @@ class JobNamespace(NamespaceManager):
         self.bind("jobmap", JOBMAP)
         self.bind("loc", LOC)
         self.bind("openalex", OPENALEX)
+        self.bind("prism", PRISM)
         self.bind("romeo", ROMEO)
         self.bind("schema", SCHEMA)
         if uuid:
@@ -37,3 +38,9 @@ class JobNamespace(NamespaceManager):
         self.SUB = Namespace(id + "#")
         self.bind("this", self.THIS)
         self.bind("sub", self.SUB)
+
+    def namespace_bindings(self):
+        bindings = {}
+        for bind, ns in self.namespaces():
+            bindings[bind] = ns
+        return bindings

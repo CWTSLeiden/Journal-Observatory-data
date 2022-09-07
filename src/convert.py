@@ -2,11 +2,11 @@ from configparser import ConfigParser
 from glob import glob
 from namespace import JobNamespace
 from pyparsing.exceptions import ParseException
-from rdflib import URIRef
 from store import json_to_graph
 from tqdm import tqdm as progress
-from utils.graph import init_graph
+from utils.graph import job_graph, fuseki_graph, sparql_insert_graph
 from utils.utils import file_to_json, ROOT_DIR
+from utils.jsonld import jsonld_frame, jobmap_frame, jsonld_strip
 import json
 import re
 
@@ -25,7 +25,7 @@ def read_query_file(file):
 
 def graph_to_jobmap(graph, queries):
     jobnamespace = JobNamespace(uuid=True)
-    jobmap_graph = init_graph(nm=jobnamespace)
+    jobmap_graph = job_graph(nm=jobnamespace)
     graph.namespace_manager = jobnamespace
     # graph.bind("this", jobnamespace.THIS, override=True)
     # graph.bind("sub", jobnamespace.SUB, override=True)
@@ -57,35 +57,51 @@ def dataset_convert(dataset, batchsize=100):
     context_file = config.get(dataset, "context_file")
     convert_file = config.get(dataset, "convert_file")
     bulk_path = config.get(dataset, "bulk_path")
-    db_type = config.get("job", "db_type")
-    db_path = config.get("job", "db_path")
+    endpoint = config.get("job", "endpoint")
 
     context = file_to_json(context_file)
     queries = read_query_file(convert_file)
     files = glob(f"{bulk_path}/data/*.json")
 
     if config.getboolean("main", "test", fallback=False):
-        return dataset_convert_test(files, context, queries, dataset)
+        item = config.getint(dataset, "test_item", fallback=0)
+        return dataset_convert_test(files, context, queries, dataset, item)
 
-    graph_id = URIRef(f"https://job.org/jobmap/{dataset}")
-    jobmap_graph = init_graph(db_type, db_path, id=graph_id)
-    jobmap_graph.create_graph()
-    jobmap_graph.clear()
+    graph_id = f"https://job.org/jobmap/{dataset}"
+    jobmap_graph = fuseki_graph(type="write", endpoint=endpoint, id=graph_id, clear=True)
 
     for n in progress(range(0, len(files), batchsize), unit_scale=batchsize):
-        jobmap = init_graph()
+        jobmap = job_graph()
         for file in files[n:n+batchsize]:
             sherpa_romeo_record = file_to_json(file)
             jobmap += json_to_jobmap(sherpa_romeo_record, context, queries)
-        jobmap_graph.insert_graph(jobmap)
+        sparql_insert_graph(jobmap_graph, jobmap)
     return jobmap_graph
 
 
 def dataset_convert_test(files, context, queries, dataset, item=0):
     record = file_to_json(files[item])
     jobmap = json_to_jobmap(record, context, queries)
+    datagraph = json_to_graph(record, context)
+    # Write record to file
+    print(f"Write record to file:")
+    print(f" - test/{dataset}_record.json")
     with open(f"{ROOT_DIR}/test/{dataset}_record.json", "w") as f:
         json.dump(record, f, indent=4)
+    # Write converted graph to file
+    print(f"Write data graph to file:")
+    print(f" - test/{dataset}_graph.ttl")
+    datagraph.serialize(f"{ROOT_DIR}/test/{dataset}_graph.ttl", format="turtle")
+    print(f" - test/{dataset}_graph.json")
+    datagraph.serialize(f"{ROOT_DIR}/test/{dataset}_graph.json", format="json-ld", auto_compact=True, indent=4)
+    # Write jobmap to file
+    print(f"Write jobmap to file:")
+    print(f" - test/{dataset}_jobmap.ttl")
     jobmap.serialize(f"{ROOT_DIR}/test/{dataset}_jobmap.ttl", format="turtle")
-    json_to_graph(record, context).serialize(f"{ROOT_DIR}/test/{dataset}_graph.ttl", format="turtle")
+    print(f" - test/{dataset}_jobmap.json")
+    jobmap.serialize(f"{ROOT_DIR}/test/{dataset}_jobmap.json", format="json-ld", auto_compact=True, indent=4)
+    print(f" - test/{dataset}_jobmap_framed.json")
+    jsonld_frame(f"{ROOT_DIR}/test/{dataset}_jobmap.json", frame=jobmap_frame)
+    print(f" - test/{dataset}_jobmap_stripped.json")
+    jsonld_strip(f"{ROOT_DIR}/test/{dataset}_jobmap_framed.json")
     return jobmap
