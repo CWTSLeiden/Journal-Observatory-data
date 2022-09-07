@@ -9,6 +9,6 @@ services:
     volumes:
       - $HOME/CWTS/data:/data
       - $HOME/CWTS/Apps/fuseki/databases:/fuseki/databases
-      - $HOME/CWTS/Apps/fuseki/configuration:/fuseki/configuration
+      - ./jena/configuration:/fuseki/configuration
     ports:
       - 3030:3030
