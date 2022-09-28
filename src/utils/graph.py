@@ -23,7 +23,7 @@ def job_graph(id=None, nm=None, store="default"):
     return Graph(store=store, namespace_manager=nm, identifier=id)
 
 
-def fuseki_graph(type="read", endpoint="https://localhost:3030/job", id=None, clear=False, nm=None):
+def fuseki_graph(type="read", endpoint="http://localhost:3030/job", id=None, clear=False, nm=None):
     if not nm:
         nm = JobNamespace()
     if type == "write":
@@ -37,12 +37,15 @@ def fuseki_graph(type="read", endpoint="https://localhost:3030/job", id=None, cl
     else:
         db = SPARQLStore(
             node_to_sparql=bnode_to_sparql,
-            query_endpoint=f"{endpoint}/query"
+            query_endpoint=f"{endpoint}/query",
+            auth=('admin','test')
         )
         graph = ConjunctiveGraph(store=db, identifier=id)
     if clear:
-        if graph.__len__():
-            print(f"cleared graph {graph.identifier} with {graph.__len__()} records")
+        n = graph.__len__()
+        if n:
+            print(f"clear graph {graph.identifier} with {n} triples...", end=" ")
             graph.update(f"clear graph <{graph.identifier}>")
+            print("done")
     graph.namespace_manager = nm
     return graph

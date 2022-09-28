@@ -70,7 +70,9 @@ def dataset_convert(dataset, batchsize=100):
     graph_id = f"https://job.org/jobmap/{dataset}"
     jobmap_graph = fuseki_graph(type="write", endpoint=endpoint, id=graph_id, clear=True)
 
-    for n in progress(range(0, len(files), batchsize), unit_scale=batchsize):
+    number = config.getint(dataset, "limit", fallback=len(files))
+    if batchsize > number: batchsize = number
+    for n in progress(range(0, number, batchsize), unit_scale=batchsize):
         jobmap = job_graph()
         for file in files[n:n+batchsize]:
             sherpa_romeo_record = file_to_json(file)

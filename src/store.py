@@ -5,6 +5,7 @@ import json
 import os
 from utils.utils import file_to_json
 from utils.graph import job_graph
+from namespace import JobNamespace
 
 
 def issn_from_bulk(issn, data_dir):
@@ -20,6 +21,9 @@ def issn_from_bulk(issn, data_dir):
 def add_context(record, context={}):
     "Add the @context from the context file to the record"
     context_record = record.copy()
+    for prefix, namespace in JobNamespace().namespaces():
+        if not context.get(prefix):
+            context[prefix] = namespace
     context_record["@context"] = context
     context_record["@type"] = "https://job.org/record"
     return context_record

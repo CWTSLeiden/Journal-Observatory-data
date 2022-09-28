@@ -3,7 +3,7 @@ construct {
     this: a job:JobMap ;
         cc:license <https://creativecommons.org/licenses/by-nc-nd/4.0/> ;
         schema:dateCreated ?date ;
-        job:hasDatasource <https://v2.sherpa.ac.uk/romeo> .
+        job:hasDataSource <https://v2.sherpa.ac.uk/romeo> .
 }
 where {
     ?journal a job:record .
