@@ -20,7 +20,9 @@ def sparql_insert_graph(graph : Graph, add_graph : Graph):
 def job_graph(id=None, nm=None, store="default"):
     if not nm:
         nm = JobNamespace()
-    return Graph(store=store, namespace_manager=nm, identifier=id)
+    graph = ConjunctiveGraph(store=store, identifier=id)
+    graph.namespace_manager = nm
+    return graph
 
 
 def fuseki_graph(type="read", endpoint="http://localhost:3030/job", id=None, clear=False, nm=None):

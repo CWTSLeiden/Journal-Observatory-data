@@ -17,26 +17,27 @@ def read_query_file(file):
     querylines = [ q for q in querylines if not re.search("^ *(#.*)?$", q) ]
     n = -1
     for line in querylines:
-        if re.search("^construct ", line) or n < 0:
+        if re.search("^(construct|insert|select) ", line) or n < 0:
             n += 1; queries.append("")
         queries[n] += " " + line
     return queries
-        
 
-def graph_to_jobmap(graph, queries):
+
+def graph_to_jobmap(graph, queries, clean=True):
     jobnamespace = JobNamespace(uuid=True)
-    jobmap_graph = job_graph(nm=jobnamespace)
     graph.namespace_manager = jobnamespace
-    # graph.bind("this", jobnamespace.THIS, override=True)
-    # graph.bind("sub", jobnamespace.SUB, override=True)
-
+    original_graphs = list(graph.contexts())
     for query in queries:
         try:
-            jobmap_graph += graph.query(query)
+            graph.update(query)
         except(ParseException) as e:
             print(f"Error during parsing:\n\n{query}\n")
             raise(e)
-    return jobmap_graph
+
+    if clean:
+        for original_graph in original_graphs:
+            graph.remove_context(original_graph)
+    return graph
 
 
 def json_to_jobmap(journal_json, context, queries):
@@ -65,7 +66,7 @@ def dataset_convert(dataset, batchsize=100):
 
     if config.getboolean("main", "test", fallback=False):
         item = config.getint(dataset, "test_item", fallback=0)
-        return dataset_convert_test(files, context, queries, dataset, item)
+        return dataset_convert_test(dataset, files=files, context=context, queries=queries, item=item)
 
     graph_id = f"https://job.org/jobmap/{dataset}"
     jobmap_graph = fuseki_graph(type="write", endpoint=endpoint, id=graph_id, clear=True)
@@ -81,7 +82,20 @@ def dataset_convert(dataset, batchsize=100):
     return jobmap_graph
 
 
-def dataset_convert_test(files, context, queries, dataset, item=0):
+def dataset_convert_test(dataset, files=None, context=None, queries=None, item=0):
+    config = ConfigParser()
+    config.read(f"{ROOT_DIR}/config/job.conf")
+
+    if not context:
+        context_file = config.get(dataset, "context_file")
+        context = file_to_json(context_file)
+    if not queries:
+        convert_file = config.get(dataset, "convert_file")
+        queries = read_query_file(convert_file)
+    if not files:
+        bulk_path = config.get(dataset, "bulk_path")
+        files = glob(f"{bulk_path}/data/*.json")
+
     record = file_to_json(files[item])
     jobmap = json_to_jobmap(record, context, queries)
     datagraph = json_to_graph(record, context)
@@ -99,7 +113,9 @@ def dataset_convert_test(files, context, queries, dataset, item=0):
     # Write jobmap to file
     print(f"Write jobmap to file:")
     print(f" - test/{dataset}_jobmap.ttl")
-    jobmap.serialize(f"{ROOT_DIR}/test/{dataset}_jobmap.ttl", format="turtle")
+    jobmap.serialize(f"{ROOT_DIR}/test/{dataset}_jobmap.ttl", format="ttl")
+    print(f" - test/{dataset}_jobmap.trig")
+    jobmap.serialize(f"{ROOT_DIR}/test/{dataset}_jobmap.trig", format="trig")
     print(f" - test/{dataset}_jobmap.json")
     jobmap.serialize(f"{ROOT_DIR}/test/{dataset}_jobmap.json", format="json-ld", auto_compact=True, indent=4)
     print(f" - test/{dataset}_jobmap_framed.json")

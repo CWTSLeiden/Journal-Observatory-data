@@ -5,3 +5,4 @@ SPARQLWrapper>=2.0.0
 berkeleydb
 oxrdflib
 tqdm
+openpyxl

@@ -1,0 +1,28 @@
+{
+    "@base": "https://job.org/peer_review/",
+    "@vocab": "https://job.org/peer_review/",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "fabio": "http://purl.org/spar/fabio/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "journal_name": "schema:name",
+    "publisher": "job:hasPublisher",
+    "pissn": "prism:issn",
+    "eissn": "prism:eIssn",
+    "issn-l": "fabio:hasIssnL",
+    "provenance": {
+        "@id": "job:provenance",
+        "@context": {
+            "creator": {
+                "@id": "dcterms:creator"
+            },
+            "date": {
+                "@id": "dcterms:created",
+                "@type": "xsd:date"
+            },
+            "license": {
+                "@id": "cc:license"
+            }
+        }
+    }
+}

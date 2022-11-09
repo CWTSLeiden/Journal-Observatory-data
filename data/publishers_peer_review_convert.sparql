@@ -1,0 +1,112 @@
+# Jobmap
+insert {
+    graph sub:head {
+        this: a job:JobMap ;
+            job:hasAssertion sub:assertion ;
+            job:hasProvenance sub:provenance .
+    }
+
+    graph sub:provenance {
+        sub:assertion cc:license ?license ;
+            dcterms:created ?date ;
+            dcterms:creator ?creator .
+    }
+}
+where {
+    ?journal a job:record .
+    ?journal job:provenance ?provenance .
+    ?provenance dcterms:created ?date ;
+        dcterms:creator ?creator ;
+        cc:license ?license .
+}
+
+# Metadata
+insert {
+    graph sub:assertion {
+        sub:platform a job:Platform ;
+            schema:name ?name ;
+            job:hasPublisher ?publisher ;
+            ?hasissn ?issn .
+    }
+}
+where {
+    ?journal a job:record .
+    ?journal ppr:metadata ?metadata .
+    optional { ?metadata schema:name ?name } .
+    optional { ?metadata job:hasPublisher ?publisher } .
+    optional { ?metadata ?hasissn ?issn . 
+        filter ( ?hasissn in (prism:issn, fabio:hasIssnL) )
+    } .
+}
+
+# Evaluation Policy
+insert {
+    graph sub:assertion {
+        sub:platform a job:Platform ;
+            job:hasPolicy ?policy .
+
+        ?policy a job:EvaluationPolicy ;
+            ?published_rr true ;
+            ?reviewer_rr_opt "reviewer-opt-in" ;
+            ?author_rr_opt "author-opt-in" ;
+            ?published_manuscripts true ;
+            ?author_published_manuscripts_opt "author-opt-in" ;
+            ?published_summaries true ;
+            ?published_ae_communication true ;
+            ?post_publication_commenting true ;
+            ?post_publication_commenting_request "on-request" .
+
+        ?policy job:involves ?authorrole .
+        ?authorrole a pro:Author ;
+            ?author_an_reviewer ?reviewerrole ;
+            ?author_an_curator ?curatorrole .
+
+        ?policy job:involves ?reviewerrole .
+        ?reviewerrole a pro:peer-reviewer ;
+            ?reviewer_an_author ?authorrole ;
+            ?reviewer_an_curator ?curatorrole ;
+            ?reviewer_id_public true ;
+            ?reviewer_id_public_opt "opt-in" ;
+            ?reviewer_ia_author ?authorrole ;
+            ?reviewer_ia_curator ?curatorrole ;
+            ?reviewer_ia_reviewer ?reviewerrole .
+
+        ?policy job:involves ?curatorrole .
+        ?curatorrole a job:Curator ;
+            ?curator_id_public true .
+    }
+}
+where {
+    bind(sub:platform as ?thisplatform) .
+    bind(sub:evaluationPolicy as ?policy) .
+    bind(sub:author as ?authorrole) .
+    bind(sub:reviewer as ?reviewerrole) .
+    bind(sub:curator as ?curatorrole) .
+        
+    optional { ?journal ppr:anonymity ?anonymity . }
+    optional { ?anonymity ppr:author "reviewer" . bind(job:anonymousTo as ?author_an_reviewer) . }
+    optional { ?anonymity ppr:author "curator" . bind(job:anonymousTo as ?author_an_curator) . }
+    optional { ?anonymity ppr:reviewer "author" . bind(job:anonymousTo as ?reviewer_an_author) . }
+    optional { ?anonymity ppr:reviewer "curator" . bind(job:anonymousTo as ?reviewer_an_curator) . }
+    optional { ?anonymity ppr:reviewer "public" . bind(job:identityPublished as ?reviewer_id_public) }
+    optional { ?journal ppr:reviewer_opt_in "identity" . bind(job:identityPublished as ?reviewer_id_public_opt) }
+    optional { ?anonymity ppr:curator "public" . bind(job:identityPublished as ?curator_id_public) }
+
+    optional { ?journal ppr:author_opt_in "review_reports" . bind(job:reportPublished as ?author_rr_opt) }
+    optional { ?journal ppr:reviewer_opt_in "review_reports" . bind(job:reportPublished as ?reviewer_rr_opt) }
+    optional { ?journal ppr:review_information_published "review_reports" . bind(job:reportPublished as ?published_rr) }
+
+    optional { ?journal ppr:review_information_published "submitted_manuscripts" . bind(job:manuscriptsPublished as ?published_manuscripts) }
+    optional { ?journal ppr:author_opt_in "submitted_manuscripts" . bind(job:manuscriptsPublished as ?author_published_manuscripts_opt) }
+
+    optional { ?journal ppr:review_information_published "review_summaries" . bind(job:summariesPublished as ?published_summaries) }
+
+    optional { ?journal ppr:reviewer_interacts_with "authors" . bind(job:interactsWith as ?reviewer_ia_author) }
+    optional { ?journal ppr:reviewer_interacts_with "editor" . bind(job:interactsWith as ?reviewer_ia_curator) }
+    optional { ?journal ppr:reviewer_interacts_with "other_reviewers" . bind(job:interactsWith as ?reviewer_ia_reviewer) }
+
+    optional { ?journal ppr:post_publication_commenting ?_ . bind(job:allowsPostPublicationCommenting as ?pp_commenting) }
+    optional { ?journal ppr:post_publication_commenting "on-request" . bind(job:allowsPostPublicationCommenting as ?pp_commenting_request) }
+
+    optional { ?journal ppr:review_information_published "author_editor_communication" . bind(job:authorEditorCommunicationPublished as ?published_ae_communication) }
+}

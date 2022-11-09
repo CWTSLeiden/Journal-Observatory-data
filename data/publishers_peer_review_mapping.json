@@ -1,0 +1,13 @@
+{
+    "springer nature": "https://springernature.com",
+    "nature": "https://nature.com",
+    "wiley": "https://wiley.com",
+    "elife": "https://elifesciences.org",
+    "cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "cc-by": "https://creativecommons.org/licenses/by/4.0",
+    "cc-by-nc": "https://creativecommons.org/licenses/by-nc/4.0",
+    "cc-by-nc-nd": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+    "cc-by-nc-sa": "https://creativecommons.org/licenses/by-nc-sa/4.0",
+    "cc-by-nd": "https://creativecommons.org/licenses/by-nd/4.0",
+    "cc-by-sa": "https://creativecommons.org/licenses/by-sa/4.0"
+}

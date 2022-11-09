@@ -12,6 +12,8 @@ certifi==2022.6.15
     # via requests
 charset-normalizer==2.1.0
     # via requests
+et-xmlfile==1.1.0
+    # via openpyxl
 frozendict==2.3.2
     # via pyld
 idna==3.3
@@ -20,6 +22,8 @@ isodate==0.6.1
     # via rdflib
 lxml==4.9.1
     # via pyld
+openpyxl==3.0.10
+    # via -r requirements.in
 oxrdflib==0.3.2
     # via -r requirements.in
 pyld==2.0.3
