@@ -16,6 +16,7 @@ PRISM = Namespace("http://prismstandard.org/namespaces/basic/2.0/")
 PRO = Namespace("http://purl.org/spar/pro/")
 ROMEO = Namespace("https://v2.sherpa.ac.uk/id/")
 SCHEMA = Namespace("https://schema.org/")
+STM = Namespace("https://osf.io/68rnz/")
 
 class JobNamespace(NamespaceManager):
     def __init__(self, uuid=False):
@@ -33,6 +34,7 @@ class JobNamespace(NamespaceManager):
         self.bind("pro", PRO)
         self.bind("romeo", ROMEO)
         self.bind("schema", SCHEMA)
+        self.bind("stm", STM)
         if uuid:
             self.bind_uuid()
 
