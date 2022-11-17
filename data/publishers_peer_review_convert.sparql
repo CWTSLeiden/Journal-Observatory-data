@@ -5,7 +5,7 @@ insert {
 }
 where {
     graph ?graph {
-        ?record a job:record .
+        ?record a rdfg:Graph .
         ?record stm:metadata ?metadata .
         optional { ?metadata prism:issn ?pissn . }
         optional { ?metadata prism:eIssn ?eissn . }
@@ -17,9 +17,9 @@ where {
 # Jobmap
 insert {
     graph sub:head {
-        this: a job:JobMap ;
-            job:hasAssertion sub:assertion ;
-            job:hasProvenance sub:provenance .
+        this: a ppo:PAD ;
+            ppo:hasAssertion sub:assertion ;
+            ppo:hasProvenance sub:provenance .
     }
 
     graph sub:provenance {
@@ -29,8 +29,8 @@ insert {
     }
 }
 where {
-    ?record a job:record .
-    ?record job:provenance ?provenance .
+    ?record a rdfg:Graph .
+    ?record ppo:provenance ?provenance .
     ?provenance dcterms:created ?date ;
         dcterms:creator ?creator ;
         cc:license ?license .
@@ -39,18 +39,18 @@ where {
 # Metadata
 insert {
     graph sub:assertion {
-        ?journal a job:Platform ;
+        ?journal a ppo:Platform ;
             schema:name ?name ;
-            job:hasPublisher ?publisher ;
+            ppo:hasPublisher ?publisher ;
             ?hasissn ?issn .
     }
 }
 where {
-    ?record a job:record .
+    ?record a rdfg:Graph .
     ?record dcterms:identifier ?journal .
     ?record stm:metadata ?metadata .
     optional { ?metadata schema:name ?name } .
-    optional { ?metadata job:hasPublisher ?publisher } .
+    optional { ?metadata ppo:hasPublisher ?publisher } .
     optional { ?metadata ?hasissn ?issn . 
         filter ( ?hasissn in (prism:issn, prism:eIssn, fabio:hasIssnL) )
     } .
@@ -59,53 +59,53 @@ where {
 # Evaluation Policy
 insert {
     graph sub:assertion {
-        ?journal a job:Platform ;
-            job:hasPolicy ?policy .
+        ?journal a ppo:Platform ;
+            ppo:hasPolicy ?policy .
 
-        ?policy a job:EvaluationPolicy ;
+        ?policy a ppo:EvaluationPolicy ;
             stm:postPublicationCommenting ?ppc_value .
 
-        ?policy job:involves ?authorrole .
+        ?policy ppo:involves ?authorrole .
         ?authorrole a pro:Author ;
             ?author_an_reviewer ?reviewerrole ;
             ?author_an_curator ?curatorrole .
 
-        ?policy job:involves ?reviewerrole .
+        ?policy ppo:involves ?reviewerrole .
         ?reviewerrole a pro:peer-reviewer ;
-            job:identityPublished ?reviewer_published ;
-            job:identityPublished ?reviewer_published_reviewer ;
+            ppo:identityPublished ?reviewer_published ;
+            ppo:identityPublished ?reviewer_published_reviewer ;
             ?reviewer_an_author ?authorrole ;
             ?reviewer_an_curator ?curatorrole ;
             ?riw_author ?authorrole ;
             ?riw_curator ?curatorrole ;
             ?riw_reviewer ?reviewerrole .
 
-        ?policy job:involves ?curatorrole .
-        ?curatorrole a job:Editor .
-        ?curatorrole job:identityPublished ?editor_published_p .
+        ?policy ppo:involves ?curatorrole .
+        ?curatorrole a ppo:Editor .
+        ?curatorrole ppo:identityPublished ?editor_published_p .
 
-        ?reviewreport a job:PeerReviewReport .
-        ?policy job:covers ?reviewreport .
-        ?reviewreport job:isPublished ?rr_published .
-        ?reviewreport job:isPublished ?rr_published_author .
-        ?reviewreport job:isPublished ?rr_published_reviewer .
+        ?reviewreport a ppo:PeerReviewReport .
+        ?policy ppo:covers ?reviewreport .
+        ?reviewreport ppo:isPublished ?rr_published .
+        ?reviewreport ppo:isPublished ?rr_published_author .
+        ?reviewreport ppo:isPublished ?rr_published_reviewer .
 
-        ?submittedmanuscript a job:SubmittedManuscript .
-        ?policy job:covers ?submittedmanuscript .
-        ?submittedmanuscript job:isPublished ?sm_published .
-        ?submittedmanuscript job:isPublished ?sm_published_author .
+        ?submittedmanuscript a ppo:SubmittedManuscript .
+        ?policy ppo:covers ?submittedmanuscript .
+        ?submittedmanuscript ppo:isPublished ?sm_published .
+        ?submittedmanuscript ppo:isPublished ?sm_published_author .
 
-        ?reviewsummaries a job:ReviewSummaries .
-        ?policy job:covers ?reviewsummaries .
-        ?reviewsummaries job:isPublished ?rs_published_p .
+        ?reviewsummaries a ppo:ReviewSummaries .
+        ?policy ppo:covers ?reviewsummaries .
+        ?reviewsummaries ppo:isPublished ?rs_published_p .
 
         ?authoreditorcommunication a stm:AuthorEditorCommunication .
-        ?policy job:covers ?authoreditorcommunication .
-        ?authoreditorcommunication job:isPublished ?aec_published_p .
+        ?policy ppo:covers ?authoreditorcommunication .
+        ?authoreditorcommunication ppo:isPublished ?aec_published_p .
     }
 }
 where {
-    ?record a job:record .
+    ?record a rdfg:Graph .
     ?record dcterms:identifier ?journal .
 
     # bind named individuals for convenience
@@ -116,28 +116,28 @@ where {
     
     optional { ?record stm:identityTransparency ?id . }
     optional { ?id stm:singleAnonymised true .
-        bind(job:anonymousTo as ?reviewer_an_author) .
-        bind(job:identifiedTo as ?author_an_reviewer) .
-        bind(job:identifiedTo as ?reviewer_an_curator) .
-        bind(job:identifiedTo as ?author_an_curator) .
+        bind(ppo:anonymousTo as ?reviewer_an_author) .
+        bind(ppo:identifiedTo as ?author_an_reviewer) .
+        bind(ppo:identifiedTo as ?reviewer_an_curator) .
+        bind(ppo:identifiedTo as ?author_an_curator) .
     }
     optional { ?id stm:doubleAnonymised true .
-        bind(job:anonymousTo as ?reviewer_an_author) .
-        bind(job:anonymousTo as ?author_an_reviewer) .
-        bind(job:identifiedTo as ?reviewer_an_curator) .
-        bind(job:identifiedTo as ?author_an_curator) .
+        bind(ppo:anonymousTo as ?reviewer_an_author) .
+        bind(ppo:anonymousTo as ?author_an_reviewer) .
+        bind(ppo:identifiedTo as ?reviewer_an_curator) .
+        bind(ppo:identifiedTo as ?author_an_curator) .
     }
     optional { ?id stm:tripleAnonymised true .
-        bind(job:anonymousTo as ?reviewer_an_author) .
-        bind(job:anonymousTo as ?author_an_reviewer) .
-        bind(job:anonymousTo as ?reviewer_an_curator) .
-        bind(job:anonymousTo as ?author_an_curator) .
+        bind(ppo:anonymousTo as ?reviewer_an_author) .
+        bind(ppo:anonymousTo as ?author_an_reviewer) .
+        bind(ppo:anonymousTo as ?reviewer_an_curator) .
+        bind(ppo:anonymousTo as ?author_an_curator) .
     }
     optional { ?id stm:allIdentitiesVisible true .
-        bind(job:identifiedTo as ?reviewer_an_author) .
-        bind(job:identifiedTo as ?author_an_reviewer) .
-        bind(job:identifiedTo as ?reviewer_an_curator) .
-        bind(job:identifiedTo as ?author_an_curator) .
+        bind(ppo:identifiedTo as ?reviewer_an_author) .
+        bind(ppo:identifiedTo as ?author_an_reviewer) .
+        bind(ppo:identifiedTo as ?reviewer_an_curator) .
+        bind(ppo:identifiedTo as ?author_an_curator) .
     }
 
     optional { ?record stm:postPublicationCommenting ?ppc . }

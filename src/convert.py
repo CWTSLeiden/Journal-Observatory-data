@@ -2,7 +2,7 @@ from configparser import ConfigParser
 import datetime
 from glob import glob
 from rdflib import DCTERMS, URIRef, Literal, XSD
-from namespace import JobNamespace, JOB
+from namespace import JobNamespace, PPO
 from pyparsing.exceptions import ParseException
 from store import json_to_graph
 from tqdm import tqdm as progress
@@ -64,7 +64,7 @@ def jobmap_add_info(jobmap, config):
     jobmap.add((THIS, DCTERMS.license, URIRef(license), SUB.pubinfo))
     jobmap.add((THIS, DCTERMS.creator, URIRef(identifier), SUB.pubinfo))
     jobmap.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.pubinfo))
-    jobmap.add((THIS, JOB.hasPubinfo, SUB.pubinfo, SUB.head))
+    jobmap.add((THIS, PPO.hasPubinfo, SUB.pubinfo, SUB.head))
     return jobmap
         
 

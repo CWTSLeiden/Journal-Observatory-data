@@ -1,9 +1,9 @@
 # Provenance
 insert {
     graph sub:head {
-        this: a job:JobMap ;
-            job:hasAssertion sub:assertion ;
-            job:hasProvenance sub:provenance .
+        this: a ppo:PAD ;
+            ppo:hasAssertion sub:assertion ;
+            ppo:hasProvenance sub:provenance .
     }
 
     graph sub:provenance {
@@ -13,20 +13,20 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal schema:dateModified ?date .
 }
 
 # Metadata
 insert {
     graph sub:assertion {
-        ?journal a job:Platform ;
+        ?journal a ppo:Platform ;
             schema:name ?journal_title ;
-            job:hasKeyword ?keyword .
+            ppo:hasKeyword ?keyword .
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal schema:name ?journal_title .
     optional { ?journal doaj:keyword ?keyword . } 
 }
@@ -38,7 +38,7 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal ?hasissn ?issn . 
     filter ( ?hasissn in (prism:issn, prism:eIssn) ) .
 }
@@ -55,7 +55,7 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal doaj:Publisher ?publisher .
     optional { ?publisher schema:addressCountry ?publisher_country } .
     optional { ?publisher schema:url ?publisher_url } .
@@ -65,22 +65,22 @@ where {
 # Dissemination Policy
 insert {
     graph sub:assertion {
-        ?journal job:hasPolicy sub:disseminationPolicy .
-        sub:disseminationPolicy a job:DisseminationPolicy ;
-            job:hasAPC ?apc ;
-            job:hasCopyrightOwner ?copyright_owner ;
+        ?journal ppo:hasPolicy sub:disseminationPolicy .
+        sub:disseminationPolicy a ppo:DisseminationPolicy ;
+            ppo:hasAPC ?apc ;
+            ppo:hasCopyrightOwner ?copyright_owner ;
             dcterms:license ?license ;
-            job:disseminatesVersion [ a job:publishedVersion ] .
+            ppo:disseminatesVersion [ a ppo:publishedVersion ] .
         
         ?apc schema:url ?apc_url ;
-            job:apc ?apc_price ;
+            ppo:apc ?apc_price ;
             ?apc_p ?apc_o .
 
         ?copyright_owner a ?copyright_owner_type .
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
 
     optional { ?journal doaj:hasArticlePublishingCharges ?apc } .
     optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .

@@ -25,7 +25,7 @@ def add_context(record, context={}):
         if not context.get(prefix):
             context[prefix] = namespace
     context_record["@context"] = context
-    context_record["@type"] = "https://job.org/record"
+    context_record["@type"] = "http://www.w3.org/2004/03/trix/rdfg-1/Graph"
     return context_record
 
 

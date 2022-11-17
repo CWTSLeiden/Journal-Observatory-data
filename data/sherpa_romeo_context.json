@@ -1,6 +1,6 @@
 {
     "@base": "https://v2.sherpa.ac.uk/id/",
-    "job": "https://job.org/",
+    "ppo": "https://purl.org/cwts/ppo/",
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "romeo": "https://v2.sherpa.ac.uk/id/",

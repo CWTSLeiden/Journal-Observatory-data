@@ -1,9 +1,9 @@
 # Jobmap
 insert {
     graph sub:head {
-        this: a job:JobMap ;
-        job:hasAssertion sub:assertion ;
-        job:hasProvenance sub:provenance .
+        this: a ppo:PAD ;
+        ppo:hasAssertion sub:assertion ;
+        ppo:hasProvenance sub:provenance .
     }
 
     graph sub:provenance {
@@ -13,20 +13,20 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata [ schema:dateCreated ?date ] .
 }
 
 # Metadata
 insert {
     graph sub:assertion {
-        ?romeo_id a job:Platform ;
+        ?romeo_id a ppo:Platform ;
             schema:name ?journal_title ;
             schema:url ?journal_url .
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata ?romeo_id .
     optional { ?journal romeo:hasTitle [ romeo:title ?journal_title ] . }
     optional { ?journal schema:url ?journal_url . }
@@ -41,7 +41,7 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata ?romeo_id .
     optional { ?journal romeo:hasIssns ?issns . }
     optional { ?issns prism:issn ?pissn ; romeo:issn_type "print" . }
@@ -59,7 +59,7 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata ?romeo_id .
     ?journal romeo:hasPublisher [ romeo:Publisher ?publisher ] .
     ?publisher romeo:hasPublisherName [ romeo:PublisherName ?publisher_name ] .
@@ -89,7 +89,7 @@ where {
 
 insert {
     graph ?graph {
-        ?policy job:hasEmbargo ?embargoduration
+        ?policy ppo:hasEmbargo ?embargoduration
     }
 }
 where {
@@ -104,13 +104,13 @@ where {
 
 insert {
     graph ?graph {
-        ?policy job:hasCopyrightOwner ?copyright_owner .
+        ?policy ppo:hasCopyrightOwner ?copyright_owner .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
 where {
     graph ?graph {
-        ?journal a job:record .
+        ?journal a rdfg:Graph .
         ?journal romeo:hasMetadata ?romeo_id .
         ?policy romeo:copyrightOwner ?_copyright_owner
         optional { ?journal romeo:hasPublisherPolicy ?publisher_policy .
@@ -131,9 +131,9 @@ where {
         bind(if(contains(?_copyright_owner, "publisher"), ?publisher, ?_) as ?copyright_owner) .
         bind(if(contains(?_copyright_owner, "publisher"), pro:publisher, ?_) as ?copyright_owner_type) .
         bind(if(contains(?_copyright_owner, "society"), ?society, ?_) as ?copyright_owner) .
-        bind(if(contains(?_copyright_owner, "society"), job:society, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "society"), ppo:society, ?_) as ?copyright_owner_type) .
         bind(if(contains(?_copyright_owner, "institution"), ?institution, ?_) as ?copyright_owner) .
-        bind(if(contains(?_copyright_owner, "institution"), job:authors-institution, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "institution"), ppo:authors-institution, ?_) as ?copyright_owner_type) .
     }
 }
 
@@ -141,19 +141,19 @@ where {
 # Dissemination Policy
 insert {
     graph sub:assertion {
-        ?romeo_id job:hasPolicy ?disseminationpolicy .
-        ?disseminationpolicy a job:DisseminationPolicy ;
-            job:openAccessAllowed ?oaallowed ;
-            job:hasOpenAccessFee ?oafee ;
-            job:disseminatesVersion job:publishedVersion ;
+        ?romeo_id ppo:hasPolicy ?disseminationpolicy .
+        ?disseminationpolicy a ppo:DisseminationPolicy ;
+            ppo:openAccessAllowed ?oaallowed ;
+            ppo:hasOpenAccessFee ?oafee ;
+            ppo:disseminatesVersion ppo:publishedVersion ;
             dcterms:license ?license ;
-            job:hasCopyrightOwner ?copyright_owner ;
-            job:embargo ?embargoduration .
+            ppo:hasCopyrightOwner ?copyright_owner ;
+            ppo:embargo ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata ?romeo_id .
     ?journal romeo:hasPublisherPolicy ?publisher_policy .
     ?publisher_policy romeo:hasPermittedOA ?policy .
@@ -173,30 +173,30 @@ where {
             ("yes" true)
         }
     }
-    optional { ?policy job:hasCopyrightOwner ?copyright_owner .
+    optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
         ?copyright_owner a ?copyright_owner_type .
     } .
     optional { ?policy dcterms:license ?license } .
-    optional { ?policy job:hasEmbargo ?embargoduration } .
+    optional { ?policy ppo:hasEmbargo ?embargoduration } .
 }
 
 # Publication Elsewhere Policy
 insert {
     graph sub:assertion {
-        ?romeo_id job:hasPolicy ?publicationelsewherepolicy .
-        ?publicationelsewherepolicy a job:PublicationElsewherePolicy ;
+        ?romeo_id ppo:hasPolicy ?publicationelsewherepolicy .
+        ?publicationelsewherepolicy a ppo:PublicationElsewherePolicy ;
             dcterms:creator ?publisher ;
-            job:appliesToVersion ?articleversion ;
+            ppo:appliesToVersion ?articleversion ;
             dcterms:license ?license ;
-            job:hasCopyrightOwner ?copyright_owner ;
-            job:condition ?condition ;
-            job:location ?location ;
-            job:embargo ?embargoduration .
+            ppo:hasCopyrightOwner ?copyright_owner ;
+            ppo:condition ?condition ;
+            ppo:location ?location ;
+            ppo:embargo ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata ?romeo_id .
     ?journal romeo:hasPublisherPolicy ?publisher_policy .
     ?publisher_policy romeo:hasPermittedOA ?policy .
@@ -208,16 +208,16 @@ where {
     }
     optional { ?policy romeo:articleVersion ?_articleversion .
         values (?_articleversion ?articleversion) {
-            ("submitted" job:submittedVersion)
-            ("accepted" job:acceptedVersion)
-            ("published" job:publishedVersion)
+            ("submitted" ppo:submittedVersion)
+            ("accepted" ppo:acceptedVersion)
+            ("published" ppo:publishedVersion)
         }
     } .
-    optional { ?policy job:hasCopyrightOwner ?copyright_owner .
+    optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
         ?copyright_owner a ?copyright_owner_type .
     } .
     optional { ?policy romeo:condition ?condition } .
     optional { ?policy romeo:hasPermittedLocation [ romeo:PermittedLocation ?location ] } .
-    optional { ?policy job:hasLicense ?license } .
-    optional { ?policy job:hasEmbargo ?embargoduration } .
+    optional { ?policy ppo:hasLicense ?license } .
+    optional { ?policy ppo:hasEmbargo ?embargoduration } .
 }

@@ -1,9 +1,9 @@
 # Provenance
 insert {
     graph sub:head {
-        this: a job:JobMap ;
-            job:hasAssertion sub:assertion ;
-            job:hasProvenance sub:provenance .
+        this: a ppo:PAD ;
+            ppo:hasAssertion sub:assertion ;
+            ppo:hasProvenance sub:provenance .
     }
 
     graph sub:provenance {
@@ -13,19 +13,19 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal schema:dateModified ?date .
 }
 
 # Metadata Assertion
 insert {
     graph sub:assertion {
-        ?journal a job:Platform ;
+        ?journal a ppo:Platform ;
             schema:name ?name .
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal openalex:name ?name .
 }
 
@@ -36,7 +36,7 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     ?journal openalex:publisher_name ?publisher . 
 }
 
@@ -48,7 +48,7 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
+    ?journal a rdfg:Graph .
     optional {
         ?journal ?hasissn ?issn . 
         filter ( ?hasissn in (prism:issn, fabio:hasIssnL) )

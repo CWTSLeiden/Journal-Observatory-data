@@ -1,5 +1,5 @@
 {
-    "job": "https://job.org/",
+    "ppo": "https://purl.org/cwts/ppo/",
     "schema": "https://schema.org/",
     "openalex": "https://openalex.org/",
     "id": "@id",
