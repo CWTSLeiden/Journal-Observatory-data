@@ -1,37 +1,44 @@
 # Jobmap
-construct {
-    this: a job:JobMap ;
-        cc:license <https://creativecommons.org/licenses/by-nc-nd/4.0/> ;
-        schema:dateCreated ?date ;
-        job:hasDataSource <https://v2.sherpa.ac.uk/romeo> .
+insert {
+    graph sub:head {
+        this: a job:JobMap ;
+        job:hasAssertion sub:assertion ;
+        job:hasProvenance sub:provenance .
+    }
+
+    graph sub:provenance {
+        sub:assertion cc:license <https://creativecommons.org/licenses/by-nc-nd/4.0/> ;
+            dcterms:created ?date ;
+            dcterms:creator <https://v2.sherpa.ac.uk/romeo> .
+    }
 }
 where {
     ?journal a job:record .
     ?journal romeo:hasMetadata [ schema:dateCreated ?date ] .
 }
 
-# Metadata assertion
-construct {
-    this: job:hasAssertion sub:metadata .
-
-    sub:metadata a job:MetadataAssertion ;
-        schema:name ?journal_title ;
-        schema:url ?journal_url .
+# Metadata
+insert {
+    graph sub:assertion {
+        ?romeo_id a job:Platform ;
+            schema:name ?journal_title ;
+            schema:url ?journal_url .
+    }
 }
 where {
     ?journal a job:record .
+    ?journal romeo:hasMetadata ?romeo_id .
     optional { ?journal romeo:hasTitle [ romeo:title ?journal_title ] . }
     optional { ?journal schema:url ?journal_url . }
 }
 
-# Identifier assertion
-construct {
-    this: job:hasAssertion sub:identifier .
-
-    sub:identifier a job:IdentifierAssertion ;
-        prism:issn ?pissn ;
-        prism:eIssn ?eissn ;
-        romeo:id ?romeo_id .
+# Identifier
+insert {
+    graph sub:assertion {
+        ?romeo_id romeo:id ?romeo_id ;
+            prism:issn ?pissn ;
+            prism:eIssn ?eissn .
+    }
 }
 where {
     ?journal a job:record .
@@ -41,72 +48,176 @@ where {
     optional { ?issns prism:issn ?eissn ; romeo:issn_type "electronic" . }
 }
 
-# Publisher assertion
-construct {
-    this: job:hasAssertion sub:metadata .
-
-    sub:metadata a job:MetadataAssertion ;
-        job:hasPublisher [
-            a job:Publisher ;
+# Publisher
+insert {
+    graph sub:assertion {
+        ?romeo_id dcterms:publisher ?publisher .
+        ?publisher a pro:publisher ; 
             schema:name ?publisher_name ;
             schema:addressCountry ?publisher_country ;
-            schema:url ?publisher_url
-        ] .
+            schema:url ?publisher_url .
+    }
 }
 where {
     ?journal a job:record .
+    ?journal romeo:hasMetadata ?romeo_id .
     ?journal romeo:hasPublisher [ romeo:Publisher ?publisher ] .
     ?publisher romeo:hasPublisherName [ romeo:PublisherName ?publisher_name ] .
     optional { ?publisher schema:url ?publisher_url . }
     optional { ?publisher romeo:publisherCountry ?publisher_country . }
 }
 
-# OpenAccessPolicy assertion
-construct {
-    this: job:hasAssertion sub:policy .
+insert {
+    graph ?graph {
+        ?policy dcterms:license ?license
+    }
+}
+where {
+    graph ?graph {
+        ?policy romeo:hasPermittedLicense [ romeo:PermittedLicense ?permittedlicense ] .
+        optional { ?permittedlicense romeo:PermittedLicenseVersion ?licenseversion . } .
+        bind(if(?permittedlicense in ("cc0", "cc_public_domain"), concat("publicdomain/zero/", coalesce(?licenseversion, "1.0")), ?_) as ?license_str)
+        bind(if(?permittedlicense = "cc_by", concat("licenses/by/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
+        bind(if(?permittedlicense = "cc_by_nc", concat("licenses/by-nc/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
+        bind(if(?permittedlicense = "cc_by_nc_nd", concat("licenses/by-nc-nd/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
+        bind(if(?permittedlicense = "cc_by_nc_sa", concat("licenses/by-nc-sa/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
+        bind(if(?permittedlicense = "cc_by_nd", concat("licenses/by-nd/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
+        bind(if(?permittedlicense = "cc_by_sa", concat("licenses/by-sa/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
+        bind(if(bound(?license_str), iri(concat("https://creativecommons.org/", encode_for_uri(?license_str))), ?_) as ?license)
+    }
+}
 
-    sub:policy a job:OpenAccessPolicyAssertion ;
-        job:hasOpenAccessPolicy ?_oa_policy .
-    ?_oa_policy a ?oa_policy ;
-        cc:license ?license ;
-        job:hasEmbargo ?oa_embargo ;
-        job:hasPublishingLocation ?oa_location ;
-        job:hasCondition ?oa_condition ;
-        job:hasCopyrightOwner ?oa_copyright .
-        # job:appliesToVersion ?oa_articleversion ;
+insert {
+    graph ?graph {
+        ?policy job:hasEmbargo ?embargoduration
+    }
+}
+where {
+    graph ?graph {
+        ?policy romeo:hasEmbargo [ romeo:embargoAmount ?embargoamount ;
+                romeo:embargoUnits ?embargounit ] .
+        bind(if(?embargounit="weeks", ?embargoamount * 7, ?embargoamount) as ?embargoamount)
+        bind(if(?embargounit="weeks", "days", ?embargounit) as ?embargounit)
+        bind(strdt(concat("P", str(?embargoamount), ucase(substr(?embargounit, 1, 1))), xsd:duration) as ?embargoduration)
+    }
+}
+
+insert {
+    graph ?graph {
+        ?policy job:hasCopyrightOwner ?copyright_owner .
+        ?copyright_owner a ?copyright_owner_type .
+    }
+}
+where {
+    graph ?graph {
+        ?journal a job:record .
+        ?journal romeo:hasMetadata ?romeo_id .
+        ?policy romeo:copyrightOwner ?_copyright_owner
+        optional { ?journal romeo:hasPublisherPolicy ?publisher_policy .
+            ?publisher_policy romeo:hasPermittedOA ?policy .
+            ?journal romeo:hasPublisher [ romeo:Publisher ?publisher ] .
+            ?publisher_policy romeo:PublisherID ?publisherid .
+            ?publisher romeo:PublisherID ?publisherid .
+        }
+        bind(sub:author as ?author)
+        bind(if(bound(?publisher), ?publisher, sub:publisher) as ?publisher)
+        bind(sub:society as ?society)
+        bind(sub:institution as ?institution)
+
+        bind(if(contains(?_copyright_owner, "authors"), ?author, ?_) as ?copyright_owner) .
+        bind(if(contains(?_copyright_owner, "authors"), pro:author, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "journal"), ?romeo_id, ?_) as ?copyright_owner) .
+        bind(if(contains(?_copyright_owner, "journal"), pro:journal, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "publisher"), ?publisher, ?_) as ?copyright_owner) .
+        bind(if(contains(?_copyright_owner, "publisher"), pro:publisher, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "society"), ?society, ?_) as ?copyright_owner) .
+        bind(if(contains(?_copyright_owner, "society"), job:society, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "institution"), ?institution, ?_) as ?copyright_owner) .
+        bind(if(contains(?_copyright_owner, "institution"), job:authors-institution, ?_) as ?copyright_owner_type) .
+    }
+}
+
+
+# Dissemination Policy
+insert {
+    graph sub:assertion {
+        ?romeo_id job:hasPolicy ?disseminationpolicy .
+        ?disseminationpolicy a job:DisseminationPolicy ;
+            job:openAccessAllowed ?oaallowed ;
+            job:hasOpenAccessFee ?oafee ;
+            job:disseminatesVersion job:publishedVersion ;
+            dcterms:license ?license ;
+            job:hasCopyrightOwner ?copyright_owner ;
+            job:embargo ?embargoduration .
+        ?copyright_owner a ?copyright_owner_type .
+    }
 }
 where {
     ?journal a job:record .
+    ?journal romeo:hasMetadata ?romeo_id .
     ?journal romeo:hasPublisherPolicy ?publisher_policy .
-    ?publisher_policy romeo:hasPermittedOA ?_oa_policy .
-    ?_oa_policy romeo:articleVersion ?oa_articleversion .
-    values (?oa_articleversion ?oa_policy) {
-        ("submitted" job:OpenAccessPolicy-Submitted)
-        ("accepted" job:OpenAccessPolicy-Accepted)
-        ("published" job:OpenAccessPolicy-Published)
-    }
+    ?publisher_policy romeo:hasPermittedOA ?policy .
+    ?policy romeo:articleVersion "published" .
+    bind(bnode() as ?disseminationpolicy)
 
-    optional { ?_oa_policy romeo:copyrightOwner ?oa_copyright } .
-    optional { ?_oa_policy romeo:condition ?oa_condition } .
-    optional { ?_oa_policy romeo:hasPermittedLocation [ romeo:PermittedLocation ?oa_location ] } .
-    optional {
-        ?_oa_policy romeo:hasPermittedLicense ?_oa_licence .
-        ?_oa_license romeo:PermittedLicense ?oa_license .
-        optional {
-            ?_oa_license romeo:PermittedLicenseVersion ?oa_licenseversion .
-        } .
-        bind(if(?oa_license in ("cc0", "cc_public_domain"), concat("https://creativecommons.org/publicdomain/zero/", coalesce(?oa_licenseversion, "1.0")), ?_) as ?license_str)
-        bind(if(?oa_license = "cc_by", concat("https://creativecommons.org/licenses/by/", coalesce(?oa_licenseversion, "4.0")), ?_) as ?license_str)
-        bind(if(?oa_license = "cc_by_nc", concat("https://creativecommons.org/licenses/by-nc/", coalesce(?oa_licenseversion, "4.0")), ?_) as ?license_str)
-        bind(if(?oa_license = "cc_by_nc_nd", concat("https://creativecommons.org/licenses/by-nc-nd/", coalesce(?oa_licenseversion, "4.0")), ?_) as ?license_str)
-        bind(if(?oa_license = "cc_by_nc_sa", concat("https://creativecommons.org/licenses/by-nc-sa/", coalesce(?oa_licenseversion, "4.0")), ?_) as ?license_str)
-        bind(if(?oa_license = "cc_by_nd", concat("https://creativecommons.org/licenses/by-nd/", coalesce(?oa_licenseversion, "4.0")), ?_) as ?license_str)
-        bind(if(?oa_license = "cc_by_sa", concat("https://creativecommons.org/licenses/by-sa/", coalesce(?oa_licenseversion, "4.0")), ?_) as ?license_str)
-        bind(iri(encode_for_uri(?license_str)) as ?license)
-    } .
-    optional {
-        ?oa_policy romeo:embargo [ romeo:embargoAmount ?oa_embargoamount ;
-                                   romeo:embargoUnits ?oa_embargoamount ] .
-        bind(strdt(concat("P", ?oa_embargoaumount, ucase(substr(?oa_embargoamount, 1))), xsd:duration) as ?oa_embargoduration)
+    optional { ?policy romeo:oaProhibited ?oaprohibited
+        values (?oaprohibited ?oaallowed) {
+            ("yes" false)
+            ("no" true)
+            (undef true)
+        }
     }
+    optional { ?policy romeo:hasAdditionalFee ?_oafee
+        values (?_oafee ?oafee) {
+            ("no" false)
+            ("yes" true)
+        }
+    }
+    optional { ?policy job:hasCopyrightOwner ?copyright_owner .
+        ?copyright_owner a ?copyright_owner_type .
+    } .
+    optional { ?policy dcterms:license ?license } .
+    optional { ?policy job:hasEmbargo ?embargoduration } .
+}
+
+# Publication Elsewhere Policy
+insert {
+    graph sub:assertion {
+        ?romeo_id job:hasPolicy ?publicationelsewherepolicy .
+        ?publicationelsewherepolicy a job:PublicationElsewherePolicy ;
+            dcterms:creator ?publisher ;
+            job:appliesToVersion ?articleversion ;
+            dcterms:license ?license ;
+            job:hasCopyrightOwner ?copyright_owner ;
+            job:condition ?condition ;
+            job:location ?location ;
+            job:embargo ?embargoduration .
+        ?copyright_owner a ?copyright_owner_type .
+    }
+}
+where {
+    ?journal a job:record .
+    ?journal romeo:hasMetadata ?romeo_id .
+    ?journal romeo:hasPublisherPolicy ?publisher_policy .
+    ?publisher_policy romeo:hasPermittedOA ?policy .
+    bind(bnode() as ?publicationelsewherepolicy)
+
+    optional { ?journal romeo:hasPublisher [ romeo:Publisher ?publisher ] .
+        ?publisher_policy romeo:PublisherID ?publisherid .
+        ?publisher romeo:PublisherID ?publisherid .
+    }
+    optional { ?policy romeo:articleVersion ?_articleversion .
+        values (?_articleversion ?articleversion) {
+            ("submitted" job:submittedVersion)
+            ("accepted" job:acceptedVersion)
+            ("published" job:publishedVersion)
+        }
+    } .
+    optional { ?policy job:hasCopyrightOwner ?copyright_owner .
+        ?copyright_owner a ?copyright_owner_type .
+    } .
+    optional { ?policy romeo:condition ?condition } .
+    optional { ?policy romeo:hasPermittedLocation [ romeo:PermittedLocation ?location ] } .
+    optional { ?policy job:hasLicense ?license } .
+    optional { ?policy job:hasEmbargo ?embargoduration } .
 }

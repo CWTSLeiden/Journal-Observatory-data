@@ -38,6 +38,7 @@
     "publisher_policy": {
         "@id": "romeo:hasPublisherPolicy",
         "@context": {
+            "id": "romeo:PublisherID",
             "internal_moniker": "romeo:internalMoniker",
             "open_access_prohibited": "romeo:oaProhibited",
             "permitted_oa": {
@@ -92,6 +93,7 @@
                     "publisher_deposit": {
                         "@id": "romeo:hasPublisherDeposit",
                         "@context": {
+                            "id": "romeo:DepositID",
                             "repository_metadata": "romeo:DepositRepositoryMetadata",
                             "name": {
                                 "@id": "romeo:hasDepositRepositoryName",
@@ -123,6 +125,7 @@
                     "language": "romeo:PublisherNameLanguage"
                 }
             },
+            "id": "romeo:PublisherID",
             "publication_count": "romeo:PublisherPublicationCount"
         }
     }

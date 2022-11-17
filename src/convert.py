@@ -42,7 +42,7 @@ def graph_to_jobmap(graph, queries, clean=True):
 
 def json_to_jobmap(journal_json, context, queries):
     graph = json_to_graph(journal_json, context)
-    return graph_to_jobmap(graph, queries)
+    return graph_to_jobmap(graph, queries, clean=True)
 
 
 def json_file_to_jobmap(file, context_file, queries_file):

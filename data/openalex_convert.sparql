@@ -1,9 +1,16 @@
-# Jobmap
-construct {
-    this: a job:JobMap ;
-        cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
-        schema:dateCreated ?date ;
-        job:hasDataSource <https://openalex.org> .
+# Provenance
+insert {
+    graph sub:head {
+        this: a job:JobMap ;
+            job:hasAssertion sub:assertion ;
+            job:hasProvenance sub:provenance .
+    }
+
+    graph sub:provenance {
+        sub:assertion cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+            dcterms:created ?date ;
+            dcterms:creator <https://openalex.org> .
+    }
 }
 where {
     ?journal a job:record .
@@ -11,11 +18,11 @@ where {
 }
 
 # Metadata Assertion
-construct {
-    this: job:hasAssertion sub:metadata .
-    
-    sub:metadata a job:MetadataAssertion ;
-        schema:name ?name .
+insert {
+    graph sub:assertion {
+        ?journal a job:Platform ;
+            schema:name ?name .
+    }
 }
 where {
     ?journal a job:record .
@@ -23,11 +30,10 @@ where {
 }
 
 # Publisher Assertion
-construct {
-    this: job:hasAssertion sub:metadata .
-    
-    sub:metadata a job:MetadataAssertion ;
-        job:hasPublisher [ schema:name ?publisher ] .
+insert {
+    graph sub:assertion {
+        ?journal dcterms:publisher [ schema:name ?publisher ] .
+    }
 }
 where {
     ?journal a job:record .
@@ -35,15 +41,16 @@ where {
 }
 
 # Identifier Assertion
-construct {
-    this: job:hasAssertion sub:identifier .
-
-    sub:identifier a job:IdentifierAssertion ;
-        ?hasissn ?issn ;
-        openalex:venueId ?journal .
+insert {
+    graph sub:assertion {
+        ?journal ?hasissn ?issn ;
+            openalex:venueId ?journal .
+    }
 }
 where {
     ?journal a job:record .
-    ?journal ?hasissn ?issn . 
-    filter ( ?hasissn in (prism:issn, fabio:hasIssnL) ) .
+    optional {
+        ?journal ?hasissn ?issn . 
+        filter ( ?hasissn in (prism:issn, fabio:hasIssnL) )
+    } .
 }

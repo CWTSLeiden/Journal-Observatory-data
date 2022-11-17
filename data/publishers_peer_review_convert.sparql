@@ -1,3 +1,19 @@
+insert {
+    graph ?graph {
+        ?record dcterms:identifier ?journal .
+    }
+}
+where {
+    graph ?graph {
+        ?record a job:record .
+        ?record stm:metadata ?metadata .
+        optional { ?metadata prism:issn ?pissn . }
+        optional { ?metadata prism:eIssn ?eissn . }
+        optional { ?metadata fabio:hasIssnL ?lissn . }
+        bind(iri(concat("https://issn.org/", coalesce(?lissn, ?pissn, ?eissn))) as ?journal)
+    }
+}
+
 # Jobmap
 insert {
     graph sub:head {
@@ -13,8 +29,8 @@ insert {
     }
 }
 where {
-    ?journal a job:record .
-    ?journal job:provenance ?provenance .
+    ?record a job:record .
+    ?record job:provenance ?provenance .
     ?provenance dcterms:created ?date ;
         dcterms:creator ?creator ;
         cc:license ?license .
@@ -23,26 +39,27 @@ where {
 # Metadata
 insert {
     graph sub:assertion {
-        sub:platform a job:Platform ;
+        ?journal a job:Platform ;
             schema:name ?name ;
             job:hasPublisher ?publisher ;
             ?hasissn ?issn .
     }
 }
 where {
-    ?journal a job:record .
-    ?journal ppr:metadata ?metadata .
+    ?record a job:record .
+    ?record dcterms:identifier ?journal .
+    ?record stm:metadata ?metadata .
     optional { ?metadata schema:name ?name } .
     optional { ?metadata job:hasPublisher ?publisher } .
     optional { ?metadata ?hasissn ?issn . 
-        filter ( ?hasissn in (prism:issn, fabio:hasIssnL) )
+        filter ( ?hasissn in (prism:issn, prism:eIssn, fabio:hasIssnL) )
     } .
 }
 
 # Evaluation Policy
 insert {
     graph sub:assertion {
-        sub:platform a job:Platform ;
+        ?journal a job:Platform ;
             job:hasPolicy ?policy .
 
         ?policy a job:EvaluationPolicy ;
@@ -88,7 +105,10 @@ insert {
     }
 }
 where {
-    bind(sub:platform as ?thisplatform) .
+    ?record a job:record .
+    ?record dcterms:identifier ?journal .
+
+    # bind named individuals for convenience
     bind(sub:evaluationPolicy as ?policy) .
     bind(sub:author as ?authorrole) .
     bind(sub:reviewer as ?reviewerrole) .

@@ -20,7 +20,8 @@ def clean_val(val, mapping={}):
             return False
         return val
     if mapping.get(val.lower()):
-        return mapping.get(val.lower())
+        # return mapping.get(val.lower())
+        return { "@id": mapping.get(val.lower()) }
     return val
 
 

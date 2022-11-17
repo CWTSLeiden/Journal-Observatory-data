@@ -1,22 +1,29 @@
-# JobMap
-construct {
-    this: a job:JobMap ;
-        cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
-        schema:dateCreated ?date ;
-        job:hasDataSource <https://doaj.org> .
+# Provenance
+insert {
+    graph sub:head {
+        this: a job:JobMap ;
+            job:hasAssertion sub:assertion ;
+            job:hasProvenance sub:provenance .
+    }
+
+    graph sub:provenance {
+        sub:assertion cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+            dcterms:created ?date ;
+            dcterms:creator <https://doaj.org> .
+    }
 }
 where {
     ?journal a job:record .
     ?journal schema:dateModified ?date .
 }
 
-# Metadata Assertion
-construct {
-    this: job:hasAssertion sub:metadata .
-
-    sub:metadata a job:MetadataAssertion ;
-        schema:name ?journal_title ;
-        job:hasKeyword ?keyword .
+# Metadata
+insert {
+    graph sub:assertion {
+        ?journal a job:Platform ;
+            schema:name ?journal_title ;
+            job:hasKeyword ?keyword .
+    }
 }
 where {
     ?journal a job:record .
@@ -24,12 +31,11 @@ where {
     optional { ?journal doaj:keyword ?keyword . } 
 }
 
-# Identifier Assertion
-construct {
-    this: job:hasAssertion sub:identifier .
-
-    sub:identifier a job:IdentifierAssertion ;
-        ?hasissn ?issn .
+# Identifier
+insert {
+    graph sub:assertion {
+        ?journal ?hasissn ?issn .
+    }
 }
 where {
     ?journal a job:record .
@@ -37,16 +43,16 @@ where {
     filter ( ?hasissn in (prism:issn, prism:eIssn) ) .
 }
 
-# Publisher Assertion
-construct {
-    this: job:hasAssertion sub:metadata .
+# Publisher
+insert {
+    graph sub:assertion {
+        ?journal dcterms:publisher ?publisher .
 
-    sub:metadata a job:MetadataAssertion ;
-        dcterms:publisher ?publisher .
-
-    ?publisher schema:name ?publisher_name ;
-        schema:addressCountry ?publisher_country ;
-        schema:url ?publisher_url .
+        ?publisher a pro:publisher ; 
+            schema:name ?publisher_name ;
+            schema:addressCountry ?publisher_country ;
+            schema:url ?publisher_url .
+    }
 }
 where {
     ?journal a job:record .
@@ -56,45 +62,40 @@ where {
     optional { ?publisher schema:name ?publisher_name } .
 }
 
-# ArticlePublishingCharges Assertion
-construct {
-    this: job:hasAssertion sub:apc .
+# Dissemination Policy
+insert {
+    graph sub:assertion {
+        ?journal job:hasPolicy sub:disseminationPolicy .
+        sub:disseminationPolicy a job:DisseminationPolicy ;
+            job:hasAPC ?apc ;
+            job:hasCopyrightOwner ?copyright_owner ;
+            dcterms:license ?license ;
+            job:disseminatesVersion [ a job:publishedVersion ] .
+        
+        ?apc schema:url ?apc_url ;
+            job:apc ?apc_price ;
+            ?apc_p ?apc_o .
 
-    sub:apc a job:ArticlePublishingChargesAssertion ;
-        schema:url ?url ;
-        schema:maxPrice ?price ;
-        schema:priceCurrency ?currency .
-}
-where {
-    ?journal a job:record .
-    ?journal doaj:hasArticlePublishingCharges ?apc .
-    optional { ?apc schema:PriceSpecification [ schema:MaxPrice ?_price ;
-                                                schema:priceCurrency ?_currency ] } .
-    optional { ?apc schema:url ?url } .
-    bind(coalesce(?_price, 0) as ?price)
-    bind(if(bound(?_currency), strdt(str(?_currency), xsd:string), ?_) as ?currency)
-}
-
-# OpenAccessPolicy assertion
-construct {
-    this: job:hasAssertion sub:policy .
-
-    sub:policy a job:OpenAccessPolicyAssertion ;
-        job:hasPolicy ?_oa_policy .
-    ?_oa_policy a dcterms:Policy ;
-        dcterms:license ?license ;
-        job:hasCopyrightOwner ?copyright_owner ;
-        job:appliesToVersion "published" ;
-}
-where {
-    ?journal a job:record .
-    bind(bnode() as ?_oa_policy) .
-    optional { ?journal doaj:Copyright ?oa_copyright } .
-    optional {
-        ?oa_copyright doaj:authorRetainsCopyright ?copyright_author_bool .
-        bind(if(?copyright_author_bool, "authors", ?_) as ?copyright_owner) .
+        ?copyright_owner a ?copyright_owner_type .
     }
-    optional { ?oa_copyright schema:url ?copyright_url } .
+}
+where {
+    ?journal a job:record .
+
+    optional { ?journal doaj:hasArticlePublishingCharges ?apc } .
+    optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
+    optional { ?apc schema:url ?apc_url } .
+    optional { ?apc doaj:ArticlePublishingChargesApply false . bind(0 as ?apc_price) } .
+
+    optional {
+        ?journal doaj:Copyright ?oa_copyright .
+        ?oa_copyright doaj:authorRetainsCopyright ?copyright_author_p .
+        bind(sub:author as ?author)
+        optional { ?journal doaj:Publisher ?publisher . }
+        bind(if(bound(?publisher), ?publisher, sub:publisher) as ?publisher)
+        bind(if(?copyright_author_p=true, ?author, ?publisher) as ?copyright_owner) .
+        bind(if(?copyright_author_p=true, pro:author, pro:publisher) as ?copyright_owner_type) .
+    }
     
     optional {
         ?oa_license doaj:licenseType ?license_type .
