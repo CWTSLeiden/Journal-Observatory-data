@@ -1,6 +1,8 @@
 from configparser import ConfigParser
+import datetime
 from glob import glob
-from namespace import JobNamespace
+from rdflib import DCTERMS, URIRef, Literal, XSD
+from namespace import JobNamespace, JOB
 from pyparsing.exceptions import ParseException
 from store import json_to_graph
 from tqdm import tqdm as progress
@@ -50,6 +52,20 @@ def json_file_to_jobmap(file, context_file, queries_file):
     context = file_to_json(context_file)
     queries = read_query_file(queries_file)
     return json_to_jobmap(journal_json, context, queries)
+
+
+def jobmap_add_info(jobmap, config):
+    config.read(f"{ROOT_DIR}/config/job.conf")
+    identifier = config.get("main", "identifier")
+    license = config.get("main", "license")
+    date = datetime.date.today()
+    THIS = jobmap.namespace_manager.THIS[""]
+    SUB = jobmap.namespace_manager.SUB
+    jobmap.add((THIS, DCTERMS.license, URIRef(license), SUB.pubinfo))
+    jobmap.add((THIS, DCTERMS.creator, URIRef(identifier), SUB.pubinfo))
+    jobmap.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.pubinfo))
+    jobmap.add((THIS, JOB.hasPubinfo, SUB.pubinfo, SUB.head))
+    return jobmap
         
 
 def dataset_convert(dataset, batchsize=100):
@@ -98,6 +114,7 @@ def dataset_convert_test(dataset, files=None, context=None, queries=None, item=0
 
     record = file_to_json(files[item])
     jobmap = json_to_jobmap(record, context, queries)
+    jobmap = jobmap_add_info(jobmap, config)
     datagraph = json_to_graph(record, context)
     # Write record to file
     print(f"Write record to file:")
