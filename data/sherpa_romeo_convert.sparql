@@ -183,8 +183,11 @@ where {
 # Publication Elsewhere Policy
 insert {
     graph sub:assertion {
-        ?romeo_id ppo:hasPolicy ?publicationelsewherepolicy .
-        ?publicationelsewherepolicy a ppo:PublicationElsewherePolicy ;
+        ?romeo_id ppo:hasPolicy ?publicationelsewhereprohibited .
+        ?publicationelsewhereprohibited a ppo:PublicationElsewhereProhibited .
+
+        ?romeo_id ppo:hasPolicy ?publicationelsewhereallowed .
+        ?publicationelsewhereallowed a ppo:PublicationElsewhereAllowed ;
             dcterms:creator ?publisher ;
             ppo:appliesToVersion ?articleversion ;
             dcterms:license ?license ;
@@ -198,9 +201,10 @@ insert {
 where {
     ?journal a rdfg:Graph .
     ?journal romeo:hasMetadata ?romeo_id .
+    bind(bnode() as ?publicationelsewhereprohibited)
     ?journal romeo:hasPublisherPolicy ?publisher_policy .
     ?publisher_policy romeo:hasPermittedOA ?policy .
-    bind(bnode() as ?publicationelsewherepolicy)
+    bind(bnode() as ?publicationelsewhereallowed)
 
     optional { ?journal romeo:hasPublisher [ romeo:Publisher ?publisher ] .
         ?publisher_policy romeo:PublisherID ?publisherid .

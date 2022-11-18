@@ -50,7 +50,7 @@ where {
     ?record dcterms:identifier ?journal .
     ?record stm:metadata ?metadata .
     optional { ?metadata schema:name ?name } .
-    optional { ?metadata ppo:hasPublisher ?publisher } .
+    optional { ?metadata stm:hasPublisher ?publisher } .
     optional { ?metadata ?hasissn ?issn . 
         filter ( ?hasissn in (prism:issn, prism:eIssn, fabio:hasIssnL) )
     } .
@@ -63,45 +63,46 @@ insert {
             ppo:hasPolicy ?policy .
 
         ?policy a ppo:EvaluationPolicy ;
-            stm:postPublicationCommenting ?ppc_value .
+            ppo:postPublicationCommenting ?ppc_value .
 
-        ?policy ppo:involves ?authorrole .
-        ?authorrole a pro:Author ;
-            ?author_an_reviewer ?reviewerrole ;
-            ?author_an_curator ?curatorrole .
+        ?policy ppo:involves sub:author .
+        sub:author a pro:Author ;
+            ?author_an_reviewer sub:reviewer ;
+            ?author_an_curator sub:curator .
 
-        ?policy ppo:involves ?reviewerrole .
-        ?reviewerrole a pro:peer-reviewer ;
-            ppo:identityPublished ?reviewer_published ;
-            ppo:identityPublished ?reviewer_published_reviewer ;
-            ?reviewer_an_author ?authorrole ;
-            ?reviewer_an_curator ?curatorrole ;
-            ?riw_author ?authorrole ;
-            ?riw_curator ?curatorrole ;
-            ?riw_reviewer ?reviewerrole .
+        ?policy ppo:involves sub:reviewer .
+        sub:reviewer a pro:peer-reviewer ;
+            ppo:identityPubliclyAccessible ?reviewer_published ;
+            ppo:identityPubliclyAccessible ?reviewer_published_reviewer ;
+            ?reviewer_an_author sub:author ;
+            ?reviewer_an_curator sub:curator ;
+            ?riw_author sub:author ;
+            ?riw_curator sub:curator ;
+            ?riw_reviewer sub:reviewer .
+        ?reviewer_published ppo:optInBy ?reviewer_published_reviewer .
 
-        ?policy ppo:involves ?curatorrole .
-        ?curatorrole a ppo:Editor .
-        ?curatorrole ppo:identityPublished ?editor_published_p .
+        ?policy ppo:involves sub:curator .
+        sub:curator a ppo:Editor .
+        sub:curator ppo:identityPubliclyAccessible ?editor_published .
 
         ?reviewreport a ppo:PeerReviewReport .
         ?policy ppo:covers ?reviewreport .
-        ?reviewreport ppo:isPublished ?rr_published .
-        ?reviewreport ppo:isPublished ?rr_published_author .
-        ?reviewreport ppo:isPublished ?rr_published_reviewer .
+        ?reviewreport ppo:publiclyAccessible ?rr_published .
+        ?rr_published ppo:optInBy ?rr_published_author .
+        ?rr_published ppo:optInBy ?rr_published_reviewer .
 
         ?submittedmanuscript a ppo:SubmittedManuscript .
         ?policy ppo:covers ?submittedmanuscript .
-        ?submittedmanuscript ppo:isPublished ?sm_published .
-        ?submittedmanuscript ppo:isPublished ?sm_published_author .
+        ?submittedmanuscript ppo:publiclyAccessible ?sm_published .
+        ?sm_published ppo:optInBy ?sm_published_author .
 
         ?reviewsummaries a ppo:ReviewSummaries .
         ?policy ppo:covers ?reviewsummaries .
-        ?reviewsummaries ppo:isPublished ?rs_published_p .
+        ?reviewsummaries ppo:publiclyAccessible ?rs_published .
 
-        ?authoreditorcommunication a stm:AuthorEditorCommunication .
+        ?authoreditorcommunication a ppo:AuthorEditorCommunication .
         ?policy ppo:covers ?authoreditorcommunication .
-        ?authoreditorcommunication ppo:isPublished ?aec_published_p .
+        ?authoreditorcommunication ppo:publiclyAccessible ?aec_published .
     }
 }
 where {
@@ -110,9 +111,6 @@ where {
 
     # bind named individuals for convenience
     bind(sub:evaluationPolicy as ?policy) .
-    bind(sub:author as ?authorrole) .
-    bind(sub:reviewer as ?reviewerrole) .
-    bind(sub:curator as ?curatorrole) .
     
     optional { ?record stm:identityTransparency ?id . }
     optional { ?id stm:singleAnonymised true .
@@ -146,18 +144,22 @@ where {
 
     optional { ?record stm:reviewerInteractsWith ?riw . }
     optional { ?riw stm:authors true .
-        bind(stm:interactsWith as ?riw_author) .
+        bind(ppo:interactsWith as ?riw_author) .
     }
     optional { ?riw stm:editor true .
-        bind(stm:interactsWith as ?riw_curator) .
+        bind(ppo:interactsWith as ?riw_curator) .
     }
     optional { ?riw stm:otherReviewers true .
-        bind(stm:reviewerInteractsWith as ?riw_reviewer) .
+        bind(ppo:reviewerInteractsWith as ?riw_reviewer) .
     }
 
     optional { ?record stm:reviewInformationPublished ?rip . }
     optional {
-        ?rip stm:authorEditorCommunication ?aec_published_p . 
+        ?rip stm:authorEditorCommunication ?aec_published_p .
+        values (?aec_published_p ?aec_published) {
+            (true ppo:Accessible)
+            (false ppo:NotAccessible)
+        }
         bind(sub:authorEditorCommunication as ?authoreditorcommunication)
     }
     optional {
@@ -165,29 +167,38 @@ where {
         ?rip stm:reviewReportsAuthorOptIn ?rr_published_author_p .
         ?rip stm:reviewReportsReviewerOptIn ?rr_published_reviewer_p .
         bind(sub:reviewReport as ?reviewreport)
-        bind(if(?rr_published_p=true && ?rr_published_author_p=false && ?rr_published_reviewer_p=false, true, ?_) as ?rr_published).
-        bind(if(?rr_published_p=false && ?rr_published_author_p=false && ?rr_published_reviewer_p=false, true, ?_) as ?rr_published).
-        bind(if(?rr_published_author_p, "Author Opt-In", ?_) as ?rr_published_author) .
-        bind(if(?rr_published_reviewer_p, "Reviewer Opt-In", ?_) as ?rr_published_reviewer) .
+        bind(if(?rr_published_p=true, ppo:Accessible, ppo:NotAccessible) as ?rr_published).
+        bind(if(?rr_published_author_p=true || ?rr_published_reviewer_p=true, bnode(), ?rr_published) as ?rr_published).
+        bind(if(?rr_published_author_p=true, sub:author, ?_) as ?rr_published_author) .
+        bind(if(?rr_published_reviewer_p=true, sub:reviewer, ?_) as ?rr_published_reviewer) .
     }
     optional {
         ?rip stm:reviewSummaries ?rs_published_p .
+        values (?rs_published_p ?rs_published) {
+            (true ppo:Accessible)
+            (false ppo:NotAccessible)
+        }
         bind(sub:reviewSummaries as ?reviewsummaries)
     }
     optional {
         ?rip stm:submittedManuscripts ?sm_published_p .
         ?rip stm:submittedManuscriptsAuthorOptIn ?sm_published_author_p .
         bind(sub:submittedManuscript as ?submittedmanuscript)
-        bind(if(?sm_published_p=true && ?sm_published_author_p=false, true, ?_) as ?sm_published) .
-        bind(if(?sm_published_p=false && ?sm_published_author_p=false, false, ?_) as ?sm_published) .
-        bind(if(?sm_published_author_p, "Author Opt-In", ?_) as ?sm_published_author) .
+        bind(if(?sm_published_p=true, ppo:Accessible, ppo:NotAccessible) as ?sm_published) .
+        bind(if(?sm_published_author_p=true, bnode(), ?sm_published) as ?sm_published) .
+        bind(if(?sm_published_author_p=true, sub:author, ?_) as ?sm_published_author) .
     }
     optional {
         ?rip stm:reviewerIdentities ?reviewer_published_p .
         ?rip stm:reviewerIdentitiesReviewerOptIn ?reviewer_published_reviewer_p .
-        bind(if(?reviewer_published_p=true && ?reviewer_published_reviewer_p=false, true, ?_) as ?reviewer_published) .
-        bind(if(?reviewer_published_p=false && ?reviewer_published_reviewer_p=false, false, ?_) as ?reviewer_published) .
-        bind(if(?reviewer_published_reviewer_p, "Reviewer Opt-In", ?_) as ?reviewer_published_reviewer) .
+        bind(if(?reviewer_published_p=true, ppo:Accessible, ppo:NotAccessible) as ?reviewer_published) .
+        bind(if(?reviewer_published_reviewer_p, bnode(), ?reviewer_published) as ?reviewer_published) .
+        bind(if(?reviewer_published_reviewer_p, sub:reviewer, ?_) as ?reviewer_published_reviewer) .
     }
-    optional { ?rip stm:editorIdentities ?editor_published_p . }
+    optional { ?rip stm:editorIdentities ?editor_published_p .
+        values (?editor_published_p ?editor_published) {
+            (true ppo:Accessible)
+            (false ppo:NotAccessible)
+        }
+    }
 }
