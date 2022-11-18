@@ -1,110 +1,345 @@
+#+property: header-args :tangle ontology.ttl
+
 * Namespaces
 
 ** Creative Commons
-- prefix :: cc
+- prefix :: <<<cc>>>
 - url :: http://creativecommons.org/ns#
 ** DOAJ
-- prefix :: doaj
+- prefix :: <<<doaj>>>
 - url :: https://doaj.org/
 ** FABIO
-- prefix :: fabio
+- prefix :: <<<fabio>>>
 - url :: http://purl.org/spar/fabio/
-** Journal Observatory
-- prefix :: job
-- url :: https://job.org/
-** Journal Observatory (jobmap)
-- prefix :: jobmap
-- url :: https://job.org/jobmap/
+** Publishing Platform Ontology
+- prefix :: <<<ppo>>>
+- url :: https://purl.org/cwts/ppo/
+** Publication Roles Ontology
+- prefix :: <<<pro>>>
+- url :: https://purl.org/spar/ppo/
 ** Library of Congress
-- prefix :: loc
+- prefix :: <<<loc>>>
 - url :: http://id.loc.gov/ontologies/bibframe/
 ** OpenAlex
-- prefix :: openalex
+- prefix :: <<<openalex>>>
 - url :: https://openalex.org/
 ** Prismstandard
-- prefix :: prism
+- prefix :: <<<prism>>>
 - url :: http://prismstandard.org/namespaces/basic/2.0/
 ** Sherpa Romeo
-- prefix :: romeo
+- prefix :: <<<romeo>>>
 - url :: https://v2.sherpa.ac.uk/id/
 ** Schema
-- prefix :: schema
+- prefix :: <<<schema>>>
 - url :: https://schema.org/
 ** XSD
-- prefix :: xsd
+- prefix :: <<<xsd>>>
 - url :: http://www.w3.org/2001/XMLSchema#
 ** Dublin Core terms
-- prefix :: dcterms
+- prefix :: <<<dcterms>>>
 - url :: http://purl.org/dc/terms/
 
-* Classes
-** job:JobMap
-** job:Assertion
-** job:MetadataAssertion
+* PAD
+** ppo:PAD                                                                 :class:
 
-- rdfs:subClassOf :: job:Assertion
-  
-** job:IdentifierAssertion
+#+BEGIN_SRC ttl
+ppo:PAD rdfs:subClassOf np:Nanopublication .
+#+END_SRC
 
-- rdfs:subClassOf :: job:Assertion
-  
-** job:PolicyAssertion
+** ppo:Assertion                                                           :class:
 
-- rdfs:subClassOf :: job:Assertion
-  
-** job:OpenAccessPolicyAssertion
+#+BEGIN_SRC ttl
+ppo:Assertion rdfs:subClassOf rdfg:Graph .
+#+END_SRC
 
-- rdfs:subClassOf :: job:PolicyAssertion
-  
-** job:ArticlePublishingChargesAssertion
+** ppo:Provenance                                                          :class:
 
-- rdfs:subClassOf :: job:Assertion
-  
-** job:record
-only used during conversion of data
-** dcterms:Policy
-* Object Properties
-** job:hasAssertion
+#+BEGIN_SRC ttl
+ppo:Provenance rdfs:subClassOf rdfg:Graph .
+#+END_SRC
 
-- rdfs:domain :: job:JobMap
-- rdfs:range :: job:Assertion
+** ppo:PubInfo                                                             :class:
 
-** job:hasPolicy                                                           :replace:
-** cc:license
+#+BEGIN_SRC ttl
+ppo:PubInfo rdfs:subClassOf rdfg:Graph .
+#+END_SRC
 
-- rdfs:subPropertyOf :: dcterms:license
-  
-** dcterms:license
-** dcterms:publisher
-* Data Properties
-** job:hasKeyword                                                          :replace:
-** job:hasDatasource                                                       :replace:
-** job:hasEmbargo                                                          :replace:
-** job:hasPublishingLocation                                               :replace:
-** job:hasCondition                                                        :replace:
-** job:hasCopyrightOwner                                                   :replace:
-** job:appliesToVersion                                                    :replace:
-** romeo:id                                                              :undefined:
+** ppo:hasAssertion                                                     :property:
 
-- rdfs:subPropertyOf :: dcterms:identifier
+#+BEGIN_SRC ttl
+ppo:hasAssertion a owl:FunctionalProperty ;
+    rdfs:domain ppo:JobMap ;
+    rdfs:range ppo:Assertion .
+#+END_SRC
 
-** openalex:venueId                                                      :undefined:
+** ppo:hasProvenance                                                    :property:
 
-- rdfs:subPropertyOf :: dcterms:identifier
+#+BEGIN_SRC ttl
+ppo:hasProvenance a owl:FunctionalProperty ;
+    rdfs:domain ppo:JobMap ;
+    rdfs:range ppo:Provenance .
+#+END_SRC
 
-** fabio:hasIssnL
+** ppo:hasPubInfo                                                       :property:
 
-- rdfs:subPropertyOf :: dcterms:identifier
+#+BEGIN_SRC ttl
+ppo:hasPubInfo a owl:FunctionalProperty ;
+    rdfs:domain ppo:JobMap ;
+    rdfs:range ppo:JobInfo .
+#+END_SRC
 
-** schema:addressCountry
-** schema:dateCreated
-** schema:name
-** schema:url
-** prism:issn
+* Provenance
+** dcterms:license                                                      :property:
 
-- rdfs:subPropertyOf :: dcterms:identifier
+#+BEGIN_SRC ttl
+dcterms:license a rdf:Property ;
+    rdfs:domain ppo:Assertion ;
+    rdfs:range xsd:IRI .
+#+END_SRC
 
-** prism:eIssn
+** dcterms:created                                                      :property:
 
-- rdfs:subPropertyOf :: dcterms:identifier
+#+BEGIN_SRC ttl
+dcterms:created a rdf:Property ;
+    rdfs:domain ppo:Assertion ;
+    rdfs:range xsd:DateTime .
+#+END_SRC
 
+** dcterms:creator                                                      :property:
+
+#+BEGIN_SRC ttl
+dcterms:creator a rdf:Property ;
+    rdfs:domain ppo:Assertion ;
+    rdfs:range dcterms:Agent .
+#+END_SRC
+
+* Assertion
+** ppo:Platform                                                              :class:
+
+#+BEGIN_SRC ttl
+ppo:Platform a rdfs:Class .
+#+END_SRC
+
+** ppo:PlatformType                                                          :class:
+
+#+BEGIN_SRC ttl
+ppo:PlatformType a rdfs:Class .
+#+END_SRC
+
+** ppo:Policy                                                                :class:
+
+#+BEGIN_SRC ttl
+ppo:Policy a rdfs:Class .
+#+END_SRC
+*** ppo:DisseminationPolicy
+
+#+BEGIN_SRC ttl
+ppo:DisseminationPolicy rdfs:subClassOf ppo:Policy .
+#+END_SRC
+
+*** ppo:EvaluationPolicy
+
+#+BEGIN_SRC ttl
+ppo:EvaluationPolicy rdfs:subClassOf ppo:Policy .
+#+END_SRC
+
+*** ppo:PublicationElsewherePolicy
+
+#+BEGIN_SRC ttl
+ppo:PublicationElsewherePolicy rdfs:subClassOf ppo:Policy .
+#+END_SRC
+
+
+** ppo:hasPlatformType                                                    :property:
+
+#+BEGIN_SRC ttl
+ppo:hasPlatformType a rdf:Property ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range ppo:PlatformType .
+#+END_SRC
+
+** ppo:hasPolicy                                                          :property:
+
+#+BEGIN_SRC ttl
+ppo:hasPolicy a rdf:Property ;
+    rdfs:domain ppo:Platform, ppo:PlatformType ;
+    rdfs:range ppo:Policy .
+#+END_SRC
+
+** dcterms:publisher                                                      :property:
+
+#+BEGIN_SRC ttl
+dcterms:publisher a rdf:Property ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range dcterms:Agent .
+#+END_SRC
+
+** dcterms:identifier                                                     :property:
+
+#+BEGIN_SRC ttl
+dcterms:identifier a rdf:Property ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:Literal .
+#+END_SRC
+
+*** fabio:hasIssnL
+
+#+BEGIN_SRC ttl
+fabio:hasIssnL a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+*** prism:issn
+
+#+BEGIN_SRC ttl
+prism:issn a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+*** prism:eIssn
+
+#+BEGIN_SRC ttl
+prism:eIssn a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+*** prism:doi
+
+#+BEGIN_SRC ttl
+prism:doi a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+*** openalex:venueId
+
+#+BEGIN_SRC ttl
+openalex:venueId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI .
+#+END_SRC
+
+*** romeo:id
+
+#+BEGIN_SRC ttl
+romeo:id a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI .
+#+END_SRC
+
+*** wikidata:id
+
+#+BEGIN_SRC ttl
+wikidata:id a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+** schema:name                                                            :property:
+
+#+BEGIN_SRC ttl
+schema:name a rdf:Property ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+
+** pro:PublishingRole                                                        :class:
+*** pro:author                                                              :class:
+*** pro:peer-reviewer                                                       :class:
+*** pro:editor                                                              :class:
+*** pro:publisher                                                           :class:
+
+** ppo:anonymousTo                                                        :property:
+
+#+BEGIN_SRC ttl
+ppo:anonymousTo a rdf:Property ;
+    rdfs:domain pro:PublishingRole ;
+    rdfs:range pro:PublishingRole .
+#+END_SRC
+
+** ppo:interactsWith                                                      :property:
+
+#+BEGIN_SRC ttl
+ppo:interactsWith a rdf:Property ;
+    rdfs:domain pro:PublishingRole ;
+    rdfs:range pro:PublishingRole .
+#+END_SRC
+
+** ppo:possibleDecision                                                   :property:
+
+#+BEGIN_SRC ttl
+ppo:possibleDecision a rdf:Property ;
+    rdfs:domain ppo:EvaluationPolicy ;
+    rdfs:range xsd:String .
+#+END_SRC
+
+** ppo:involves                                                           :property:
+
+#+BEGIN_SRC ttl
+ppo:involves a rdf:Property ;
+    rdfs:domain ppo:Policy ;
+    rdfs:range pro:PublishingRole .
+#+END_SRC
+
+** ppo:hasInitiator                                                       :property:
+
+#+BEGIN_SRC ttl
+ppo:hasInitiator rdfs:subPropertyOf ppo:involves ;
+    rdfs:domain ppo:Policy ;
+    rdfs:range pro:PublishingRole .
+#+END_SRC
+
+
+** ppo:identityPublished                                                  :property:
+
+#+BEGIN_SRC ttl
+ppo:identityPublished rdfs:subPropertyOf ppo:isPublished ;
+    rdfs:domain ppo:PublishingRole ;
+    rdfs:range xsd:Literal .
+#+END_SRC
+
+
+** fabio:Work
+*** ppo:ReviewReport
+
+#+BEGIN_SRC ttl
+ppo:ReviewReport rdfs:subClassOf fabio:Work .
+#+END_SRC
+
+*** ppo:ReviewSummary
+
+#+BEGIN_SRC ttl
+ppo:ReviewSummary rdfs:subClassOf fabio:Work .
+#+END_SRC
+
+*** ppo:AuthorEditorCommunication
+
+#+BEGIN_SRC ttl
+ppo:AuthorEditorCommunication rdfs:subClassOf fabio:Work .
+#+END_SRC
+
+*** ppo:SubmittedManuscript
+
+#+BEGIN_SRC ttl
+ppo:SubmittedManuscript rdfs:subClassOf fabio:Work .
+#+END_SRC
+
+** ppo:covers
+** ppo:PublicAccessability
+*** ppo:Accessible
+*** ppo:NotAccessible
+*** ppo:OptIn
+** ppo:identityPubliclyAccessible
+** ppo:publiclyAccessible
+** ppo:optInBy
