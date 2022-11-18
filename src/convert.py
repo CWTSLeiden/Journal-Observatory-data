@@ -61,10 +61,10 @@ def jobmap_add_info(jobmap, config):
     date = datetime.date.today()
     THIS = jobmap.namespace_manager.THIS[""]
     SUB = jobmap.namespace_manager.SUB
-    jobmap.add((THIS, DCTERMS.license, URIRef(license), SUB.pubinfo))
-    jobmap.add((THIS, DCTERMS.creator, URIRef(identifier), SUB.pubinfo))
-    jobmap.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.pubinfo))
-    jobmap.add((THIS, PPO.hasPubinfo, SUB.pubinfo, SUB.head))
+    jobmap.add((THIS, DCTERMS.license, URIRef(license), SUB.docinfo))
+    jobmap.add((THIS, DCTERMS.creator, URIRef(identifier), SUB.docinfo))
+    jobmap.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.docinfo))
+    jobmap.add((THIS, PPO.hasDocInfo, SUB.docinfo, SUB.head))
     return jobmap
         
 
