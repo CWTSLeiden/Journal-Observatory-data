@@ -43,10 +43,10 @@ where {
     filter ( ?hasissn in (prism:issn, prism:eIssn) ) .
 }
 
-# Publisher
+# Organization
 insert {
     graph sub:assertion {
-        ?journal dcterms:publisher ?publisher .
+        ?journal ppo:hasOrganization ?publisher .
 
         ?publisher a pro:publisher ; 
             schema:name ?publisher_name ;

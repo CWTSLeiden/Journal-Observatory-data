@@ -10,7 +10,7 @@ where {
         optional { ?metadata prism:issn ?pissn . }
         optional { ?metadata prism:eIssn ?eissn . }
         optional { ?metadata fabio:hasIssnL ?lissn . }
-        bind(iri(concat("https://issn.org/", coalesce(?lissn, ?pissn, ?eissn))) as ?journal)
+        bind(iri(concat("https://issn.org/", replace(coalesce(?lissn, ?pissn, ?eissn), " ", ""))) as ?journal)
     }
 }
 
@@ -41,8 +41,9 @@ insert {
     graph sub:assertion {
         ?journal a ppo:Platform ;
             schema:name ?name ;
-            ppo:hasPublisher ?publisher ;
+            ppo:hasOrganization ?publisher ;
             ?hasissn ?issn .
+        ?publisher a pro:publisher .
     }
 }
 where {

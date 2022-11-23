@@ -1,7 +1,4 @@
 {
-    "ppo": "https://purl.org/cwts/ppo/",
-    "schema": "https://schema.org/",
-    "openalex": "https://openalex.org/",
     "id": "@id",
     "created_date": {
         "@id": "schema:dateCreated",
@@ -11,8 +8,23 @@
         "@id": "schema:dateModified",
         "@type": "schema:DateTime"
     },
-    "issn_l": "fabio:hasIssnL",
-    "issn": "prism:issn",
+    "ids": {
+        "@id": "openalex:external_identifier",
+        "@context": {
+            "issn_l": "fabio:hasIssnL",
+            "issn": "prism:issn",
+            "wikidata": "wikibase:identifier",
+            "fatcat": "fc:identifier"
+        }
+    },
     "display_name": "openalex:name",
-    "publisher": "openalex:publisher_name"
+    "publisher": "openalex:publisher_name",
+    "apc_usd": "openalex:apc_usd",
+    "societies": {
+        "@id": "openalex:society",
+        "@context": {
+            "url": "@id",
+            "organization": "schema:name"
+        }
+    }
 }

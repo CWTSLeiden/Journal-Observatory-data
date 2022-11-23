@@ -17,7 +17,7 @@ where {
     ?journal schema:dateModified ?date .
 }
 
-# Metadata Assertion
+# Metadata
 insert {
     graph sub:assertion {
         ?journal a ppo:Platform ;
@@ -29,28 +29,37 @@ where {
     ?journal openalex:name ?name .
 }
 
-# Publisher Assertion
+# Organizations
 insert {
     graph sub:assertion {
-        ?journal dcterms:publisher [ schema:name ?publisher ] .
+        ?journal ppo:hasOrganization ?publisher .
+        ?publisher a pro:publisher ;
+            schema:name ?publisher . 
+        ?journal ppo:hasOrganization ?society .
+        ?society a ppo:Society ;
+            schema:name ?society_name .
     }
 }
 where {
     ?journal a rdfg:Graph .
-    ?journal openalex:publisher_name ?publisher . 
+    optional { ?journal openalex:publisher_name ?publisher_name
+        bind(bnode() as ?publisher)
+    } . 
+    optional { ?journal openalex:society ?society .
+        ?society schema:name ?society_name
+    } .
 }
 
-# Identifier Assertion
+# Identifier
 insert {
     graph sub:assertion {
-        ?journal ?hasissn ?issn ;
-            openalex:venueId ?journal .
+        ?journal ?idtype ?id .
     }
 }
 where {
-    ?journal a rdfg:Graph .
-    optional {
-        ?journal ?hasissn ?issn . 
-        filter ( ?hasissn in (prism:issn, fabio:hasIssnL) )
-    } .
+    ?journal a rdfg:Graph ;
+        openalex:external_identifier ?ids .
+    ?ids ?idtype ?id . 
+    bind(if(?idtype in (openalex:), openalex:id, ?idtype) as ?idtype) .
+    bind(if(?idtype in (wikibase:identifier, fc:identifier, openalex:id), encode_for_uri(iri(?id)), ?id) as ?id) .
 }

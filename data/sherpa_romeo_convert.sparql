@@ -48,10 +48,10 @@ where {
     optional { ?issns prism:issn ?eissn ; romeo:issn_type "electronic" . }
 }
 
-# Publisher
+# Organization
 insert {
     graph sub:assertion {
-        ?romeo_id dcterms:publisher ?publisher .
+        ?romeo_id ppo:hasOrganization ?publisher .
         ?publisher a pro:publisher ; 
             schema:name ?publisher_name ;
             schema:addressCountry ?publisher_country ;
