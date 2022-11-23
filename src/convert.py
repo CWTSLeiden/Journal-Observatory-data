@@ -6,7 +6,7 @@ from namespace import JobNamespace, PPO
 from pyparsing.exceptions import ParseException
 from store import json_to_graph
 from tqdm import tqdm as progress
-from utils.graph import job_graph, fuseki_graph, sparql_insert_graph
+from utils.store import sparql_store
 from utils.utils import file_to_json, ROOT_DIR
 from utils.jsonld import jsonld_frame, jobmap_frame, jsonld_strip
 import json
@@ -74,28 +74,24 @@ def dataset_convert(dataset, batchsize=100):
     context_file = config.get(dataset, "context_file")
     convert_file = config.get(dataset, "convert_file")
     bulk_path = config.get(dataset, "bulk_path")
-    endpoint = config.get("job", "endpoint")
 
     context = file_to_json(context_file)
     queries = read_query_file(convert_file)
-    files = glob(f"{bulk_path}/data/*.json")
+    files = glob(f"{bulk_path}/data/V00000*.json")
 
     if config.getboolean("main", "test", fallback=False):
         item = config.getint(dataset, "test_item", fallback=0)
         return dataset_convert_test(dataset, files=files, context=context, queries=queries, item=item)
 
-    graph_id = f"https://job.org/jobmap/{dataset}"
-    jobmap_graph = fuseki_graph(type="write", endpoint=endpoint, id=graph_id, clear=True)
-
+    sparqlstore = sparql_store(update=True)
     number = config.getint(dataset, "limit", fallback=len(files))
     if batchsize > number: batchsize = number
     for n in progress(range(0, number, batchsize), unit_scale=batchsize):
-        jobmap = job_graph()
         for file in files[n:n+batchsize]:
-            sherpa_romeo_record = file_to_json(file)
-            jobmap += json_to_jobmap(sherpa_romeo_record, context, queries)
-        sparql_insert_graph(jobmap_graph, jobmap)
-    return jobmap_graph
+            record = file_to_json(file)
+            jobmap = json_to_jobmap(record, context, queries)
+            jobmap = jobmap_add_info(jobmap, config)
+            sparqlstore.addN(jobmap.quads())
 
 
 def dataset_convert_test(dataset, files=None, context=None, queries=None, item=0):
@@ -110,7 +106,7 @@ def dataset_convert_test(dataset, files=None, context=None, queries=None, item=0
         queries = read_query_file(convert_file)
     if not files:
         bulk_path = config.get(dataset, "bulk_path")
-        files = glob(f"{bulk_path}/data/*.json")
+        files = glob(f"{bulk_path}/data/V00000*.json")
 
     record = file_to_json(files[item])
     jobmap = json_to_jobmap(record, context, queries)
