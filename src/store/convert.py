@@ -1,16 +1,51 @@
 from configparser import ConfigParser
-import datetime
 from glob import glob
-from rdflib import DCTERMS, URIRef, Literal, XSD
-from namespace import JobNamespace, PPO
+from utils.namespace import JobNamespace, PPO
+from pyld import jsonld
 from pyparsing.exceptions import ParseException
-from store import json_to_graph
+from rdflib import DCTERMS, URIRef, Literal, XSD
 from tqdm import tqdm as progress
+from utils.graph import job_graph
+from utils.jsonld import jsonld_frame, jobmap_frame, jsonld_strip
+from utils.print import print_verbose
 from utils.store import sparql_store
 from utils.utils import file_to_json, ROOT_DIR
-from utils.jsonld import jsonld_frame, jobmap_frame, jsonld_strip
+import datetime
 import json
 import re
+
+
+def add_context(record, context={}):
+    "Add the @context from the context file to the record"
+    context_record = record.copy()
+    for prefix, namespace in JobNamespace().namespaces():
+        if not context.get(prefix):
+            context[prefix] = namespace
+    context_record["@context"] = context
+    context_record["@type"] = "http://www.w3.org/2004/03/trix/rdfg-1/Graph"
+    return context_record
+
+
+def jsonld_to_graph(record, graph=None):
+    """
+    Convert a json-ld record to an rdf graph
+    If graph is provided, add to the existing graph
+    """
+    if not graph: graph = job_graph()
+    record = jsonld.compact(record, record["@context"])
+    graph.parse(data=json.dumps(record), format='json-ld')
+    return graph
+
+
+def json_to_graph(journal_json, context={}, graph=None, serialize=None):
+    "Convert a json record to a graph."
+    if not graph: graph = job_graph()
+    journal_jsonld = add_context(journal_json, context)
+    graph = jsonld_to_graph(journal_jsonld, graph)
+    if serialize:
+        graph.serialize(destination=serialize)
+    return graph
+
 
 def read_query_file(file):
     queries = []
@@ -26,7 +61,7 @@ def read_query_file(file):
 
 
 def graph_to_jobmap(graph, queries, clean=True):
-    jobnamespace = JobNamespace(uuid=True)
+    jobnamespace = JobNamespace()
     graph.namespace_manager = jobnamespace
     original_graphs = list(graph.contexts())
     for query in queries:
@@ -69,6 +104,7 @@ def jobmap_add_info(jobmap, config):
         
 
 def dataset_convert(dataset, batchsize=100):
+    print_verbose(f"Convert dataset: {dataset}")
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
     context_file = config.get(dataset, "context_file")
@@ -77,7 +113,7 @@ def dataset_convert(dataset, batchsize=100):
 
     context = file_to_json(context_file)
     queries = read_query_file(convert_file)
-    files = glob(f"{bulk_path}/data/V00000*.json")
+    files = glob(f"{bulk_path}/data/*.json")
 
     if config.getboolean("main", "test", fallback=False):
         item = config.getint(dataset, "test_item", fallback=0)
@@ -87,11 +123,13 @@ def dataset_convert(dataset, batchsize=100):
     number = config.getint(dataset, "limit", fallback=len(files))
     if batchsize > number: batchsize = number
     for n in progress(range(0, number, batchsize), unit_scale=batchsize):
+        batchgraph = job_graph()
         for file in files[n:n+batchsize]:
             record = file_to_json(file)
             jobmap = json_to_jobmap(record, context, queries)
             jobmap = jobmap_add_info(jobmap, config)
-            sparqlstore.addN(jobmap.quads())
+            batchgraph.addN(jobmap.quads())
+        sparqlstore.addN(batchgraph.quads())
 
 
 def dataset_convert_test(dataset, files=None, context=None, queries=None, item=0):
@@ -106,7 +144,7 @@ def dataset_convert_test(dataset, files=None, context=None, queries=None, item=0
         queries = read_query_file(convert_file)
     if not files:
         bulk_path = config.get(dataset, "bulk_path")
-        files = glob(f"{bulk_path}/data/V00000*.json")
+        files = glob(f"{bulk_path}/data/*.json")
 
     record = file_to_json(files[item])
     jobmap = json_to_jobmap(record, context, queries)

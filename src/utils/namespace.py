@@ -47,7 +47,7 @@ class JobNamespace(NamespaceManager):
         if not this:
             this = PAD + str(uuid())
         self.THIS = Namespace(this)
-        self.SUB = Namespace(self.THIS + "#")
+        self.SUB = Namespace(self.THIS + "/")
         self.bind("this", self.THIS)
         self.bind("sub", self.SUB)
 

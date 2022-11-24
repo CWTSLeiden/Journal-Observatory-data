@@ -1,5 +1,5 @@
 from rdflib import ConjunctiveGraph
-from namespace import JobNamespace
+from utils.namespace import JobNamespace
 
 
 def job_graph(id=None, nm=None, store="default"):

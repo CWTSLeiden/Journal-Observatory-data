@@ -1,9 +1,10 @@
 from configparser import ConfigParser
 from rdflib import ConjunctiveGraph
-from namespace import JobNamespace
+from utils.namespace import JobNamespace
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from rdflib import BNode
 from utils.utils import ROOT_DIR
+from utils.print import print_verbose
 
 
 def bnode_to_sparql(node):
@@ -12,15 +13,18 @@ def bnode_to_sparql(node):
     return node.n3()
 
 
-def clear_default_graph(graph):
+def clear_default_graph(graph, confirm=False):
     n = graph.__len__()
     if n:
-        r = input(f"Clear graph {graph.identifier} with {n} triples? y/[n]")
-        if r in ("y", "Y", "yes", "Yes"):
+        if not confirm:
+            r = input(f"Clear graph {graph.identifier} with {n} triples? y/[n]")
+            confirm = r in ("y", "Y", "yes", "Yes")
+        if confirm:
+            print_verbose("Clear graph {graph.identifier}...", end="")
             graph.update(f"drop all")
-            print("done")
+            print_verbose("done")
     else:
-        print(f"Graph {graph.identifier} has no triples.")
+        print_verbose(f"Graph {graph.identifier} has no triples.")
 
 
 def clear_pads(graph, pads=[]):
@@ -29,15 +33,17 @@ def clear_pads(graph, pads=[]):
         update += f"drop graph <{pad}#head>; "
         update += f"drop graph <{pad}#provenance>; "
         update += f"drop graph <{pad}#assertion>; "
+        update += f"drop graph <{pad}#docinfo>; "
     graph.update(update)
 
 
-def clear_by_creator(graph, creator):
+def clear_by_creator(graph, creators):
     query = f"""
     SELECT ?pad
     WHERE {{
         graph ?head {{ ?pad ppo:hasProvenance ?provenance . }}
-        graph ?provenance {{ ?assertion dcterms:creator <{creator}> . }}
+        graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
+        filter (?creator in {", ".join(creators)})
     }}
     """
     result = graph.query(query)

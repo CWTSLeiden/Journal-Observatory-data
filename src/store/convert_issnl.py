@@ -1,12 +1,12 @@
 import glob
 import csv
 from tqdm import tqdm as progress
-from namespace import *
+from utils.namespace import *
 from rdflib.namespace import DCTERMS
 from utils.graph import job_graph
 from rdflib import Literal, URIRef
 from rdflib.namespace._RDF import RDF
-from convert import jobmap_add_info
+from store.convert import jobmap_add_info
 from utils.store import sparql_store
 
 def load_issnl_file(bulk_dir):
@@ -47,7 +47,7 @@ def issnl_parse_bulk_file(bulk_dir, identicals=True):
 
 
 def issnl_tuple_to_jobmap(issnl, issn, date):
-    jobnamespace = JobNamespace(uuid=True)
+    jobnamespace = JobNamespace()
     jobmap = job_graph(nm=jobnamespace)
     platform = URIRef(f"https://issn.org/{issnl}")
     THIS = jobnamespace.THIS[""]
@@ -66,16 +66,14 @@ def issnl_tuple_to_jobmap(issnl, issn, date):
     return jobmap
 
 
-if __name__ == "__main__":
+def dataset_convert_issnl():
     from configparser import ConfigParser
     from utils.utils import ROOT_DIR
     from os import path
 
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
-
     bulk_dir = config.get("issnl", "bulk_path", fallback="~/issnl")
-    limit = config.getint("issnl", "limit")
 
     file = path.basename(load_issnl_file(bulk_dir))
     date = f"{file[:4]}-{file[4:6]}-{file[6:8]}"
@@ -91,5 +89,11 @@ if __name__ == "__main__":
     for n in progress(range(0, number, batchsize), unit_scale=batchsize):
         batchgraph = job_graph()
         for issnl, issn in bulk[n:n+batchsize]:
-            batchgraph.addN(issnl_tuple_to_jobmap(issnl, issn, date).quads())
+            jobmap = issnl_tuple_to_jobmap(issnl, issn, date)
+            jobmap_add_info(jobmap, config)
+            batchgraph.addN(jobmap.quads())
         sparqlstore.addN(batchgraph.quads())
+
+
+if __name__ == "__main__":
+    dataset_convert_issnl()
