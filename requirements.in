@@ -3,3 +3,4 @@ rdflib>=5.0.0
 requests>=2.27.1
 tqdm
 openpyxl
+flask
