@@ -63,3 +63,21 @@ where {
     bind(if(?idtype in (openalex:), openalex:id, ?idtype) as ?idtype) .
     bind(if(?idtype in (wikibase:identifier, fc:identifier, openalex:id), encode_for_uri(iri(?id)), ?id) as ?id) .
 }
+
+# Dissemination Policy
+insert {
+    graph sub:assertion {
+        ?journal ppo:hasPolicy sub:disseminationPolicy .
+        sub:disseminationPolicy a ppo:DisseminationPolicy ;
+            ppo:hasAPC ?apc .
+        
+        ?apc a ppo:ArticlePublishingCharges ;
+            ppo:apc ?apc_price ;
+            schema:priceCurrency "USD" .
+    }
+}
+where {
+    ?journal a rdfg:Graph ;
+        openalex:apc_usd ?apc_price .
+    bind(bnode() as ?apc)
+}
