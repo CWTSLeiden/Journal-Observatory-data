@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-from rdflib import ConjunctiveGraph
+from rdflib import ConjunctiveGraph, Dataset
 from utils.namespace import JobNamespace
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from rdflib import BNode
@@ -52,7 +52,7 @@ def clear_by_creator(graph, creators):
     clear_pads(graph, pads)
 
 
-def sparql_store(update=False, id=None, nm=None):
+def sparql_store(update=False, nm=None):
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
     endpoint = config.get("store", "endpoint")
@@ -70,6 +70,6 @@ def sparql_store(update=False, id=None, nm=None):
             node_to_sparql=bnode_to_sparql,
             query_endpoint=f"{endpoint}/query"
         )
-    graph = ConjunctiveGraph(store=db, identifier=id)
+    graph = Dataset(store=db)
     graph.namespace_manager = (nm or JobNamespace())
     return graph
