@@ -1,0 +1,22 @@
+<html>
+    <head></head>
+    <style>
+    body { padding-left: 30px; }
+    section { border-radius: 10px;
+                padding: 1px 15px;
+                margin-bottom: 10px; }
+    .prefix { background-color: #fff;
+                padding: 0 }
+    .head { background-color: lightgrey; }
+    .docinfo { background-color: yellow; }
+    .provenance { background-color: orange; }
+    .assertion { background-color: lightblue; }
+    </style>
+    <body>
+        <section class="prefix"><sub>sub:prefix</sub><pre>{{ prefix }}</pre></section>
+        <section class="head"><sub>sub:prefix</sub><pre>{{ head }}</pre></section>
+        <section class="docinfo"><pre>{{ docinfo }}</pre></section>
+        <section class="provenance"><pre>{{ provenance }}</pre></section>
+        <section class="assertion"><pre>{{ assertion }}</pre></section>
+    </body>
+</html>
