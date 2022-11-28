@@ -17,10 +17,10 @@ def strip_prefixes(serialized, invert=False):
 def api_pad_graphical(graph : ConjunctiveGraph):
     SUB = graph.namespace_manager.SUB
     prefix = strip_prefixes(graph.serialize(format="trig"), invert=True)
-    head = strip_prefixes(graph.get_context(SUB.head).serialize())
-    docinfo = strip_prefixes(graph.get_context(SUB.docinfo).serialize())
-    provenance = strip_prefixes(graph.get_context(SUB.provenance).serialize())
-    assertion = strip_prefixes(graph.get_context(SUB.assertion).serialize())
+    head = strip_prefixes(graph.get_context(SUB.head).serialize(format="trig"))
+    docinfo = strip_prefixes(graph.get_context(SUB.docinfo).serialize(format="trig"))
+    provenance = strip_prefixes(graph.get_context(SUB.provenance).serialize(format="trig"))
+    assertion = strip_prefixes(graph.get_context(SUB.assertion).serialize(format="trig"))
     return render_template("pad.html",
                            prefix=prefix,
                            head=head,
@@ -33,6 +33,7 @@ def api_pad_trig(graph):
     html = graph.serialize(format='trig')
     html = html.replace("<", "&lt;").replace(">", "&gt;")
     return f"<pre>{html}</pre>"
+
 
 def api_pad_json(graph):
     return jsonify(json.loads(graph.serialize(format="json-ld", auto_compact="true")))
