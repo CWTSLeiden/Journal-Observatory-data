@@ -35,8 +35,16 @@ def api_pad_trig(graph):
     return f"<pre>{html}</pre>"
 
 
-def api_pad_json(graph):
-    return jsonify(json.loads(graph.serialize(format="json-ld", auto_compact="true")))
+def api_pad_json(graph, compact=True):
+    json_ld = graph.serialize(format="json-ld", auto_compact=compact)
+    return jsonify(json.loads(json_ld))
+
+
+def api_results(total, limit, page):
+    result = {"meta": {"total": total, "limit": limit, "page": page}, "results": []}
+    result, code = api_error_global_limit(result)
+    result, code = api_error_paging(result, code)
+    return result, code
 
 
 def api_error_global_limit(result, code=200):
@@ -62,3 +70,25 @@ def api_error_paging(result, code=200):
             "message": "paging exeeds data"
         }
     return result, code
+
+
+def parse_filter(filter_string):
+    filters = []
+    for filter_str in filter_string.split(","):
+        key, val = filter_str.split(":")
+        neg, eq = " ", "="
+        if val[0] == "!":
+            neg = "NOT"
+            val = val[1:]
+        elif val[0] in ("<", ">"):
+            eq = val[0]
+            val = val[1:]
+        if key in ("d_creator", "p_creator", "d_license", "p_license"):
+            filter = f"?{key} = \"{val}\""
+        elif key in ("d_date", "p_date"):
+            filter = f"?{key}^^xsd:dateTime {eq} \"{val}\"^^xsd:dateTime"
+        else:
+            filter = ""
+        if filter:
+            filters.append(f"FILTER {neg} EXISTS {{ FILTER ({ filter }) }}")
+    return " ".join(filters)

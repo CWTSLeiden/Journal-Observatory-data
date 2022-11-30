@@ -24,7 +24,13 @@ def get_pad(id, sub=None):
 def get_pads():
     limit = int(request.args.get("limit", 10))
     page = int(request.args.get("page", 0))
+    filter = request.args.get("filter", "")
+    search = request.args.get("search", "")
     db = sparql_store()
+    if filter:
+        return get_pads_filter(db, filter, limit, page)
+    if search:
+        return get_pads_search(db, search)
     total_query = "select (count(*) as ?count) where {?pad a ppo:PAD}"
     total = int(get_single_result(db.query(total_query)) or 0)
     query = f"""
@@ -33,8 +39,21 @@ def get_pads():
         limit {limit}
         offset {page * limit}
     """
-    result = {"meta": {"total": total, "limit": limit, "page": page}, "results": []}
-    result, code = api_error_global_limit(result)
-    result, code = api_error_paging(result, code)
+    result, code = api_results(total, limit, page)
     if code == 200: result["results"] = get_results(db.query(query))
     return jsonify(debug_urls(result)), code
+
+
+def get_pads_filter(db, filter, limit, page):
+    query = f"""
+    select ?pad
+    where {{
+      ?pad a ppo:PAD ;
+        ppo:hasProvenance ?provenance
+    }}
+    """
+
+
+
+def get_pads_search(db, search):
+    pass
