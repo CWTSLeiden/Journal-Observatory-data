@@ -12,3 +12,11 @@ services:
       - ./jena/configuration:/fuseki/configuration
     ports:
       - 3030:3030
+  graphdb:
+    image: khaller/graphdb-free
+    container_name: graphdb
+    volumes:
+      - $HOME/CWTS/data:/opt/graphdb/data/raw
+      - $HOME/CWTS/Apps/graphdb/databases:/opt/graphdb/data/repositories
+    ports:
+      - 7200:7200

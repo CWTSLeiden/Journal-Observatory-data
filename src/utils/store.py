@@ -20,7 +20,7 @@ def clear_default_graph(graph, confirm=False):
             r = input(f"Clear graph {graph.identifier} with {n} triples? y/[n]")
             confirm = r in ("y", "Y", "yes", "Yes")
         if confirm:
-            print_verbose("Clear graph {graph.identifier}...", end="")
+            print_verbose(f"Clear graph {graph.identifier}...", end="")
             graph.update(f"drop all")
             print_verbose("done")
     else:
@@ -55,20 +55,21 @@ def clear_by_creator(graph, creators):
 def sparql_store(update=False, nm=None):
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
-    endpoint = config.get("store", "endpoint")
+    query_endpoint = config.get("store", "endpoint")
+    update_endpoint = config.get("store", "endpoint")
     if update:
         username = config.get("store", "username")
         password = config.get("store", "password")
         db = SPARQLUpdateStore(
             node_to_sparql=bnode_to_sparql,
-            query_endpoint=f"{endpoint}/query",
-            update_endpoint=f"{endpoint}/update",
+            query_endpoint=query_endpoint,
+            update_endpoint=update_endpoint,
             auth=(username, password)
         )
     else:
         db = SPARQLStore(
             node_to_sparql=bnode_to_sparql,
-            query_endpoint=f"{endpoint}/query"
+            query_endpoint=query_endpoint
         )
     graph = Dataset(store=db)
     graph.namespace_manager = (nm or JobNamespace())
