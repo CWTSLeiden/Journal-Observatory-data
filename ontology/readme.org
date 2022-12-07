@@ -2,6 +2,16 @@
 
 * Namespaces
 
+** Standard
+
+#+begin_src ttl
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+#+end_src
+
 ** Creative Commons <<<cc>>>
 
 #+begin_src ttl
@@ -12,6 +22,18 @@
 
 #+begin_src ttl
 @prefix doaj: <https://doaj.org/> .
+#+end_src
+
+** Dublin Core <<<dc>>>
+
+#+begin_src ttl
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+#+end_src
+
+** Dublin Core terms <<<dcterms>>>
+
+#+begin_src ttl
+@prefix dcterms: <http://purl.org/dc/terms/> .
 #+end_src
 
 ** FRBR-aligned Bibliographic Ontology <<<fabio>>>
@@ -38,6 +60,12 @@
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
 #+end_src
 
+** Nanopub <np>
+
+#+begin_src ttl
+@prefix np: <http://www.nanopub.org/nschema#> .
+#+end_src
+
 ** OpenAlex <<<openalex>>>
 
 #+begin_src ttl
@@ -62,22 +90,16 @@
 @prefix schema: <https://schema.org/> .
 #+end_src
 
+** Wikidata <wd>
+
+#+begin_src ttl
+@prefix wd: <http://www.wikidata.org/entity/> .
+#+end_src
+
 ** XSD <<<xsd>>>
 
 #+begin_src ttl
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-#+end_src
-
-** Dublin Core terms <<<dc>>>
-
-#+begin_src ttl
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-#+end_src
-
-** Dublin Core terms <<<dcterms>>>
-
-#+begin_src ttl
-@prefix dcterms: <http://purl.org/dc/terms/> .
 #+end_src
 
 * PAD
@@ -332,10 +354,10 @@ romeo:id a rdf:Property ;
     rdfs:comment ""@en .
 #+end_src
 
-*** wikidata:id                                                          :property:
+*** wd:id                                                                :property:
 
 #+begin_src ttl
-wikidata:id a rdf:Property ;
+wd:id a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
     rdfs:range xsd:String ;

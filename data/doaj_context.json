@@ -9,11 +9,11 @@
     "id": "@id",
     "created_date": {
         "@id": "schema:dateCreated",
-        "@type": "schema:DateTime"
+        "@type": "xsd:dateTime"
     },
     "last_updated": {
         "@id": "schema:dateModified",
-        "@type": "schema:DateTime"
+        "@type": "xsd:dateTime"
     },
     "name": {
         "@id": "schema:name"

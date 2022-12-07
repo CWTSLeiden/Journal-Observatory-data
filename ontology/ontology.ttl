@@ -1,6 +1,16 @@
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
 @prefix cc: <http://creativecommons.org/ns#> .
 
 @prefix doaj: <https://doaj.org/> .
+
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+@prefix dcterms: <http://purl.org/dc/terms/> .
 
 @prefix fabio: <http://purl.org/spar/fabio/> .
 
@@ -10,6 +20,8 @@
 
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
 
+@prefix np: <http://www.nanopub.org/nschema#> .
+
 @prefix openalex: <https://openalex.org/> .
 
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
@@ -18,11 +30,9 @@
 
 @prefix schema: <https://schema.org/> .
 
+@prefix wd: <http://www.wikidata.org/entity/> .
+
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-
-@prefix dcterms: <http://purl.org/dc/terms/> .
 
 ppo:PAD rdfs:subClassOf np:Nanopublication ;
     rdfs:label "Platform Assertion Document"@en ;
@@ -163,7 +173,7 @@ romeo:id a rdf:Property ;
     rdfs:label ""@en ;
     rdfs:comment ""@en .
 
-wikidata:id a rdf:Property ;
+wd:id a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
     rdfs:range xsd:String ;
