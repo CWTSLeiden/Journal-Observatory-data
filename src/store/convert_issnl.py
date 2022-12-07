@@ -50,11 +50,11 @@ def issnl_tuple_to_jobmap(issnl, issn, date):
     jobnamespace = JobNamespace()
     jobmap = job_graph(nm=jobnamespace)
     platform = URIRef(f"https://issn.org/{issnl}")
-    THIS = jobnamespace.THIS[""]
-    SUB = jobnamespace.SUB
+    THIS = jobmap.namespace_manager.THIS[""]
+    SUB = jobmap.namespace_manager.SUB
     jobmap.add((THIS, RDF.type, PPO.PAD, SUB.head))
-    jobmap.add((THIS, PPO.hasAssertion, SUB.assertion, PPO.head))
-    jobmap.add((THIS, PPO.hasProvenance, SUB.provenance, PPO.head))
+    jobmap.add((THIS, PPO.hasAssertion, SUB.assertion, SUB.head))
+    jobmap.add((THIS, PPO.hasProvenance, SUB.provenance, SUB.head))
 
     jobmap.add((SUB.assertion, CC.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
     jobmap.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=SCHEMA.Date), SUB.provenance))

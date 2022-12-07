@@ -1,5 +1,18 @@
 from rdflib import ConjunctiveGraph, Graph
 from utils.namespace import JobNamespace
+import re
+
+
+def get_mapping(key, mapping={}, reverse=False):
+    if reverse:
+        rev_mapping = mapping
+        mapping = {}
+        for k, v in rev_mapping:
+            if type(v) == str:
+                mapping[v] = k
+    if not reverse:
+        key = re.sub("[-/ _]", "", key)
+    return mapping.get(key)
 
 
 def job_graph(id=None, nm=None, store="default"):

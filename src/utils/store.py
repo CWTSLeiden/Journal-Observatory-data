@@ -1,6 +1,9 @@
 from configparser import ConfigParser
-from rdflib import ConjunctiveGraph, Dataset
-from utils.namespace import JobNamespace
+import requests
+from rdflib import DCTERMS, RDFS, ConjunctiveGraph, Dataset
+from rdflib.graph import DATASET_DEFAULT_GRAPH_ID
+from utils.graph import job_graph
+from utils.namespace import PPO, JobNamespace, CC
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from rdflib import BNode
 from utils.utils import ROOT_DIR
@@ -55,8 +58,8 @@ def clear_by_creator(graph, creators):
 def sparql_store(update=False, nm=None):
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/job.conf")
-    query_endpoint = config.get("store", "endpoint")
-    update_endpoint = config.get("store", "endpoint")
+    query_endpoint = config.get("store", "query")
+    update_endpoint = config.get("store", "update")
     if update:
         username = config.get("store", "username")
         password = config.get("store", "password")
@@ -74,3 +77,23 @@ def sparql_store(update=False, nm=None):
     graph = Dataset(store=db)
     graph.namespace_manager = (nm or JobNamespace())
     return graph
+
+
+def add_ontology(graph : ConjunctiveGraph):
+    print_verbose("Add ontology")
+    id = PPO.ontology
+    batchgraph = job_graph()
+    batchgraph.parse(source=f"{ROOT_DIR}/ontology/ontology.ttl", publicID=id)
+    graph.update(f"clear graph <{id}>")
+    graph.addN(batchgraph.quads())
+
+
+def graphdb_add_namespaces(query_endpoint):
+    if "/repositories/" in query_endpoint:
+        print_verbose("Add namespaces to GraphDB")
+        for prefix, uri in JobNamespace().namespace_bindings().items():
+            if prefix not in ("this", "sub"):
+                url = f"{query_endpoint}/namespaces/{prefix}"
+                requests.put(url, data=uri)
+    else:
+        print_verbose("Endpoint is not a GraphDB instance, no namespaces added.")

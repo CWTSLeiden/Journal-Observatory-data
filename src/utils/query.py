@@ -15,9 +15,8 @@ def get_results(query_result):
     return results
 
 
-def debug_urls(result):
+def debug_urls(result, debug_url):
     original_url = "https://journalobservatory.org"
-    debug_url = "http://localhost:5000"
     if type(result) == dict:
         string = json.dumps(result)
         string = string.replace(original_url, debug_url)

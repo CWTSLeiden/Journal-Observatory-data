@@ -1,13 +1,12 @@
 import json
 import os
 import re
-from bulk import dump_file
+from store.bulk import dump_file
 from configparser import ConfigParser
 from datetime import datetime
 from glob import glob
 from openpyxl import load_workbook
 from utils.utils import ROOT_DIR
-from convert import dataset_convert
 
 
 def clean_val(val, mapping={}):
@@ -20,7 +19,6 @@ def clean_val(val, mapping={}):
             return False
         return val
     if mapping.get(val.lower()):
-        # return mapping.get(val.lower())
         return { "@id": mapping.get(val.lower()) }
     return val
 

@@ -10,5 +10,8 @@
     "cc-by-nc-nd": "https://creativecommons.org/licenses/by-nc-nd/4.0",
     "cc-by-nc-sa": "https://creativecommons.org/licenses/by-nc-sa/4.0",
     "cc-by-nd": "https://creativecommons.org/licenses/by-nd/4.0",
-    "cc-by-sa": "https://creativecommons.org/licenses/by-sa/4.0"
+    "cc-by-sa": "https://creativecommons.org/licenses/by-sa/4.0",
+    "doaj": "https://doaj.org",
+    "openalex": "https://openalex.org",
+    "sherparomeo": "https://v2.sherpa.ac.uk"
 }

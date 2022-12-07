@@ -1,1 +1,4 @@
-from api import api
+from api.application import api
+
+if __name__ == '__main__':
+    api.run(debug=True)
