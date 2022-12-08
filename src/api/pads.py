@@ -1,4 +1,5 @@
 from flask_restful import abort, request
+from marshmallow import ValidationError
 from api.rest import ApiResource
 from utils.query import get_results
 from utils.utils import ROOT_DIR
@@ -30,15 +31,11 @@ class PADsResource(ApiResource):
         return self.get_pads()
 
     def set_args(self, request_args):
-        args = {}
-        for key, value in request_args.items():
-            if value:
-                args[key] = value
-        errors = self.schema.validate(args)
-        if errors:
-            self.abort(400, message=str(errors), code=400)
-        args = dict(self.schema.dump(args))
-        self.meta.update(args)
+        args = dict((k, v) for k, v in request_args.items() if v != None )
+        try:
+            self.meta.update(self.schema.load(args))
+        except ValidationError as e:
+            abort(400, message=str(e), code=400)
     
     def get_pads(self):
         if self.meta.filter:
@@ -49,7 +46,6 @@ class PADsResource(ApiResource):
         return self.api_return()
 
     def get_pads_query(self, query, total_query):
-        self.check_limit()
         self.check_total(total_query)
         self.check_paging()
         try:
@@ -112,9 +108,8 @@ def parse_filter_sparql(filter_dict):
         for value in values:
             val = value.get("value")
             eq = value.get("modifier", "=")
-            neg = ""
-            if eq == "!":
-                neg, eq = "NOT", "="
+            neg = "NOT" if eq in ("!") else ""
+            eq = "=" if eq in ("!", "") else eq
             filters.append(f"FILTER {neg} EXISTS {{ FILTER (?{key} {eq} {sparqlify_string(val)}) }}")
     return " ".join(filters)
 
