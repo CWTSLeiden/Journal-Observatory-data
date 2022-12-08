@@ -1,6 +1,7 @@
-from flask_restful import abort, request
+from flask import abort, request
 from marshmallow import ValidationError
 from api.rest import ApiResource
+from api.pad import PADView
 from utils.query import get_results
 from utils.utils import ROOT_DIR
 from configparser import ConfigParser
@@ -9,7 +10,7 @@ import json
 import re
 
 
-class PADsResource(ApiResource):
+class PADsView(ApiResource):
     def __init__(self):
         super().__init__()
 
@@ -19,6 +20,46 @@ class PADsResource(ApiResource):
         return self.get_pads()
         
     def get(self):
+        """
+        Get a list of pads, optionally based on a filter.
+        ---
+        tags:
+          - PADs
+        parameters:
+          - name: limit
+            description: The maximum number of PADs to load
+            in: query
+            type: integer
+            required: false
+            default: 10
+          - name: page
+            description: Which page of the results to load
+            in: query
+            type: integer
+            required: false
+            default: 0
+          - name: filter
+            description: |
+              A list of string filters.
+              Each filter should be of the format `{key}:{modifier}{value}`.
+              Filters are separated by a comma (,) which means 'and'.
+                - `key` can be one of (`creator`, `created`, `license`)
+                  prefixed with either `p_` for _provenance_ or `d_` for _docinfo_
+                - `modifier` can be one of (`!`, `<`, `>`)
+                  `!` means 'not', `<` and `>` are only applicable to int and date fields.
+
+              **example**: _Get all pads created by DOAJ in 2022_
+              `p_creator:<https://doaj.org>,p_created:>2022-01-01,p_created:<2022-12-31`
+              
+            in: query
+            type: string
+            required: false
+        responses:
+          200:
+            description: A list of PADs
+        produces:
+          - application/json
+        """
         self.meta.limit = int(request.args.get("limit", 10))
         self.meta.page = int(request.args.get("page", 0))
         args = {
@@ -31,11 +72,10 @@ class PADsResource(ApiResource):
         return self.get_pads()
 
     def set_args(self, request_args):
-        args = dict((k, v) for k, v in request_args.items() if v != None )
-        try:
-            self.meta.update(self.schema.load(args))
-        except ValidationError as e:
-            abort(400, message=str(e), code=400)
+        args = dict((k, v) for k, v in request_args.items() if v != None)
+        self.meta.update(self.schema.load(args))
+        # except ValidationError as e:
+        #     abort(401, e)
     
     def get_pads(self):
         if self.meta.filter:
@@ -53,7 +93,7 @@ class PADsResource(ApiResource):
             self.results = get_results(query_results)
         except Exception:
             print(query)
-            abort(400, message="error in query", code=400)
+            abort(500, "error in query")
 
     def get_pads_base(self):
         total_query = "select (count(*) as ?count) where {?pad a ppo:PAD}"
@@ -90,6 +130,16 @@ class PADsResource(ApiResource):
         pass
 
 
+
+class PADsIdView(PADView):
+    def get(self, id):
+        """
+        Get the content of a single PAD
+        """
+        graph = self.pad_from_id(self.db, id)
+        return self.api_return(graph, "json-ld")
+
+
 def sparqlify_string(string):
     if re.match("^[0-9]+$", string):
         return string
@@ -115,6 +165,8 @@ def parse_filter_sparql(filter_dict):
 
 
 def parse_filter_dict(filter_string):
+    if not filter_string:
+        return None
     filters = {}
     config = ConfigParser()
     config.read(f"{ROOT_DIR}/config/api.conf")
@@ -127,7 +179,7 @@ def parse_filter_dict(filter_string):
         key, val = filter_str.split(":", 1)
         filter = {"value": val}
         if val[0] in ("!", "<", ">") and not val[-1] == ">":
-            filter["mod"] = val[0]
+            filter["modifier"] = val[0]
             filter["value"] = val[1:]
         if get_mapping(filter["value"], mapping):
             filter["value"] = f"<{get_mapping(val, mapping)}>"

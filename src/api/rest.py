@@ -1,5 +1,6 @@
 from flask.helpers import make_response
-from flask_restful import Resource, abort
+from flask import abort
+from flask.views import MethodView
 from utils.query import debug_urls, get_single_result
 from utils.store import sparql_store
 from marshmallow import Schema, ValidationError, fields, EXCLUDE, post_load, validates
@@ -62,7 +63,7 @@ class MetaSchema(Schema):
         return ResultsMeta(**data)
 
 
-class ApiResource(Resource):
+class ApiResource(MethodView):
     def __init__(self):
         self.results = []
         self.meta = ResultsMeta()
@@ -72,7 +73,7 @@ class ApiResource(Resource):
     def check_paging(self):
         if self.meta.limit and self.meta.page:
             if (self.meta.limit * self.meta.page) > self.meta.total:
-                abort(400, message="paging exeeds data", code=400)
+                abort(404, "paging exeeds data")
 
     def check_total(self, total_query):
         try:
@@ -83,7 +84,7 @@ class ApiResource(Resource):
             self.meta.total = int(total)
         except ValueError:
             print(total_query)
-            abort(400, message="error in query", code=400)
+            abort(500, "error in query")
 
     def query_limit_offset(self):
         limit_offset = ""

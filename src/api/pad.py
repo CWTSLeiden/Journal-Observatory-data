@@ -1,29 +1,59 @@
-from flask import render_template
+from rdflib.graph import ConjunctiveGraph
+from utils.graph import job_graph, add_graph_context
+from utils.namespace import JobNamespace, PAD
+from flask import render_template, request, abort
+from flask.views import MethodView
 from flask.helpers import make_response
-from flask_restful import Resource, request, abort
-from api.query import pad_from_id
 from utils.store import sparql_store
 import json
 from rdflib import ConjunctiveGraph
 
-class PADResource(Resource):
+
+class PADView(MethodView):
     def __init__(self):
         self.graph = ConjunctiveGraph()
         self.db = sparql_store()
 
-    def get(self, id, sub=None):
-        self.graph = pad_from_id(self.db, id, sub)
-        if len(self.graph) == 0:
-            abort(403, message="PAD not found", code=403)
+    def get(self, id):
+        """
+        Get the content of a single PAD
+        ---
+        tags: [PAD]
+        parameters:
+            - name: id
+              description: Identifier of the PAD
+              in: path
+              type: string
+              required: true
+            - name: format
+              description: The output format
+              in: query
+              type: string
+              enum: [json,trig,html]
+              required: false
+              default: json
+        responses:
+            200: 
+                description: A single pad
+        produces:
+            - application/json
+            - text/html
+        """
+        graph = self.pad_from_id(id)
         format = request.args.get("format", "json-ld")
-        if format in ("ttl", "trig"):
-            data = self.api_pad_trig()
-        elif format in ("html"):
-            data = self.api_pad_graphical()
-        else:
-            data = self.api_pad_json()
-        return make_response(data, 200, self.header(format))
+        return self.api_return(graph, format)
 
+    def api_return(self, graph : ConjunctiveGraph, format):
+        if len(graph) == 0:
+            abort(404, "PAD not found")
+        if format in ("ttl", "trig"):
+            data = self.api_pad_trig(graph)
+        elif format in ("html"):
+            data = self.api_pad_graphical(graph)
+        else:
+            data = self.api_pad_json(graph)
+        return make_response(data, 200, self.header(format))
+    
     @staticmethod
     def header(format="json"):
         map = {
@@ -34,13 +64,30 @@ class PADResource(Resource):
         }
         return {'Content-Type': map.get(format, "application/json")}
 
-    def api_pad_graphical(self):
-        SUB = self.graph.namespace_manager.SUB
-        prefix = strip_prefixes(self.graph.serialize(format="trig"), invert=True)
-        head = strip_prefixes(self.graph.get_context(SUB.head).serialize(format="trig"))
-        docinfo = strip_prefixes(self.graph.get_context(SUB.docinfo).serialize(format="trig"))
-        provenance = strip_prefixes(self.graph.get_context(SUB.provenance).serialize(format="trig"))
-        assertion = strip_prefixes(self.graph.get_context(SUB.assertion).serialize(format="trig"))
+    def pad_from_id(self, id, sub=None) -> ConjunctiveGraph:
+        id = PAD[id]
+        graph = job_graph(nm=JobNamespace(this=id))
+        if sub:
+            add_graph_context(graph, self.db.get_context(f"{id}/{sub}"))
+        else:
+            add_graph_context(graph, self.db.get_context(f"{id}/head"))
+            add_graph_context(graph, self.db.get_context(f"{id}/provenance"))
+            add_graph_context(graph, self.db.get_context(f"{id}/assertion"))
+            add_graph_context(graph, self.db.get_context(f"{id}/docinfo"))
+        return graph
+
+    @staticmethod
+    def api_pad_graphical(graph : ConjunctiveGraph):
+        def strip_prefixes(text, invert=False):
+            return "\n".join(
+                filter(lambda line: ("@prefix" not in line)^invert, text.split("\n"))
+            )
+        SUB = graph.namespace_manager.SUB
+        prefix = strip_prefixes(graph.serialize(format="trig"), invert=True)
+        head = strip_prefixes(graph.get_context(SUB.head).serialize(format="trig"))
+        docinfo = strip_prefixes(graph.get_context(SUB.docinfo).serialize(format="trig"))
+        provenance = strip_prefixes(graph.get_context(SUB.provenance).serialize(format="trig"))
+        assertion = strip_prefixes(graph.get_context(SUB.assertion).serialize(format="trig"))
         return render_template("pad.html",
                                prefix=prefix,
                                head=head,
@@ -48,22 +95,51 @@ class PADResource(Resource):
                                provenance=provenance,
                                assertion=assertion)
 
-    def api_pad_trig(self):
-        html = self.graph.serialize(format='trig')
+    @staticmethod
+    def api_pad_trig(graph):
+        html = graph.serialize(format='trig')
         html = html.replace("<", "&lt;").replace(">", "&gt;")
         return f"<pre>{html}</pre>"
 
-    def api_pad_json(self):
-        json_ld = self.graph.serialize(format="json-ld", auto_compact=True)
+    @staticmethod
+    def api_pad_json(graph):
+        json_ld = graph.serialize(format="json-ld", auto_compact=True)
         return json.loads(json_ld)
 
 
-def strip_prefixes(serialized, invert=False):
-    result = []
-    for line in serialized.split("\n"):
-        if invert and "@prefix" in line:
-            result.append(line)
-        if not invert and not "@prefix" in line:
-            result.append(line)
-    return "\n".join(result)
-
+class PADSubView(PADView):
+    def get(self, id, sub):
+        """
+        Get the content of a single PAD
+        ---
+        tags: [PAD]
+        parameters:
+            - name: id
+              description: Identifier of the PAD
+              in: path
+              type: string
+              required: true
+            - name: sub
+              description: Subgraph of the PAD
+              in: path
+              type: string
+              enum: [head,provenance,docinfo,assertion]
+              required: true
+              default: assertion
+            - name: format
+              description: The output format
+              in: query
+              type: string
+              enum: [json,trig,html]
+              required: false
+              default: json
+        responses:
+            200: 
+                description: A subgraph of a PAD
+        produces:
+            - application/json
+            - text/html
+        """
+        graph = self.pad_from_id(id, sub)
+        format = request.args.get("format", "json-ld")
+        return self.api_return(graph, format)
