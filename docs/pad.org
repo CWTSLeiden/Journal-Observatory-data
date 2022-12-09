@@ -1,0 +1,192 @@
+#+title:Platform Assertion Documents - Design considerations
+#+bibliography: sources.bib
+#  LocalWords:  Nanopublication PADs docinfo Nanopublications RDF
+
+The goal of the structure of a Platform Assertion Document (PAD) is to provide context about the information for a platform. Because data gets outdated, sources can be unreliable and conditions to its use can vary, it is important to have information about the provenance of this data. Using named graphs, we propose a model for information about publishing platforms with corresponding provenance, based on the nanopublication model.
+
+* Named graphs, Nanopublications, PADs
+To a great extent, this problem is addressed in RDF by the concept of ‘named graphs’. This provides us with the ability to add a unique identifier to a statement (triple), which allows us to make a statement about a statement (and by extension, a collection of statements).
+
+The Concept Web Alliance has taken this concept as the core of their ‘Nanopublication’ model. A Nanopublication is a small unit of publishable information, expressed in RDF and consists of exactly 4 named graphs. An assertion graph, which contains the statements that are to be published. A provenance graph, which contains information about how the statements in the assertion graph were conceived. A docinfo graph, which contains metadata about the nanopublication itself. And a head graph, which ties the three other graphs together.[cite:@groth2010anatomy]
+
+The nanopublication model is very applicable to our use-case: we want to make statements about publication platforms, but we know that these statements are not absolute, hence we call them ‘assertions’. We want to know the origin of the data, hence we add the provenance on top of the assertion. However, this information is not meant as a 'publishable' piece of information, so authorship and provenance of the nanopublication itself is of lesser importance in our model.
+
+We therefore propose the PAD model to consist of exactly one assertion-, exactly one provenance- and zero or one docinfo graphs. While it is in some cases desirable to be able to make statements about a PAD (for instance to reference the source code that was used to generate the PAD), it is not necessary for the effective use of the data.
+
+Furthermore, we propose to further constrain the contents of these graphs, such that an assertion only contains information on a single Platform. And that every object within an assertion graph has a relation of any depth to a subject of the type =ppo:Platform=.[fn::(s ? ?) is shorthand for \exists.y\exists.z(s y z). so (s ? ?) means: s is the object of a triple, where there is some unbound predicate and object.]
+
+#+begin_src latex
+\forall.g(g a ppo:Assertion \to
+    \forall.p\forall.q((p ? ?),(q ? ?) \in g \land p a ppo:Platform \land q a ppo:Platform \to
+        a owl:sameAs b))
+
+\forall.g(g a ppo:Assertion \to
+    \forall.o((? ? o) \in g \to
+        \exists.s.\exists.p(s a ppo:Platform \land (s p* o))))
+#+end_src
+
+The same goes for the provenance- and docinfo graphs: 
+
+A provenance graph contains information on a single Assertion. And every object within a provenance graph has a relation of any depth to a subject of the type =ppo:Assertion=.
+#+begin_src latex
+\forall.g(g a ppo:Provenance \to
+    \forall.p\forall.q((p ? ?),(q ? ?) \in g \land p a ppo:Assertion \land q a ppo:Assertion \rarr
+        a owl:sameAs b))
+        
+\forall.g(g a ppo:Provenance \to
+    \forall.o((? ? o) \in g \to
+        \exists.s.\exists.p(s a ppo:Assertion \land (s p* o))))
+#+end_src
+
+A docinfo graph contains information on a single PAD, namely, the pad that it belongs to. And every object within a docinfo graph has a relation of any depth to a subject of the type =ppo:PAD=.
+#+begin_src latex
+\forall.g(g a ppo:DocInfo \land (s ? ?) \in g \land s a ppo:PAD \to
+    \exists.h(h a ppo:Head \land (s ppo:hasDocInfo g) \in h))
+
+\forall.g(g a ppo:DocInfo \to
+    \forall.p\forall.q((p ? ?),(q ? ?) \in g \land p a ppo:PAD \land q a ppo:PAD \rarr
+        a owl:sameAs b))
+        
+\forall.g(g a ppo:DocInfo \to
+    \forall.o((? ? o) \in g \to
+        \exists.s.\exists.p(s a ppo:PAD \land (s p* o))))
+#+end_src
+
+Some considerations:
+- There is no constraint to the number of Platforms that can occur as object in an assertion graph, but if one would add information on an additional platform, it should be defined in a separate assertion graph. 
+- The constraints outlined above are not a conceptual necessity, but proposed to make the resulting data easier to work with.
+
+* Updates, Corrections, Retractions
+
+This model also gives us the expressiveness to add more than just provenance to our data: it allows us to provide any additional remarks on an assertion. For instance, we can provide a correction on erroneous data in a PAD:
+
+#+begin_src ttl
+@prefix : <http://journalobservatory.org/example/> .
+@prefix ppo: <http://purl.org/cwts/ppo> .
+@prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
+
+# PAD 1
+:head1 {
+    :pad1 a ppo:PAD ;
+        ppo:hasAssertion  :assertion1 ;
+        ppo:hasProvenance :provenance1 .
+}
+
+:assertion1 {
+   :platform1 prism:issn "1234-5678" ;
+       schema:name "Imaginary Journal" .
+}
+
+:provenance1 {
+   :assertion1 :creator :author1 ;
+       :created "2022-12-01" .
+}
+
+
+# PAD 2
+:head2 {
+    :pad2 a ppo:PAD ;
+        ppo:hasAssertion  :assertion2 ;
+        ppo:hasProvenance :provenance2 .
+}
+
+:assertion2 {
+   :platform2 prism:issn "5678-1234" .
+}
+
+:provenance2 {
+   :assertion2 :creator :author2 ;
+       :created "2022-12-02" ;
+       ppo:corrects :pad1 .
+}
+#+end_src
+
+And a naive way to obtain the original assertion with all corrections on the objects of triples.
+
+#+begin_src sparql
+construct {
+    ?s ?p ?o
+}
+where {
+    ?pad1 a ppo:PAD ;
+        ppo:hasAssertion ?assertion1 .
+    graph ?assertion1 {
+        ?s ?p ?o1 .
+    } .
+    optional {
+        ?assertion2 :corrects ?assertion1 .
+        graph ?assertion2 {
+            ?s ?p ?o2 .
+        }
+    }
+    bind(coalesce(?o2, ?o1) as ?o) .
+}
+#+end_src
+
+
+Another use-case is aggregating, cleaning, completing data from other PADs, while being able to reference the original data:
+
+#+begin_src ttl
+@prefix : <http://journalobservatory.org/example/> .
+@prefix ppo: <http://purl.org/cwts/ppo> .
+@prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
+
+# PAD 1
+:head1 {
+    :pad1 a ppo:PAD ;
+        ppo:hasAssertion  :assertion1 ;
+        ppo:hasProvenance :provenance1 .
+}
+
+:assertion1 {
+   :platform1 prism:issn "1234-5678" ;
+       schema:name "Imaginary Journal" .
+}
+
+:provenance1 {
+   :assertion1 :creator :author1 ;
+       :created "2022-12-01" .
+}
+
+
+# PAD 2
+:head2 {
+    :pad2 a ppo:PAD ;
+        ppo:hasAssertion  :assertion2 ;
+        ppo:hasProvenance :provenance2 .
+}
+
+:assertion2 {
+   :platform2 prism:issn "1234-5678" ;
+       ppo:hasPublisher [ schema:name "ImaginaryPublisher" ] .
+}
+
+:provenance2 {
+   :assertion2 :creator :author2 ;
+       :created "2022-12-02" .
+}
+
+# PAD 1+2
+:head12 {
+    :pad12 a ppo:PAD ;
+        ppo:hasAssertion  :assertion12 ;
+        ppo:hasProvenance :provenance12 .
+}
+
+:assertion12 {
+   :platform2 prism:issn "1234-5678" ;
+       schema:name "Imaginary Journal" ;
+       ppo:hasPublisher [ schema:name "ImaginaryPublisher" ] .
+}
+
+:provenance2 {
+   :assertion2 :creator :author3 ;
+       :created "2022-12-03" .
+       ppo:hasSourcePad :pad1, :pad2 .
+}
+#+end_src
+
+Some considerations:
+- In the first example, =:provenance2= contains the triple =:assertion2 ppo:corrects :pad1=. Of course, there are cases to be made that this should be =:assertion2 ppo:corrects :assertion1= or even =:pad2 :corrects :pad1=. The current reasoning is that the whole of =:pad1= is erroneous, but that the contents of =:assertion2= are the correction. So we only want to override what is the =:assertion2=, not, for instance the contents of =:provenance2=. However, it could well be that any of the other cases are more appropriate (feedback is appreciated).
+  
+
