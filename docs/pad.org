@@ -60,7 +60,7 @@ Some considerations:
 
 This model also gives us the expressiveness to add more than just provenance to our data: it allows us to provide any additional remarks on an assertion. For instance, we can provide a correction on erroneous data in a PAD:
 
-#+begin_src ttl
+#+begin_src trig
 @prefix : <http://journalobservatory.org/example/> .
 @prefix ppo: <http://purl.org/cwts/ppo> .
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
@@ -73,13 +73,13 @@ This model also gives us the expressiveness to add more than just provenance to 
 }
 
 :assertion1 {
-   :platform1 prism:issn "1234-5678" ;
-       schema:name "Imaginary Journal" .
+    :platform1 prism:issn "1234-5678" ;
+        schema:name "Imaginary Journal" .
 }
 
 :provenance1 {
-   :assertion1 :creator :author1 ;
-       :created "2022-12-01" .
+    :assertion1 dcterms:creator :author1 ;
+        dcterms:created "2022-12-01" .
 }
 
 
@@ -91,13 +91,13 @@ This model also gives us the expressiveness to add more than just provenance to 
 }
 
 :assertion2 {
-   :platform2 prism:issn "5678-1234" .
+    :platform2 prism:issn "5678-1234" .
 }
 
 :provenance2 {
-   :assertion2 :creator :author2 ;
-       :created "2022-12-02" ;
-       ppo:corrects :pad1 .
+    :assertion2 dcterms:creator :author2 ;
+        dcterms:created "2022-12-02" ;
+        ppo:corrects :pad1 .
 }
 #+end_src
 
@@ -126,7 +126,7 @@ where {
 
 Another use-case is aggregating, cleaning, completing data from other PADs, while being able to reference the original data:
 
-#+begin_src ttl
+#+begin_src trig
 @prefix : <http://journalobservatory.org/example/> .
 @prefix ppo: <http://purl.org/cwts/ppo> .
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
@@ -139,13 +139,13 @@ Another use-case is aggregating, cleaning, completing data from other PADs, whil
 }
 
 :assertion1 {
-   :platform1 prism:issn "1234-5678" ;
-       schema:name "Imaginary Journal" .
+    :platform1 prism:issn "1234-5678" ;
+        schema:name "Imaginary Journal" .
 }
 
 :provenance1 {
-   :assertion1 :creator :author1 ;
-       :created "2022-12-01" .
+    :assertion1 dcterms:creator :author1 ;
+        dcterms:created "2022-12-01" .
 }
 
 
@@ -157,13 +157,13 @@ Another use-case is aggregating, cleaning, completing data from other PADs, whil
 }
 
 :assertion2 {
-   :platform2 prism:issn "1234-5678" ;
-       ppo:hasPublisher [ schema:name "ImaginaryPublisher" ] .
+    :platform2 prism:issn "1234-5678" ;
+        ppo:hasPublisher [ schema:name "ImaginaryPublisher" ] .
 }
 
 :provenance2 {
-   :assertion2 :creator :author2 ;
-       :created "2022-12-02" .
+    :assertion2 dcterms:creator :author2 ;
+        dcterms:created "2022-12-02" .
 }
 
 # PAD 1+2
@@ -174,15 +174,15 @@ Another use-case is aggregating, cleaning, completing data from other PADs, whil
 }
 
 :assertion12 {
-   :platform2 prism:issn "1234-5678" ;
-       schema:name "Imaginary Journal" ;
-       ppo:hasPublisher [ schema:name "ImaginaryPublisher" ] .
+    :platform2 prism:issn "1234-5678" ;
+        schema:name "Imaginary Journal" ;
+        ppo:hasPublisher [ schema:name "ImaginaryPublisher" ] .
 }
 
 :provenance2 {
-   :assertion2 :creator :author3 ;
-       :created "2022-12-03" .
-       ppo:hasSourcePad :pad1, :pad2 .
+    :assertion2 dcterms:creator :author3 ;
+        dcterms:created "2022-12-03" .
+        ppo:hasSourcePad :pad1, :pad2 .
 }
 #+end_src
 
