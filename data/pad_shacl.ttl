@@ -28,15 +28,45 @@ sh:PADShape a sh:NodeShape ;
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:hasAssertion ;
-        sh:class ppo:Assertion ;
+        # sh:class ppo:Assertion ;
         sh:minCount 1 ;
         sh:maxCount 1 
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:hasProvenance ;
-        sh:class ppo:Provenance ;
+        # sh:class ppo:Provenance ;
         sh:minCount 1 ;
         sh:maxCount 1 
     ] .
 
+sh:PlatformShape a sh:NodeShape ;
+    sh:targetClass ppo:Platform ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:identifier ;
+        sh:minCount 1
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasPolicy ;
+        sh:class ppo:Policy ;
+    ] ;
+.
+
+sh:AssertionShape a sh:NodeShape ;
+    sh:targetClass ppo:Platform ;
+    sh:targetObjectsOf ppo:hasAssertion ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:creator ;
+        sh:class dcterms:Agent ;
+        sh:minCount 1
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:created ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:license ;
+        sh:datatype xsd:IRI ;
+        sh:minCount 1
+    ] .
 
