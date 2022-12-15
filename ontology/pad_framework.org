@@ -1,0 +1,143 @@
+#+property: header-args :tangle pad_framework.ttl
+
+* Namespaces
+
+** Standard
+
+#+begin_src ttl
+@prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+#+end_src
+
+** Creative Commons <<<cc>>>
+
+#+begin_src ttl
+@prefix cc: <http://creativecommons.org/ns#> .
+#+end_src
+
+** Dublin Core terms <<<dcterms>>>
+
+#+begin_src ttl
+@prefix dcterms: <http://purl.org/dc/terms/> .
+#+end_src
+
+** Platform Assertion Document Framework <<<pad>>>
+
+#+begin_src ttl
+@prefix pad: <https://purl.org/cwts/pad/> .
+#+end_src
+
+** XSD <<<xsd>>>
+
+#+begin_src ttl
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+#+end_src
+
+* pad:PAD                                                                     :class:
+
+#+begin_src ttl
+pad:PAD rdfs:subClassOf np:Nanopublication ;
+    rdfs:label "Platform Assertion Document"@en ;
+    rdfs:comment ""@en .
+#+end_src
+
+* pad:Assertion                                                               :class:
+
+#+begin_src ttl
+pad:Assertion rdfs:subClassOf rdfg:Graph ;
+    rdfs:label "Assertion"@en ;
+    rdfs:comment "Graph that contains statements about a platform."@en .
+#+end_src
+
+* pad:Provenance                                                              :class:
+
+#+begin_src ttl
+pad:Provenance rdfs:subClassOf rdfg:Graph ;
+    rdfs:label "Provenance"@en ;
+    rdfs:comment "Graph that contains statements about an Assertion."@en .
+#+end_src
+
+* pad:DocInfo                                                                 :class:
+
+#+begin_src ttl
+pad:PubInfo rdfs:subClassOf rdfg:Graph ;
+    rdfs:label "PADInfo"@en ;
+    rdfs:comment "Graph that contains statements about a Platform Assertion Document."@en .
+#+end_src
+
+* pad:hasAssertion                                                         :property:
+
+#+begin_src ttl
+pad:hasAssertion a owl:FunctionalProperty ;
+    rdfs:domain pad:PAD ;
+    rdfs:range pad:Assertion ;
+    rdfs:label "has Assertion"@en ;
+    rdfs:comment "The property relating a Platform Assertion Document to an Assertion."@en .
+#+end_src
+
+* pad:hasProvenance                                                        :property:
+
+#+begin_src ttl
+pad:hasProvenance a owl:FunctionalProperty ;
+    rdfs:domain pad:PAD ;
+    rdfs:range pad:Provenance ;
+    rdfs:label "has Provenance"@en ;
+    rdfs:comment "The property relating a Platform Assertion Document to the Provenance of the Assertion."@en .
+#+end_src
+
+* pad:hasDocInfo                                                           :property:
+
+#+begin_src ttl
+pad:hasPubInfo a owl:FunctionalProperty ;
+    rdfs:domain pad:PAD ;
+    rdfs:range pad:DocInfo ;
+    rdfs:label ""@en ;
+    rdfs:comment "The property relating a Platform Assertion Document to its PADInfo."@en .
+#+end_src
+
+* pad:sourceCode                                                           :property:
+
+#+begin_src ttl
+pad:hasProvenance a owl:FunctionalProperty ;
+    rdfs:domain pad:PAD ;
+    rdfs:range xsd:IRI ;
+    rdfs:label "source Code"@en ;
+    rdfs:comment "The property relating a Platform Assertion Document to the source code by which it was generated."@en .
+#+end_src
+
+* dcterms:license                                                          :property:
+
+#+begin_src ttl
+dcterms:license a rdf:Property ;
+    rdfs:domain pad:Assertion ;
+    rdfs:range xsd:IRI ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> .
+#+end_src
+
+* cc:license                                                               :property:
+
+#+begin_src ttl
+cc:license rdfs:subPropertyOf dcterms:license .
+#+end_src
+
+* dcterms:created                                                          :property:
+
+#+begin_src ttl
+dcterms:created a rdf:Property ;
+    rdfs:domain pad:Assertion ;
+    rdfs:range xsd:DateTime ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/created> .
+#+end_src
+
+* dcterms:creator                                                          :property:
+
+#+begin_src ttl
+dcterms:creator a rdf:Property ;
+    rdfs:domain pad:Assertion ;
+    rdfs:range dcterms:Agent ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/creator> .
+#+end_src
+
