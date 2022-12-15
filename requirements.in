@@ -4,3 +4,5 @@ requests>=2.27.1
 tqdm
 openpyxl
 flask
+marshmallow
+flasgger
