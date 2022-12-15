@@ -1,8 +1,8 @@
 from configparser import ConfigParser
 import requests
 from rdflib import ConjunctiveGraph, Dataset
-from utils.graph import job_graph
-from utils.namespace import PAD, PPO, JobNamespace
+from utils.graph import pad_graph
+from utils.namespace import PAD, PPO, PADNamespaceManager
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from rdflib import BNode
 from utils.utils import ROOT_DIR
@@ -42,7 +42,7 @@ def clear_by_creator(graph, creators):
     query = f"""
     SELECT ?pad
     WHERE {{
-        graph ?docinfo {{ ?pad ppo:hasProvenance ?provenance . }}
+        graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
         graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
         filter (?creator in {", ".join(creators)})
     }}
@@ -73,7 +73,7 @@ def sparql_store(update=False, nm=None):
             query_endpoint=query_endpoint
         )
     graph = Dataset(store=db)
-    graph.namespace_manager = (nm or JobNamespace())
+    graph.namespace_manager = (nm or PADNamespaceManager())
     return graph
 
 
@@ -81,7 +81,7 @@ def add_ontology(graph : ConjunctiveGraph):
     print_verbose("Add ontology")
     ppo_id = PPO.ontology
     pad_id = PAD.ontology
-    batchgraph = job_graph()
+    batchgraph = pad_graph()
     batchgraph.parse(source=f"{ROOT_DIR}/ontology/ppo_ontology.ttl", publicID=ppo_id)
     batchgraph.parse(source=f"{ROOT_DIR}/ontology/pad_framework.ttl", publicID=pad_id)
     graph.update(f"clear graph <{id}>")
@@ -91,7 +91,7 @@ def add_ontology(graph : ConjunctiveGraph):
 def graphdb_add_namespaces(query_endpoint):
     if "/repositories/" in query_endpoint:
         print_verbose("Add namespaces to GraphDB")
-        for prefix, uri in JobNamespace().namespace_bindings().items():
+        for prefix, uri in PADNamespaceManager().namespace_bindings().items():
             if prefix not in ("this", "sub"):
                 url = f"{query_endpoint}/namespaces/{prefix}"
                 requests.put(url, data=uri)

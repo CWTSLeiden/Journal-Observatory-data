@@ -96,10 +96,10 @@ class PADsView(ApiResource):
             abort(500, "error in query")
 
     def get_pads_base(self):
-        total_query = "select (count(*) as ?count) where {?pad a ppo:PAD}"
+        total_query = "select (count(*) as ?count) where {?pad a pad:PAD}"
         query = f"""
             select ?pad
-            where {{ ?pad a ppo:PAD }}
+            where {{ ?pad a pad:PAD }}
             {self.query_limit_offset()}
         """
         return query, total_query
@@ -107,8 +107,8 @@ class PADsView(ApiResource):
     def get_pads_filter(self):
         query_filter = parse_filter_sparql(self.meta.filter)
         base_query = f"""
-            ?pad a ppo:PAD ;
-                ppo:hasAssertion ?assertion ;
+            ?pad a pad:PAD ;
+                pad:hasAssertion ?assertion ;
             ?assertion
                 dcterms:creator ?a_creator ;
                 dcterms:created ?a_created ;

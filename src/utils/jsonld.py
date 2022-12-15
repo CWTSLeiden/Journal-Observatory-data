@@ -1,7 +1,7 @@
 import json
 from pyld import jsonld
 
-jobmap_frame = {
+pad_frame = {
     "job:hasAssertion": {}
 }
 
@@ -10,11 +10,11 @@ def jsonld_frame(infile, outfile=None, frame={}):
         outfile = infile.replace(".json", "_framed.json")
     
     with open(infile, "rb") as f:
-        jobmap = json.load(f)
-    frame = {"@graph": jobmap_frame, "@context": jobmap["@context"]}
-    jobmap_framed = jsonld.frame(jobmap, frame)
+        pad = json.load(f)
+    frame = {"@graph": pad_frame, "@context": pad["@context"]}
+    pad_framed = jsonld.frame(pad, frame)
     with open(outfile, "w") as f:
-        json.dump(jobmap_framed, f, indent=4)
+        json.dump(pad_framed, f, indent=4)
 
 
 def jsonld_strip_uni_p(d):
@@ -63,10 +63,10 @@ def jsonld_strip(infile, outfile=None):
     if not outfile:
         outfile = infile.replace("_framed.json", ".json").replace(".json", "_stripped.json")
     with open(infile, "rb") as f:
-        jobmap = json.load(f)
+        pad = json.load(f)
 
     strip = {}
-    for key, val in jobmap.items():
+    for key, val in pad.items():
         if key not in ("@context", "@id", "@type"):
             strip[jsonld_strip_key(key)] = jsonld_strip_sub(val)
 

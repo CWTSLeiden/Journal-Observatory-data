@@ -3,10 +3,10 @@ import csv
 from tqdm import tqdm as progress
 from utils.namespace import *
 from rdflib.namespace import DCTERMS
-from utils.graph import job_graph
+from utils.graph import pad_graph
 from rdflib import Literal, URIRef
 from rdflib.namespace._RDF import RDF
-from store.convert import jobmap_add_info
+from store.convert import pad_add_creation_docinfo
 from utils.store import sparql_store
 
 def load_issnl_file(bulk_dir):
@@ -46,24 +46,24 @@ def issnl_parse_bulk_file(bulk_dir, identicals=True):
     return store
 
 
-def issnl_tuple_to_jobmap(issnl, issn, date):
-    jobnamespace = JobNamespace()
-    jobmap = job_graph(nm=jobnamespace)
+def issnl_tuple_to_pad(issnl, issn, date):
+    jobnamespace = PADNamespaceManager()
+    pad = pad_graph(nm=jobnamespace)
     platform = URIRef(f"https://issn.org/{issnl}")
-    THIS = jobmap.namespace_manager.THIS[""]
-    SUB = jobmap.namespace_manager.SUB
-    jobmap.add((THIS, RDF.type, PPO.PAD, SUB.docinfo))
-    jobmap.add((THIS, PPO.hasAssertion, SUB.assertion, SUB.docinfo))
-    jobmap.add((THIS, PPO.hasProvenance, SUB.provenance, SUB.docinfo))
+    THIS = pad.namespace_manager.THIS[""]
+    SUB = pad.namespace_manager.SUB
+    pad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))
+    pad.add((THIS, PAD.hasAssertion, SUB.assertion, SUB.docinfo))
+    pad.add((THIS, PAD.hasProvenance, SUB.provenance, SUB.docinfo))
 
-    jobmap.add((SUB.assertion, CC.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
-    jobmap.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=SCHEMA.Date), SUB.provenance))
-    jobmap.add((SUB.assertion, DCTERMS.creator, URIRef("https://issn.org"), SUB.provenance))
+    pad.add((SUB.assertion, CC.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
+    pad.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=SCHEMA.Date), SUB.provenance))
+    pad.add((SUB.assertion, DCTERMS.creator, URIRef("https://issn.org"), SUB.provenance))
     
-    jobmap.add((platform, RDF.type, PPO.Platform, SUB.assertion))
-    jobmap.add((platform, PRISM.issn, Literal(issn), SUB.assertion))
-    jobmap.add((platform, FABIO.hasIssnL, Literal(issnl), SUB.assertion))
-    return jobmap
+    pad.add((platform, RDF.type, PPO.Platform, SUB.assertion))
+    pad.add((platform, PRISM.issn, Literal(issn), SUB.assertion))
+    pad.add((platform, FABIO.hasIssnL, Literal(issnl), SUB.assertion))
+    return pad
 
 
 def dataset_convert_issnl():
@@ -87,11 +87,11 @@ def dataset_convert_issnl():
     number = config.getint("issnl", "limit", fallback=len(bulk))
     if batchsize > number: batchsize = number
     for n in progress(range(0, number, batchsize), unit_scale=batchsize):
-        batchgraph = job_graph()
+        batchgraph = pad_graph()
         for issnl, issn in bulk[n:n+batchsize]:
-            jobmap = issnl_tuple_to_jobmap(issnl, issn, date)
-            jobmap_add_info(jobmap, config)
-            batchgraph.addN(jobmap.quads())
+            pad = issnl_tuple_to_pad(issnl, issn, date)
+            pad_add_creation_docinfo(pad, config)
+            batchgraph.addN(pad.quads())
         sparqlstore.addN(batchgraph.quads())
 
 

@@ -1,6 +1,6 @@
 from rdflib.graph import ConjunctiveGraph
-from utils.graph import job_graph, add_graph_context
-from utils.namespace import JobNamespace, PAD
+from utils.graph import pad_graph, add_graph_context
+from utils.namespace import PADNamespaceManager, PAD
 from flask import render_template, request, abort
 from flask.views import MethodView
 from flask.helpers import make_response
@@ -66,7 +66,7 @@ class PADView(MethodView):
 
     def pad_from_id(self, id, sub=None) -> ConjunctiveGraph:
         id = PAD[id]
-        graph = job_graph(nm=JobNamespace(this=id))
+        graph = pad_graph(nm=PADNamespaceManager(this=id))
         if sub:
             add_graph_context(graph, self.db.get_context(f"{id}/{sub}"))
         else:

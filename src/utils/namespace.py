@@ -22,7 +22,7 @@ WD = Namespace("http://www.wikidata.org/entity/")
 WIKIBASE = Namespace("http://wikiba.se/ontology#")
 
 
-class JobNamespace(NamespaceManager):
+class PADNamespaceManager(NamespaceManager):
     def __init__(self, this=None):
         super().__init__(Graph())
         self.bind("cc", CC)

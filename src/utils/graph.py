@@ -1,5 +1,5 @@
 from rdflib import ConjunctiveGraph, Graph
-from utils.namespace import JobNamespace
+from utils.namespace import PADNamespaceManager
 import re
 
 
@@ -15,9 +15,9 @@ def get_mapping(key, mapping={}, reverse=False):
     return mapping.get(key)
 
 
-def job_graph(id=None, nm=None, store="default"):
+def pad_graph(id=None, nm=None, store="default"):
     graph = ConjunctiveGraph(store=store, identifier=id)
-    graph.namespace_manager = nm or JobNamespace()
+    graph.namespace_manager = nm or PADNamespaceManager()
     return graph
 
 
