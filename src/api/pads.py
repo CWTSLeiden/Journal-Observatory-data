@@ -15,6 +15,62 @@ class PADsView(ApiResource):
         super().__init__()
 
     def post(self):
+        """
+        Get a list of pads, optionally based on a filter.
+        ---
+        tags:
+          - PADs
+        parameters:
+          - name: query
+            in: body
+            required: false
+            schema:
+              id: Query
+              properties:
+                limit:
+                  description: The maximum number of PADs to load
+                  type: integer
+                  default: 10
+                page:
+                  description: Which page of the results to load
+                  type: integer
+                  default: 0
+                filter:
+                  id: Filter
+                  description: A list of string filters.
+                  properties:
+                    key:
+                      type: array
+                      description: |
+                        `key` can be one of:
+                          `a_creator`: Creator of the assertion
+                          `a_created`: Creation date of the assertion
+                          `a_license`: License of the assertion
+                          `p_identifier`: Any identifier of the platform
+                          `p_name`: Name of the platform
+                          `p_organization_name`: Name of any organization belonging to the platform
+                      items:
+                        type: object
+                        properties:
+                          modifier:
+                            type: string
+                            description: |
+                              `modifier` can be one of (`=`, `~`, `!`, `<`, `>`)
+                                `=` means 'is'
+                                `~` means 'contains'
+                                `!` means 'not'
+                                `<` and `>` are only applicable to int and date fields.
+
+                          value:
+                            type: string
+                            description: |
+                              `value` is a string value, if it is an IRI it needs to be in angled brackets (<{value}>)
+        responses:
+          200:
+            description: A list of PADs
+        produces:
+          - application/json
+        """
         args = request.get_json(force=True, silent=True) or dict()
         self.set_args(args)
         return self.get_pads()
@@ -43,10 +99,19 @@ class PADsView(ApiResource):
               A list of string filters.
               Each filter should be of the format `{key}:{modifier}{value}`.
               Filters are separated by a comma (,) which means 'and'.
-                - `key` can be one of (`creator`, `created`, `license`)
-                  prefixed with either `p_` for _provenance_ or `d_` for _docinfo_
-                - `modifier` can be one of (`!`, `<`, `>`)
-                  `!` means 'not', `<` and `>` are only applicable to int and date fields.
+                - `key` can be one of:
+                  `a_creator`: Creator of the assertion
+                  `a_created`: Creation date of the assertion
+                  `a_license`: License of the assertion
+                  `p_identifier`: Any identifier of the platform
+                  `p_name`: Name of the platform
+                  `p_organization_name`: Name of any organization belonging to the platform
+                - `modifier` can be one of (`=`, `~`, `!`, `<`, `>`)
+                  `=` means 'is'
+                  `~` means 'contains'
+                  `!` means 'not'
+                  `<` and `>` are only applicable to int and date fields.
+                - `value` is a string value, if it is an IRI it needs to be in angled brackets (<{value}>)
 
               **example**: _Get all pads created by DOAJ in 2022_
               `a_creator:<https://doaj.org>,a_created:>2022-01-01,a_created:<2022-12-31`
