@@ -25,10 +25,17 @@ api.add_url_rule("/api/pads/<id>", view_func=PADsIdView.as_view("pads_id"))
 @api.errorhandler(401)
 @api.errorhandler(404)
 @api.errorhandler(500)
-@api.errorhandler(ValidationError)
-def validationerrorhandler(e):
+def httperrorhandler(e):
     if request.args.get("format", "") in ("ttl", "trig", "html"):
         return f"<pre>{str(e.description)}</pre>"
     if request.headers.get("Accept", "") in ("text/html"):
         return f"<pre>{str(e.description)}</pre>"
     return jsonify({"message": str(e.description)}), 400
+
+@api.errorhandler(ValidationError)
+def validationerrorhandler(e):
+    if request.args.get("format", "") in ("ttl", "trig", "html"):
+        return f"<pre>{str(e)}</pre>"
+    if request.headers.get("Accept", "") in ("text/html"):
+        return f"<pre>{str(e)}</pre>"
+    return jsonify({"message": str(e)}), 400

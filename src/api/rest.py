@@ -38,12 +38,15 @@ class MetaSchema(Schema):
                     raise ValidationError(f"Modifier contains invalid value: {value}")
             @validates("modifier")
             def validate_modifier(self, value):
-                if value not in ("", "!", "<", ">"):
+                if value not in ("", "!", "<", ">", "=", "~"):
                     raise ValidationError(f"Modifier contains invalid value: {value}")
 
         a_creator = fields.List(fields.Nested(FilterSubSchema), required=False)
         a_created = fields.List(fields.Nested(FilterSubSchema), required=False)
         a_license = fields.List(fields.Nested(FilterSubSchema), required=False)
+        p_identifier = fields.List(fields.Nested(FilterSubSchema), required=False)
+        p_name = fields.List(fields.Nested(FilterSubSchema), required=False)
+        p_organization_name = fields.List(fields.Nested(FilterSubSchema), required=False)
     filter = fields.Nested(FilterSchema, required=False)
     search = fields.Str(required=False)
     limit = fields.Int(required=False, dump_default=10, load_default=10)

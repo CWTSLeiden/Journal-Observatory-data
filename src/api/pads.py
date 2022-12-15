@@ -1,5 +1,4 @@
 from flask import abort, request
-from marshmallow import ValidationError
 from api.rest import ApiResource
 from api.pad import PADView
 from utils.query import get_results
@@ -172,12 +171,15 @@ class PADsView(ApiResource):
     def get_pads_filter(self):
         query_filter = parse_filter_sparql(self.meta.filter)
         base_query = f"""
-            ?pad a pad:PAD ;
-                pad:hasAssertion ?assertion ;
-            ?assertion
-                dcterms:creator ?a_creator ;
-                dcterms:created ?a_created ;
-                dcterms:license ?a_license .
+            ?pad a pad:PAD .
+            ?pad pad:hasAssertion ?assertion .
+            {"?assertion dcterms:creator ?a_creator ." if "?a_creator" in query_filter else ""}
+            {"?assertion dcterms:created ?a_created ." if "?a_created" in query_filter else ""}
+            {"?assertion dcterms:license ?a_license ." if "?a_license" in query_filter else ""}
+            graph ?assertion {{ ?platform a ppo:Platform }}
+            {"?platform dcterms:identifier ?p_identifier ." if "?p_identifier" in query_filter else ""}
+            {"?platform schema:name ?p_name ." if "?p_name" in query_filter else ""}
+            {"?platform ppo:hasOrganization [ schema:name ?p_organization_name ] ." if "?p_organization_name" in query_filter else ""}
             {query_filter}
         """
         query = f"""
@@ -185,6 +187,7 @@ class PADsView(ApiResource):
             where {{{base_query}}}
             {self.query_limit_offset()}
         """
+        print(query)
         total_query = f"select (count(*) as ?count) where {{{base_query}}}"
         return query, total_query
 
@@ -220,9 +223,11 @@ def parse_filter_sparql(filter_dict):
         for value in values:
             val = value.get("value")
             eq = value.get("modifier", "=")
-            neg = "NOT" if eq in ("!") else ""
-            eq = "=" if eq in ("!", "") else eq
-            filters.append(f"FILTER {neg} EXISTS {{ FILTER (?{key} {eq} {sparqlify_string(val)}) }}")
+            if eq in ("~"):
+                filters.append(f"FILTER (contains(lcase(str(?{key})), lcase({sparqlify_string(val)})))")
+            else:
+                eq = "!=" if eq in ("!") else eq
+                filters.append(f"FILTER (?{key} {eq} {sparqlify_string(val)})")
     return " ".join(filters)
 
 
@@ -240,12 +245,11 @@ def parse_filter_dict(filter_string):
     for filter_str in filter_string.split(","):
         key, val = filter_str.split(":", 1)
         filter = {"value": val}
-        if val[0] in ("!", "<", ">") and not val[-1] == ">":
+        if val[0] in ("!", "<", ">", "~") and not val[-1] == ">":
             filter["modifier"] = val[0]
             filter["value"] = val[1:]
         if get_mapping(filter["value"], mapping):
             filter["value"] = f"<{get_mapping(val, mapping)}>"
-
         if not filters.get(key):
             filters[key] = []
         filters[key].append(filter)
