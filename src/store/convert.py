@@ -99,7 +99,7 @@ def jobmap_add_info(jobmap, config):
     jobmap.add((THIS, DCTERMS.license, URIRef(license), SUB.docinfo))
     jobmap.add((THIS, DCTERMS.creator, URIRef(identifier), SUB.docinfo))
     jobmap.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.docinfo))
-    jobmap.add((THIS, PPO.hasDocInfo, SUB.docinfo, SUB.head))
+    jobmap.add((THIS, PPO.hasDocInfo, SUB.docinfo, SUB.docinfo))
     return jobmap
         
 

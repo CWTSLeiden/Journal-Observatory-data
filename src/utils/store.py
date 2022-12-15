@@ -1,9 +1,8 @@
 from configparser import ConfigParser
 import requests
-from rdflib import DCTERMS, RDFS, ConjunctiveGraph, Dataset
-from rdflib.graph import DATASET_DEFAULT_GRAPH_ID
+from rdflib import ConjunctiveGraph, Dataset
 from utils.graph import job_graph
-from utils.namespace import PPO, JobNamespace, CC
+from utils.namespace import PAD, PPO, JobNamespace
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from rdflib import BNode
 from utils.utils import ROOT_DIR
@@ -33,10 +32,9 @@ def clear_default_graph(graph, confirm=False):
 def clear_pads(graph, pads=[]):
     update = ""
     for pad in pads:
-        update += f"drop graph <{pad}#head>; "
-        update += f"drop graph <{pad}#provenance>; "
-        update += f"drop graph <{pad}#assertion>; "
-        update += f"drop graph <{pad}#docinfo>; "
+        update += f"drop graph <{pad}/provenance>; "
+        update += f"drop graph <{pad}/assertion>; "
+        update += f"drop graph <{pad}/docinfo>; "
     graph.update(update)
 
 
@@ -44,7 +42,7 @@ def clear_by_creator(graph, creators):
     query = f"""
     SELECT ?pad
     WHERE {{
-        graph ?head {{ ?pad ppo:hasProvenance ?provenance . }}
+        graph ?docinfo {{ ?pad ppo:hasProvenance ?provenance . }}
         graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
         filter (?creator in {", ".join(creators)})
     }}
@@ -81,9 +79,11 @@ def sparql_store(update=False, nm=None):
 
 def add_ontology(graph : ConjunctiveGraph):
     print_verbose("Add ontology")
-    id = PPO.ontology
+    ppo_id = PPO.ontology
+    pad_id = PAD.ontology
     batchgraph = job_graph()
-    batchgraph.parse(source=f"{ROOT_DIR}/ontology/ontology.ttl", publicID=id)
+    batchgraph.parse(source=f"{ROOT_DIR}/ontology/ppo_ontology.ttl", publicID=ppo_id)
+    batchgraph.parse(source=f"{ROOT_DIR}/ontology/pad_framework.ttl", publicID=pad_id)
     graph.update(f"clear graph <{id}>")
     graph.addN(batchgraph.quads())
 

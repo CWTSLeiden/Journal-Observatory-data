@@ -30,6 +30,7 @@ class JobNamespace(NamespaceManager):
         self.bind("fabio", FABIO)
         self.bind("fc", FC)
         self.bind("issn", ISSN)
+        self.bind("pad", PAD)
         self.bind("ppo", PPO)
         self.bind("loc", LOC)
         self.bind("openalex", OPENALEX)

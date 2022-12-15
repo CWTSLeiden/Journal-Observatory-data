@@ -52,9 +52,9 @@ def issnl_tuple_to_jobmap(issnl, issn, date):
     platform = URIRef(f"https://issn.org/{issnl}")
     THIS = jobmap.namespace_manager.THIS[""]
     SUB = jobmap.namespace_manager.SUB
-    jobmap.add((THIS, RDF.type, PPO.PAD, SUB.head))
-    jobmap.add((THIS, PPO.hasAssertion, SUB.assertion, SUB.head))
-    jobmap.add((THIS, PPO.hasProvenance, SUB.provenance, SUB.head))
+    jobmap.add((THIS, RDF.type, PPO.PAD, SUB.docinfo))
+    jobmap.add((THIS, PPO.hasAssertion, SUB.assertion, SUB.docinfo))
+    jobmap.add((THIS, PPO.hasProvenance, SUB.provenance, SUB.docinfo))
 
     jobmap.add((SUB.assertion, CC.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
     jobmap.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=SCHEMA.Date), SUB.provenance))

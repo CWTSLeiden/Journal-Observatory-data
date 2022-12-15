@@ -5,7 +5,6 @@
      code { font-size: 1.2em }
      section { border-radius: 10px; padding: 1px 5px 1px 20px; margin-bottom: 10px; }
      #prefix { background-color: #fff; padding-left: 0 }
-     #head { background-color: #dddddd; }
      #docinfo { background-color: #fabf23; }
      #provenance { background-color: #e64428; color: #fff }
      #assertion { background-color: #2c9ac5; color: #fff }
@@ -28,7 +27,7 @@
             </div>
         </section>
 
-        {% for sec, section in [('head', head), ('docinfo', docinfo), ('provenance', provenance), ('assertion', assertion)] %}
+        {% for sec, section in [('docinfo', docinfo), ('provenance', provenance), ('assertion', assertion)] %}
         {% if section | trim | length %}
         <input id="{{ sec }}input" class="toggle-input" type="checkbox" checked>
         <section id="{{ sec }}">

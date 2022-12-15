@@ -16,10 +16,11 @@ where {
 
 # Jobmap
 insert {
-    graph sub:head {
-        this: a ppo:PAD ;
-            ppo:hasAssertion sub:assertion ;
-            ppo:hasProvenance sub:provenance .
+    graph sub:docinfo {
+        this: a pad:PAD ;
+            pad:hasProvenance sub:provenance ;
+            pad:hasAssertion sub:assertion ;
+            pad:hasDocInfo sub:docinfo .
     }
 
     graph sub:provenance {

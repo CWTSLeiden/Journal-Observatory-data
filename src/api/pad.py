@@ -70,10 +70,9 @@ class PADView(MethodView):
         if sub:
             add_graph_context(graph, self.db.get_context(f"{id}/{sub}"))
         else:
-            add_graph_context(graph, self.db.get_context(f"{id}/head"))
-            add_graph_context(graph, self.db.get_context(f"{id}/provenance"))
-            add_graph_context(graph, self.db.get_context(f"{id}/assertion"))
             add_graph_context(graph, self.db.get_context(f"{id}/docinfo"))
+            add_graph_context(graph, self.db.get_context(f"{id}/assertion"))
+            add_graph_context(graph, self.db.get_context(f"{id}/provenance"))
         return graph
 
     @staticmethod
@@ -84,13 +83,11 @@ class PADView(MethodView):
             )
         SUB = graph.namespace_manager.SUB
         prefix = strip_prefixes(graph.serialize(format="trig"), invert=True)
-        head = strip_prefixes(graph.get_context(SUB.head).serialize(format="trig"))
         docinfo = strip_prefixes(graph.get_context(SUB.docinfo).serialize(format="trig"))
         provenance = strip_prefixes(graph.get_context(SUB.provenance).serialize(format="trig"))
         assertion = strip_prefixes(graph.get_context(SUB.assertion).serialize(format="trig"))
         return render_template("pad.html",
                                prefix=prefix,
-                               head=head,
                                docinfo=docinfo,
                                provenance=provenance,
                                assertion=assertion)
@@ -123,7 +120,7 @@ class PADSubView(PADView):
               description: Subgraph of the PAD
               in: path
               type: string
-              enum: [head,provenance,docinfo,assertion]
+              enum: [provenance,docinfo,assertion]
               required: true
               default: assertion
             - name: format
