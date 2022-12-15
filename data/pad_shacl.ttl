@@ -12,7 +12,6 @@
 @prefix ppo: <https://purl.org/cwts/ppo/> .
 @prefix pro: <https://purl.org/spar/pro/> .
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
-@prefix np: <http://www.nanopub.org/nschema#> .
 @prefix openalex: <https://openalex.org/> .
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
 @prefix romeo: <https://v2.sherpa.ac.uk/id/> .

@@ -3,20 +3,33 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+
 @prefix cc: <http://creativecommons.org/ns#> .
+
 @prefix doaj: <https://doaj.org/> .
+
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
+
 @prefix dcterms: <http://purl.org/dc/terms/> .
+
 @prefix fabio: <http://purl.org/spar/fabio/> .
+
 @prefix ppo: <https://purl.org/cwts/ppo/> .
+
 @prefix pro: <https://purl.org/spar/pro/> .
+
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
-@prefix np: <http://www.nanopub.org/nschema#> .
+
 @prefix openalex: <https://openalex.org/> .
+
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
+
 @prefix romeo: <https://v2.sherpa.ac.uk/id/> .
+
 @prefix schema: <https://schema.org/> .
+
 @prefix wd: <http://www.wikidata.org/entity/> .
+
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 ppo:Platform a rdfs:Class ;

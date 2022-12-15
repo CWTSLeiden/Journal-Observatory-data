@@ -60,12 +60,6 @@
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
 #+end_src
 
-** Nanopub <np>
-
-#+begin_src ttl
-@prefix np: <http://www.nanopub.org/nschema#> .
-#+end_src
-
 ** OpenAlex <<<openalex>>>
 
 #+begin_src ttl
@@ -293,7 +287,6 @@ ppo:optInBy a rdf:Property ;
     rdfs:label "opt-In By"@en ;
     rdfs:comment "Relation that signifies the permission of persons holding a publishing role for a specific thing to be made publicly accessible."@en .
 #+end_src
-
 
 * Other ontologies
 ** dcterms:license                                                        :property:

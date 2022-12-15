@@ -39,7 +39,7 @@
 * pad:PAD                                                                     :class:
 
 #+begin_src ttl
-pad:PAD rdfs:subClassOf np:Nanopublication ;
+pad:PAD a rdfs:Class ;
     rdfs:label "Platform Assertion Document"@en ;
     rdfs:comment ""@en .
 #+end_src
