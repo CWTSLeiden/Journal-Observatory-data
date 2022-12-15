@@ -91,7 +91,7 @@ class ApiResource(MethodView):
         if self.meta.limit:
             limit_offset += f"limit {self.meta.limit}"
             if self.meta.page:
-                limit_offset += f"limit offset {self.meta.page * self.meta.limit}"
+                limit_offset += f" offset {self.meta.page * self.meta.limit}"
         return limit_offset
 
     def api_return(self):
