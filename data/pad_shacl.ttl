@@ -20,53 +20,268 @@
 @prefix wd: <http://www.wikidata.org/entity/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-sh:PADShape a sh:NodeShape ;
+ppo:PADShape a sh:NodeShape ;
     sh:targetClass ppo:PAD ;
+    sh:nodeKind sh:IRI ;
     sh:not [
         sh:class ppo:Provenance ;
         sh:class ppo:DocInfo
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:hasAssertion ;
-        # sh:class ppo:Assertion ;
+        sh:nodeKind sh:IRI ;
         sh:minCount 1 ;
         sh:maxCount 1 
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:hasProvenance ;
-        # sh:class ppo:Provenance ;
+        sh:nodeKind sh:IRI ;
         sh:minCount 1 ;
         sh:maxCount 1 
     ] .
 
-sh:PlatformShape a sh:NodeShape ;
-    sh:targetClass ppo:Platform ;
-    sh:property [ a sh:PropertyShape ;
-        sh:path dcterms:identifier ;
-        sh:minCount 1
-    ] ;
-    sh:property [ a sh:PropertyShape ;
-        sh:path ppo:hasPolicy ;
-        sh:class ppo:Policy ;
-    ] ;
-.
-
-sh:AssertionShape a sh:NodeShape ;
-    sh:targetClass ppo:Platform ;
+ppo:AssertionShape a sh:NodeShape ;
+    sh:targetClass ppo:Assertion ;
+    sh:nodeKind sh:IRI ;
     sh:targetObjectsOf ppo:hasAssertion ;
     sh:property [ a sh:PropertyShape ;
         sh:path dcterms:creator ;
         sh:class dcterms:Agent ;
+        sh:nodeKind sh:IRI ;
         sh:minCount 1
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path dcterms:created ;
         sh:datatype xsd:dateTime ;
+        sh:nodeKind sh:Literal ;
         sh:minCount 1
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path dcterms:license ;
         sh:datatype xsd:IRI ;
+        sh:nodeKind sh:Literal ;
         sh:minCount 1
     ] .
 
+ppo:PlatformShape a sh:NodeShape ;
+    sh:targetClass ppo:Platform ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:identifier ;
+        sh:nodeKind sh:IRIOrLiteral ;
+        sh:minCount 1
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasOrganization ;
+        sh:class dcterms:Agent ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path schema:url ;
+        sh:datatype xsd:anyURI ;
+        sh:nodeKind sh:IRIOrLiteral ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path schema:name ;
+        sh:datatype xsd:String ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasPolicy ;
+        sh:class ppo:Policy ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] .
+
+ppo:DisseminationPolicyShape a sh:NodeShape ;
+    sh:targetClass ppo:DisseminationPolicy ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:disseminatesVersion ;
+        sh:class ppo:articleVersion ;
+        sh:nodeKind ppo:IRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasPaywall ;
+        sh:datatype xsd:boolean ;
+        sh:nodeKind ppo:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:license ;
+        sh:datatype xsd:anyURI ;
+        sh:nodeKind ppo:IRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasEmbargo ;
+        sh:datatype xsd:duration ;
+        sh:nodeKind ppo:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasCopyrightOwner ;
+        sh:class pro:PublishingRole ;
+        sh:nodeKind ppo:BlankNodeOrIRI ;
+    ] ;
+    .
+
+ppo:ArticleVersionShape a sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:targetClass ppo:ArticleVersion .
+
+ppo:ArticlePublishingChargesShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:ArticlePublishingCharges ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:apc ;
+        sh:datatype xsd:integer ;
+        sh:nodeKind ppo:Literal ;
+        sh:minInclusive 0 ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path schema:priceCurrency ;
+        sh:datatype xsd:string ;
+        sh:nodeKind ppo:Literal ;
+        sh:pattern "[a-z]{2}" ;
+        sh:flags "i" ;  # ignore case
+    ] .
+
+
+ppo:DisseminationElsewherePolicyShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:DisseminationElsewherePolicy ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:disseminationLocation ;
+        sh:class ppo:PlatformType ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:appliesToVersion ;
+        sh:class ppo:articleVersion ;
+        sh:nodeKind sh:IRI ;
+    ] .
+
+ppo:DisseminationElsewherePolicyProhibitedShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:DisseminationElsewherePolicyProhibited ;
+    sh:not [
+        sh:class ppo:DisseminationElsewherePolicyMandatory ;
+        sh:class ppo:DisseminationElsewherePolicyAllowed ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:
+    ] .
+
+ppo:DisseminationElsewherePolicyMandatoryShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:DisseminationElsewherePolicyMandatory ;
+    sh:not [
+        sh:class ppo:DisseminationElsewherePolicyProhibited ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:license ;
+        sh:datatype xsd:anyURI ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasCopyrightOwner ;
+        sh:class pro:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] .
+
+ppo:DisseminationElsewherePolicyAllowedShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:DisseminationElsewherePolicyAllowed ;
+    sh:not [
+        sh:class ppo:DisseminationElsewherePolicyProhibited ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasEmbargo ;
+        sh:datatype xsd:duration ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:disseminationCondition ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path dcterms:license ;
+        sh:datatype xsd:anyURI ;
+        sh:nodeKind sh:IRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasCopyrightOwner ;
+        sh:class pro:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+    .
+
+ppo:EvaluationPolicyShape a sh:NodeShape ;
+    sh:targetClass ppo:EvaluationPolicy ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:postPublicationCommenting ;
+        sh:class xsd:string ;
+        sh:pattern "open|on invitation" ;
+        sh:flags "i" ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:possibleDecision ;
+        sh:class xsd:string ;
+        sh:pattern "accepted|rejected" ;  # TODO
+        sh:flags "" ;
+        sh:nodeKind sh:Literal ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:involves ;
+        sh:class pro:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:hasInitiator ;
+        sh:class pro:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:covers ;
+        sh:class pro:DocumentType ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] .
+
+
+ppo:PublishingRoleShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass pro:PublishingRole ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:anonymousTo ;
+        sh:class ppo:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:interactsWith ;
+        sh:class ppo:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:identityPubliclyAccessible ;
+        sh:class ppo:PublicAccessability ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] .
+
+ppo:DocumentTypeShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:DocumentType ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:documentPubliclyAccessible ;
+        sh:class ppo:PublicAccessability ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] .
+
+ppo:OptInShape a sh:NodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI ;
+    sh:targetClass ppo:OptIn ;
+    sh:property [ a sh:PropertyShape ;
+        sh:path ppo:optInBy ;
+        sh:class pro:PublishingRole ;
+        sh:nodeKind sh:BlankNodeOrIRI ;
+    ] .
