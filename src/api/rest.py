@@ -41,12 +41,9 @@ class MetaSchema(Schema):
                 if value not in ("", "!", "<", ">"):
                     raise ValidationError(f"Modifier contains invalid value: {value}")
 
-        p_creator = fields.List(fields.Nested(FilterSubSchema), required=False)
-        p_created = fields.List(fields.Nested(FilterSubSchema), required=False)
-        p_license = fields.List(fields.Nested(FilterSubSchema), required=False)
-        d_creator = fields.List(fields.Nested(FilterSubSchema), required=False)
-        d_created = fields.List(fields.Nested(FilterSubSchema), required=False)
-        d_license = fields.List(fields.Nested(FilterSubSchema), required=False)
+        a_creator = fields.List(fields.Nested(FilterSubSchema), required=False)
+        a_created = fields.List(fields.Nested(FilterSubSchema), required=False)
+        a_license = fields.List(fields.Nested(FilterSubSchema), required=False)
     filter = fields.Nested(FilterSchema, required=False)
     search = fields.Str(required=False)
     limit = fields.Int(required=False, dump_default=10, load_default=10)

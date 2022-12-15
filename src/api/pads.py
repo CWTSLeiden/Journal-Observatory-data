@@ -49,7 +49,7 @@ class PADsView(ApiResource):
                   `!` means 'not', `<` and `>` are only applicable to int and date fields.
 
               **example**: _Get all pads created by DOAJ in 2022_
-              `p_creator:<https://doaj.org>,p_created:>2022-01-01,p_created:<2022-12-31`
+              `a_creator:<https://doaj.org>,a_created:>2022-01-01,a_created:<2022-12-31`
               
             in: query
             type: string
@@ -109,13 +109,10 @@ class PADsView(ApiResource):
         base_query = f"""
             ?pad a ppo:PAD ;
                 ppo:hasAssertion ?assertion ;
-                dcterms:creator ?d_creator ;
-                dcterms:created ?d_created ;
-                dcterms:license ?d_license .
             ?assertion
-                dcterms:creator ?p_creator ;
-                dcterms:created ?p_created ;
-                dcterms:license ?p_license .
+                dcterms:creator ?a_creator ;
+                dcterms:created ?a_created ;
+                dcterms:license ?a_license .
             {query_filter}
         """
         query = f"""
