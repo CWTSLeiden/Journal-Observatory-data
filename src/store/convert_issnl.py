@@ -1,49 +1,12 @@
-import glob
-import csv
 from tqdm import tqdm as progress
-from utils.namespace import *
-from rdflib.namespace import DCTERMS
+from utils.namespace import PADNamespaceManager, PAD, PPO, DCTERMS, FABIO, PRISM, XSD
 from utils.graph import pad_graph
 from rdflib import Literal, URIRef
 from rdflib.namespace._RDF import RDF
 from store.convert import pad_add_creation_docinfo
 from utils.store import sparql_store
-
-def load_issnl_file(bulk_dir):
-    "Obtain the right file from the bulk import directory."
-    file = glob.glob(f"{bulk_dir}/*ISSN-to-ISSN-L.txt")
-    try:
-        return file[0]
-    except IndexError:
-        print("ISSN-to-ISSN-L.txt file not found. Please obtain it from https://issn.org")
-        print(f"and store it in {bulk_dir}/")
-        return ""
-
-
-def line_to_issnl(line, identicals=True):
-    "Transform a line from the bulk file into a issn-l,issn tuple."
-    if line.get("ISSN") and line.get("ISSN-L"):
-        if not identicals and (line.get("ISSN") == line.get("ISSN-L")):
-            return None
-        return (line.get("ISSN-L"), line.get("ISSN"))
-    return None
-
-
-def issnl_parse_bulk_file(bulk_dir, identicals=True):
-    """
-    Convert the bulk file into a set
-    parameters:
-        identicals: include records in the list where issnl == issn
-    """
-    store = []
-    file = load_issnl_file(bulk_dir)
-    if file and progress:
-        with open(file, "r") as f:
-            for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file"):
-                t = line_to_issnl(line, identicals)
-                if t:
-                    store.append(t)
-    return store
+from store.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
+from os import path
 
 
 def issnl_tuple_to_pad(issnl, issn, date):
@@ -56,8 +19,8 @@ def issnl_tuple_to_pad(issnl, issn, date):
     pad.add((THIS, PAD.hasAssertion, SUB.assertion, SUB.docinfo))
     pad.add((THIS, PAD.hasProvenance, SUB.provenance, SUB.docinfo))
 
-    pad.add((SUB.assertion, CC.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
-    pad.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=SCHEMA.Date), SUB.provenance))
+    pad.add((SUB.assertion, DCTERMS.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
+    pad.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=XSD.date), SUB.provenance))
     pad.add((SUB.assertion, DCTERMS.creator, URIRef("https://issn.org"), SUB.provenance))
     
     pad.add((platform, RDF.type, PPO.Platform, SUB.assertion))
@@ -66,27 +29,14 @@ def issnl_tuple_to_pad(issnl, issn, date):
     return pad
 
 
-def dataset_convert_issnl():
-    from configparser import ConfigParser
-    from utils.utils import ROOT_DIR
-    from os import path
-
-    config = ConfigParser()
-    config.read(f"{ROOT_DIR}/config/job.conf")
-    bulk_dir = config.get("issnl", "bulk_path", fallback="~/issnl")
-
-    file = path.basename(load_issnl_file(bulk_dir))
-    date = f"{file[:4]}-{file[4:6]}-{file[6:8]}"
-
-    if config.getboolean("main", "test", fallback=False):
-        raise(Exception("No test function for convert_issnl"))
-
-    bulk = issnl_parse_bulk_file(bulk_dir, identicals=False)
+def dataset_convert_issnl(file, limit=None, batchsize=100):
+    file_base = path.basename(file)
+    date = f"{file_base[:4]}-{file_base[4:6]}-{file_base[6:8]}"
+    bulk = issnl_parse_bulk_file(file, identicals=False)
     sparqlstore = sparql_store(update=True)
-    batchsize = 500
-    number = config.getint("issnl", "limit", fallback=len(bulk))
-    if batchsize > number: batchsize = number
-    for n in progress(range(0, number, batchsize), unit_scale=batchsize):
+    if not limit: limit = len(bulk)
+    if batchsize > limit: batchsize = limit
+    for n in progress(range(0, limit, batchsize), unit_scale=batchsize):
         batchgraph = pad_graph()
         for issnl, issn in bulk[n:n+batchsize]:
             pad = issnl_tuple_to_pad(issnl, issn, date)
@@ -96,4 +46,12 @@ def dataset_convert_issnl():
 
 
 if __name__ == "__main__":
-    dataset_convert_issnl()
+    from utils.utils import job_config as config
+
+    bulk_dir = config.get("issnl", "bulk_path", fallback="~/issnl")
+    file = get_issnl_file(bulk_dir)
+    number = config.getint("issnl", "limit", fallback=None)
+    batchsize = config.getint("issnl", "batchsize", fallback=500)
+
+    if config.getboolean("main", "test", fallback=False):
+        raise(Exception("No test function for convert_issnl"))

@@ -3,18 +3,7 @@ import json
 import tarfile as tar
 import os
 from datetime import date
-
-def dump_file(file_path, content):
-    """
-    Write results to file, creating a unique name if the path already exists.
-    """
-    file_name, extension = os.path.splitext(file_path)
-    counter = 0
-    while os.path.exists(file_path):
-        counter += 1
-        file_path = f"{file_name}_{counter}{extension}"
-    with open(file_path, "w") as f:
-        json.dump(content, f)
+from bulk import dump_file, compress_data_files
 
 
 def doaj_get_issns(doaj_bibjson):
@@ -74,25 +63,12 @@ def doaj_write_record_to_file(record, destination):
     dump_file(os.path.join(destination, f"{id}.json"), record)
         
 
-def compress_data_files(source, archive):
-    data_dir = os.path.join(source, "data")
-    with tar.open(archive, "w:gz") as t:
-        for root, _, files in os.walk(data_dir):
-            for file in files:
-                t.add(os.path.join(root, file))
-            
-
 if __name__ == "__main__":
-    from configparser import ConfigParser
-    from utils.utils import ROOT_DIR
-
-    config = ConfigParser()
-    config.read(f"{ROOT_DIR}/config/job.conf")
+    from utils.utils import job_config as config
 
     bulk_url = config.get("doaj", "bulk_url", fallback="https://doaj.org/public-data-dump/journal")
     bulk_dir = config.get("doaj", "bulk_path", fallback="~/")
     bulk_import_compress = config.getboolean("doaj", "bulk_compress", fallback=False)
-    verbose = config.getboolean("main", "verbose", fallback=False)
 
     if os.path.exists(bulk_dir):
         print(f"Import directory {bulk_dir} exists")

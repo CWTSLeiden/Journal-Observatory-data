@@ -1,10 +1,7 @@
-from configparser import ConfigParser
-from utils.utils import ROOT_DIR
+from utils.utils import job_config as config
 
 
 def print_verbose(message, end=None):
-    config = ConfigParser()
-    config.read(f"{ROOT_DIR}/config/job.conf")
     if config.getboolean("main", "verbose", fallback=False):
         print(f"VERBOSE: {message}", end=end)
 

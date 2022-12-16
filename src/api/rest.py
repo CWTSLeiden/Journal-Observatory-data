@@ -1,9 +1,9 @@
 from flask.helpers import make_response
 from flask import abort
 from flask.views import MethodView
-from utils.query import debug_urls, get_single_result
 from utils.store import sparql_store
 from marshmallow import Schema, ValidationError, fields, EXCLUDE, post_load, validates, validate
+import json
 
 class ResultsMeta():
     """
@@ -100,10 +100,10 @@ class ApiResource(MethodView):
         self.check_paging()
         try:
             query_result = self.db.query(total_query)
-            total = get_single_result(query_result)
-            if not total:
-                total = 0
-            self.meta.total = int(total)
+            try:
+                self.total = int(query_result[0][0])
+            except IndexError:
+                self.total = 0
             self.check_paging()
         except ValueError:
             print(total_query)
@@ -131,3 +131,11 @@ class ApiResource(MethodView):
             data = debug_urls(data, api.config.get("host", "http://localhost:5000"))
         return make_response(data, 200, {'Content-Type': 'application/json'})
 
+
+def debug_urls(result, debug_url):
+    original_url = "https://journalobservatory.org"
+    if type(result) == dict:
+        string = json.dumps(result)
+        string = string.replace(original_url, debug_url)
+        return json.loads(string)
+    return(result.replace(original_url, debug_url))

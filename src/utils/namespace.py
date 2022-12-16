@@ -1,5 +1,9 @@
 from rdflib import Graph, Namespace
 from rdflib.namespace import NamespaceManager
+from rdflib.namespace._DCTERMS import DCTERMS
+from rdflib.namespace._XSD import XSD
+from rdflib.namespace._RDF import RDF
+from rdflib.namespace._RDFS import RDFS
 from uuid import uuid4 as uuid
 
 
@@ -20,6 +24,10 @@ SCHEMA = Namespace("https://schema.org/")
 STM = Namespace("https://osf.io/7j6ck/")
 WD = Namespace("http://www.wikidata.org/entity/")
 WIKIBASE = Namespace("http://wikiba.se/ontology#")
+DCTERMS = DCTERMS
+XSD = XSD
+RDF = RDF
+RDFS = RDF
 
 
 class PADNamespaceManager(NamespaceManager):
@@ -51,9 +59,3 @@ class PADNamespaceManager(NamespaceManager):
         self.SUB = Namespace(self.THIS + "/")
         self.bind("this", self.THIS)
         self.bind("sub", self.SUB)
-
-    def namespace_bindings(self):
-        bindings = {}
-        for bind, ns in self.namespaces():
-            bindings[bind] = ns
-        return bindings

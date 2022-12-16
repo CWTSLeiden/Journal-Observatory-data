@@ -1,7 +1,6 @@
 from api.pad import PADView
 from api.rest import ApiResource
 from flask import abort, request
-from utils.query import get_results
 import re
 
 
@@ -156,10 +155,12 @@ class PADsView(ApiResource):
         self.check_total(total_query)
         try:
             query_results = self.db.query(query)
-            self.results = get_results(query_results)
         except Exception:
             print(query)  # TODO: for debugging
             abort(500, "error in query")
+        for r in query_results:
+            if len(r) == 1: r = r[0]
+            self.results.append(r)
 
     def get_pads_base(self):
         """

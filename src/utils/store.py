@@ -1,56 +1,18 @@
 from configparser import ConfigParser
-import requests
+from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
+from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from utils.graph import pad_graph
 from utils.namespace import PAD, PPO, PADNamespaceManager
-from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
-from rdflib import BNode
-from utils.utils import ROOT_DIR
 from utils.print import print_verbose
+from utils.utils import ROOT_DIR
+import requests
 
 
 def bnode_to_sparql(node):
     if isinstance(node, BNode):
         return f"<bnode:b{node}>"
     return node.n3()
-
-
-def clear_default_graph(graph, confirm=False):
-    n = graph.__len__()
-    if n:
-        if not confirm:
-            r = input(f"Clear graph {graph.identifier} with {n} triples? y/[n]")
-            confirm = r in ("y", "Y", "yes", "Yes")
-        if confirm:
-            print_verbose(f"Clear graph {graph.identifier}...", end="")
-            graph.update(f"drop all")
-            print_verbose("done")
-    else:
-        print_verbose(f"Graph {graph.identifier} has no triples.")
-
-
-def clear_pads(graph, pads=[]):
-    update = ""
-    for pad in pads:
-        update += f"drop graph <{pad}/provenance>; "
-        update += f"drop graph <{pad}/assertion>; "
-        update += f"drop graph <{pad}/docinfo>; "
-    graph.update(update)
-
-
-def clear_by_creator(graph, creators):
-    query = f"""
-    SELECT ?pad
-    WHERE {{
-        graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
-        graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
-        filter (?creator in {", ".join(creators)})
-    }}
-    """
-    result = graph.query(query)
-    pads = [ p.pad for p in result ]
-    print(f"clear {len(pads)} PADs")
-    clear_pads(graph, pads)
 
 
 def sparql_store(update=False, nm=None):
@@ -77,6 +39,44 @@ def sparql_store(update=False, nm=None):
     return graph
 
 
+def clear_default_graph(graph, confirm=False):
+    n = graph.__len__()
+    if n:
+        if not confirm:
+            r = input(f"Clear graph {graph.identifier} with {n} triples? y/[n]")
+            confirm = r in ("y", "Y", "yes", "Yes")
+        if confirm:
+            print_verbose(f"Clear graph {graph.identifier}...", end="")
+            graph.update(f"drop all")
+            print_verbose("done")
+    else:
+        print_verbose(f"Graph {graph.identifier} has no triples.")
+
+
+def clear_pads(graph, pads=[]):
+    update = ""
+    for pad in pads:
+        update = f"drop graph <{pad}/provenance>; "
+        update += f"drop graph <{pad}/assertion>; "
+        update += f"drop graph <{pad}/docinfo>; "
+    graph.update(update)
+
+
+def clear_by_creator(graph, creators):
+    query = f"""
+    SELECT ?pad
+    WHERE {{
+        graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
+        graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
+        filter (?creator in {", ".join(creators)})
+    }}
+    """
+    result = graph.query(query)
+    pads = [p.pad for p in result]
+    print(f"clear {len(pads)} PADs")
+    clear_pads(graph, pads)
+
+
 def add_ontology(graph : ConjunctiveGraph):
     print_verbose("Add ontology")
     ppo_id = PPO.ontology
@@ -92,7 +92,7 @@ def add_ontology(graph : ConjunctiveGraph):
 def graphdb_add_namespaces(query_endpoint):
     if "/repositories/" in query_endpoint:
         print_verbose("Add namespaces to GraphDB")
-        for prefix, uri in PADNamespaceManager().namespace_bindings().items():
+        for prefix, uri in dict(PADNamespaceManager().namespaces()).items():
             if prefix not in ("this", "sub"):
                 url = f"{query_endpoint}/namespaces/{prefix}"
                 requests.put(url, data=uri)
