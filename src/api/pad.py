@@ -1,12 +1,12 @@
+from flask import render_template, request, abort
+from flask.helpers import make_response
+from flask.views import MethodView
+from rdflib import ConjunctiveGraph
 from rdflib.graph import ConjunctiveGraph
 from utils.graph import pad_graph, add_graph_context
 from utils.namespace import PADNamespaceManager, PAD
-from flask import render_template, request, abort
-from flask.views import MethodView
-from flask.helpers import make_response
 from utils.store import sparql_store
 import json
-from rdflib import ConjunctiveGraph
 
 
 class PADView(MethodView):
@@ -43,7 +43,11 @@ class PADView(MethodView):
         format = request.args.get("format", "json-ld")
         return self.api_return(graph, format)
 
-    def api_return(self, graph : ConjunctiveGraph, format):
+    def api_return(self, graph : ConjunctiveGraph, format : str):
+        """
+        Choose the appropriate path to return the graph and return an
+        api response after some sanity checks.
+        """
         if len(graph) == 0:
             abort(404, "PAD not found")
         if format in ("ttl", "trig"):
@@ -56,6 +60,9 @@ class PADView(MethodView):
     
     @staticmethod
     def header(format="json"):
+        """
+        Construct the appropriate header based on the format parameter.
+        """
         map = {
             "json": "application/json",
             "trig": "text/html",
@@ -65,6 +72,10 @@ class PADView(MethodView):
         return {'Content-Type': map.get(format, "application/json")}
 
     def pad_from_id(self, id, sub=None) -> ConjunctiveGraph:
+        """
+        Extract a PAD or a named graph of a PAD based on its identifier.
+        The identifier should be passed without the url prefix.
+        """
         id = PAD[id]
         graph = pad_graph(nm=PADNamespaceManager(this=id))
         if sub:
@@ -77,6 +88,10 @@ class PADView(MethodView):
 
     @staticmethod
     def api_pad_graphical(graph : ConjunctiveGraph):
+        """
+        Render the PAD as an HTML web-page with some minimal styling
+        based on the 'pad.html' template.
+        """
         def strip_prefixes(text, invert=False):
             return "\n".join(
                 filter(lambda line: ("@prefix" not in line)^invert, text.split("\n"))
@@ -93,13 +108,19 @@ class PADView(MethodView):
                                assertion=assertion)
 
     @staticmethod
-    def api_pad_trig(graph):
+    def api_pad_trig(graph : ConjunctiveGraph):
+        """
+        Render the trig-serialized PAD as a HTML web-page.
+        """
         html = graph.serialize(format='trig')
         html = html.replace("<", "&lt;").replace(">", "&gt;")
         return f"<pre>{html}</pre>"
 
     @staticmethod
     def api_pad_json(graph):
+        """
+        Render the json-ld-serialized PAD as a json-object.
+        """
         json_ld = graph.serialize(format="json-ld", auto_compact=True)
         return json.loads(json_ld)
 
@@ -107,7 +128,7 @@ class PADView(MethodView):
 class PADSubView(PADView):
     def get(self, id, sub):
         """
-        Get the content of a single PAD
+        Get a single graph from a pad.
         ---
         tags: [PAD]
         parameters:
