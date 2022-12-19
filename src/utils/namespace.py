@@ -20,9 +20,10 @@ PRISM = Namespace("http://prismstandard.org/namespaces/basic/2.0/")
 PRO = Namespace("http://purl.org/spar/pro/")
 RDFG = Namespace("http://www.w3.org/2004/03/trix/rdfg-1/")
 ROMEO = Namespace("https://v2.sherpa.ac.uk/id/")
-SCHEMA = Namespace("https://schema.org/")
+SCHEMA = Namespace("http://schema.org/")
 STM = Namespace("https://osf.io/7j6ck/")
 WD = Namespace("http://www.wikidata.org/entity/")
+WDT = Namespace("http://www.wikidata.org/prop/direct/")
 WIKIBASE = Namespace("http://wikiba.se/ontology#")
 DCTERMS = DCTERMS
 XSD = XSD
@@ -49,6 +50,7 @@ class PADNamespaceManager(NamespaceManager):
         self.bind("schema", SCHEMA)
         self.bind("stm", STM)
         self.bind("wd", WD)
+        self.bind("wdt", WDT)
         self.bind("wikibase", WIKIBASE)
         self.bind_this(this=this)
 
