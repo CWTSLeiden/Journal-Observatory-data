@@ -1,0 +1,25 @@
+prefix prism: <http://prismstandard.org/namespaces/basic/2.0/>
+prefix fabio: <http://purl.org/spar/fabio/>
+prefix ppo: <https://purl.org/cwts/ppo/>
+construct {
+  ?journal schema:name ?title ;
+           prism:issn ?issn ;
+           fabio:hasIssnL ?issnl ;
+           ppo:hasOrganization ?publisher ;
+           schema:url ?platform_url ;
+           ?idproperty ?id .
+}
+WHERE {
+  ?journal wdt:P31 wd:Q5633421 ;
+           wdt:P1476 ?title ;
+           wdt:P123 ?publisher ;
+           wdt:P856 ?platform_url ;
+           wdt:P236 ?issn ;
+           wdt:P7363 ?issnl ;
+           wdt:P10283 ?openalexid ;
+           ?idprop ?id .
+  ?idproperty wikibase:propertyType wikibase:ExternalId ;
+        wikibase:directClaim ?idprop . 
+  filter (?journal in (wd:Q2000010))
+}
+LIMIT 100
