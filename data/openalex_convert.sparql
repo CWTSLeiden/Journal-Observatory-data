@@ -55,14 +55,14 @@ where {
 insert {
     graph sub:assertion {
         ?journal ?idtype ?id .
+        ?journal ppo:hasOpenalexId ?journal .
     }
 }
 where {
     ?journal a rdfg:Graph ;
-        openalex:external_identifier ?ids .
-    ?ids ?idtype ?id . 
-    bind(if(?idtype in (openalex:), openalex:id, ?idtype) as ?idtype) .
-    bind(if(?idtype in (wikibase:identifier, fc:identifier, openalex:id), encode_for_uri(iri(?id)), ?id) as ?id) .
+        ?idtype ?id .
+    bind(if(?idtype in (ppo:hasWikidataId, ppo:hasFatcatId), encode_for_uri(iri(?id)), ?id) as ?id) .
+    filter (?idtype in (prism:issn, fabio:hasIssnL, ppo:hasWikidataId, ppo:hasFatcatId))
 }
 
 # Dissemination Policy

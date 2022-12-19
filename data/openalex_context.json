@@ -13,8 +13,8 @@
         "@context": {
             "issn_l": "fabio:hasIssnL",
             "issn": "prism:issn",
-            "wikidata": "wikibase:identifier",
-            "fatcat": "fc:identifier"
+            "wikidata": "ppo:hasWikidataId",
+            "fatcat": "ppo:hasFatcatId"
         }
     },
     "display_name": "openalex:name",
