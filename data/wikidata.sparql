@@ -12,7 +12,8 @@ insert {
     }
 
     graph sub:assertion {
-        ?journal schema:name ?title ;
+        ?journal a ppo:Platform ;
+            schema:name ?title ;
             schema:url ?platform_url ;
             ?pidtype ?pid ;
             ppo:hasWikidataId ?journal ;
@@ -22,15 +23,9 @@ insert {
     }
 }
 WHERE {
-    SERVICE <https://query.wikidata.org/bigdata/namespace/wdq/sparql> {
+    SERVICE <$sparql_endpoint> {
         ?journal wdt:P31 wd:Q5633421 .
-        ?journal schema:dateModified ?date .
-
-        bind(concat("https://journalobservatory.org/pad", uuid()) as ?this)
-        bind(iri(?this) as ?pad)
-        bind(iri(concat(?this, "/docinfo")) as ?docinfo)
-        bind(iri(concat(?this, "/provenance")) as ?provenance)
-        bind(iri(concat(?this, "/assertion")) as ?assertion)
+        ?journal schema1:dateModified ?date .
 
         optional { ?journal wdt:P1476 ?title } .
         optional { ?journal wdt:P856 ?platform_url } .
@@ -60,6 +55,6 @@ WHERE {
                 (wd:Q232932 false)
             }
         }
-        filter (?journal = <replace_journal>)
+        filter (?journal = <$journal_id>)
     }
 }
