@@ -1,12 +1,10 @@
 import json
 import os
 import re
-from store.bulk import dump_file
-from configparser import ConfigParser
+from bulk import dump_file
 from datetime import datetime
 from glob import glob
 from openpyxl import load_workbook
-from utils.utils import ROOT_DIR
 
 
 def clean_val(val, mapping={}):
