@@ -2,16 +2,12 @@ from rdflib import Graph
 from utils.namespace import PADNamespaceManager
 from utils.graph import pad_graph
 from utils.print import print_verbose
-from store.convert import batch_convert, graph_to_pad, read_query_file
+from store.convert import batch_convert, graph_to_pad, pad_add_creation_docinfo, read_query_file, queries_replace
 from utils import job_config as config
 
-def wikidata_journal_list(limit, sparql_endpoint, debug=False, test_item=0):
+def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
     limit_str = f"LIMIT {limit}" if limit else ""
-    offset_str = ""
-    if debug:
-        limit_str = "LIMIT 1"
-        offset_str = f"OFFSET {test_item}"
-
+    offset_str = f"OFFSET {offset}" if offset else ""
     journal_query = f"""
         select ?journal
         where {{ 
@@ -30,13 +26,6 @@ def wikidata_journal_list(limit, sparql_endpoint, debug=False, test_item=0):
     return [item.get('journal') for item in journals]
 
 
-def queries_replace(base_queries : list, replacements : dict):
-    queries = base_queries
-    for key, value in replacements.items():
-        queries = [q.replace(f"${key}", value) for q in queries]
-    return queries
-
-
 def wikidata_journal_to_pad(journal : str, queries : list):
     journal_queries = queries_replace(queries, {"journal_id": journal})
     return graph_to_pad(pad_graph(nm=PADNamespaceManager()), journal_queries)
@@ -46,8 +35,9 @@ def wikidata_journal_convert(journals : list, queries : list, sparql_endpoint, b
     queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
     def record_to_pad(record : str):
         pad = wikidata_journal_to_pad(record, queries)
+        pad = pad_add_creation_docinfo(pad, creator_id)
         return pad
-    batch_convert(journals, record_to_pad, batchsize=batchsize, creator_id=creator_id)
+    batch_convert(journals, record_to_pad, batchsize=batchsize)
 
 
 def convert_wikidata(debug=False):
@@ -63,12 +53,14 @@ def convert_wikidata(debug=False):
     if debug:
         from store.test import dataset_convert_test_write
         item = dataset_config.getint("test_item", fallback=0)
-        journal = wikidata_journal_list(limit, sparql_endpoint, debug, item)[0]
+        journal = wikidata_journal_list(sparql_endpoint, limit=1, offset=item)[0]
         queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
-        pad = wikidata_journal_to_pad(journal, queries)
-        dataset_convert_test_write("wikidata", pad=pad)
-        return True
-    journals = wikidata_journal_list(limit, sparql_endpoint)
+        if journal:
+            pad = wikidata_journal_to_pad(journal, queries)
+            dataset_convert_test_write("wikidata", pad=pad)
+            return pad
+        return False
+    journals = wikidata_journal_list(sparql_endpoint, limit=limit)
     wikidata_journal_convert(journals, queries, sparql_endpoint, batchsize, creator_id)
 
 if __name__ == "__main__":

@@ -79,12 +79,12 @@ def add_ontology(graph : ConjunctiveGraph):
     batchgraph = pad_graph()
     graph.update(f"clear graph <{PPO.ontology}>")
     batchgraph.parse(
-        source=config.get("store", "ppo_ontology")
+        source=config.get("store", "ppo_ontology"),
         publicID=PPO.ontology
     )
     graph.update(f"clear graph <{PAD.ontology}>")
     batchgraph.parse(
-        source=config.get("store", "pad_ontology")
+        source=config.get("store", "pad_ontology"),
         publicID=PAD.ontology
     )
     graph.addN(batchgraph.quads())

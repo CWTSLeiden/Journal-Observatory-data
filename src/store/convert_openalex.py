@@ -12,13 +12,15 @@ def convert_openalex(debug=False):
     files = glob(f"{bulk_path}/data/*.json")
     context = file_to_json(dataset_config.get("context_file"))
     queries = read_query_file(dataset_config.get("convert_file"))
-    limit = dataset_config.getint("limit", fallback=len(files))
+    limit = dataset_config.getint("limit", fallback=None)
     batchsize = dataset_config.getint("batchsize", fallback=100)
     creator_id = config.get("main", "identifier", fallback=None)
 
+    if limit:
+        files = files[:limit]
     if debug:
         from store.test import dataset_convert_test
         item = dataset_config.getint("test_item", fallback=0)
         return dataset_convert_test("openalex", files, context, queries, item, creator_id)
-    json_files_convert(files, context, queries, limit, batchsize, creator_id)
+    json_files_convert(files, context, queries, batchsize, creator_id)
     return True

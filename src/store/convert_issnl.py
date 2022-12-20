@@ -1,7 +1,7 @@
 from bulk.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
 from os import path
 from rdflib import Literal, URIRef
-from store.convert import batch_convert
+from store.convert import batch_convert, pad_add_creation_docinfo
 from utils import job_config as config
 from utils.graph import pad_graph
 from utils.namespace import PADNamespaceManager, PAD, PPO, DCTERMS, FABIO, PRISM, XSD, RDF
@@ -44,9 +44,13 @@ def convert_issnl(debug=False):
     file_base = path.basename(file)
     date = f"{file_base[:4]}-{file_base[4:6]}-{file_base[6:8]}"
     bulk = issnl_parse_bulk_file(file, identicals=False)
+    if limit:
+        bulk = bulk[:limit]
     def record_to_pad(record : tuple[str, str]):
         issnl, issn = record
-        return issnl_tuple_to_pad(issnl, issn, date)
-    batch_convert(bulk, record_to_pad, limit, batchsize, creator_id)
+        pad = issnl_tuple_to_pad(issnl, issn, date)
+        pad = pad_add_creation_docinfo(pad, creator_id)
+        return pad
+    batch_convert(bulk, record_to_pad, batchsize)
     return True
 
