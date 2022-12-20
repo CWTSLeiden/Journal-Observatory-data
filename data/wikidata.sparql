@@ -19,7 +19,9 @@ insert {
             ppo:hasWikidataId ?journal ;
             ppo:hasPaywall ?paywall ;
             ppo:hasOrganization ?publisher .
-        ?publisher a pro:publisher .
+        ?publisher a pro:publisher ;
+            schema:name ?publisher_name ;
+            schema:url ?pubilsher_url .
     }
 }
 WHERE {
@@ -46,6 +48,8 @@ WHERE {
         optional {
             ?journal wdt:P123 ?publisher .
             ?publisher wdt:P31 wd:Q2085381 .
+            optional { ?publisher wdt:P1448 ?publisher_name . } .
+            optional { ?publisher wdt:P856 ?publisher_url . } .
         } .
         optional {
             ?journal wdt:6954 ?onlineaccessstatus .
