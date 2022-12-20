@@ -99,7 +99,7 @@ class ApiResource(MethodView):
         """
         self.check_paging()
         try:
-            query_result = self.db.query(total_query)
+            query_result = list(self.db.query(total_query))
             try:
                 self.total = int(query_result[0][0])
             except IndexError:

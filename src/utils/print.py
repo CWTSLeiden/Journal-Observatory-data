@@ -1,9 +1,9 @@
 from utils.utils import job_config as config
 
 
-def print_verbose(message, end=None):
+def print_verbose(message, **kwargs):
     if config.getboolean("main", "verbose", fallback=False):
-        print(f"VERBOSE: {message}", end=end)
+        print(f"VERBOSE: {message}", **kwargs)
 
 
 def print_graph(graph, max=10):

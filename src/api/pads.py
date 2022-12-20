@@ -269,7 +269,7 @@ def parse_filter_dict(filter_string : str) -> list[dict]:
     for filter_str in filter_string.split(","):
         key, val = filter_str.split(":", 1)
         filter = {"key": key, "value": val}
-        if val[0] in ("!", "<", ">", "~") and not (val[1] == "<" and val[-1] == ">"):
+        if val[0] in ("!", "<", ">", "~") and not (val[0] == "<" and val[-1] == ">"):
             filter["modifier"] = val[0]
             filter["value"] = val[1:]
         filters.append(filter)
