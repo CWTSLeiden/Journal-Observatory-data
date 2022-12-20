@@ -2,8 +2,12 @@ from store.convert import graph_to_pad, batch_convert
 from utils.namespace import PADNamespaceManager
 from pyld import jsonld
 from utils.graph import pad_graph
-from utils.utils import file_to_json
 import json
+
+
+def file_to_json(file):
+    with open(file, "rb") as f:
+        return json.load(f)
 
 
 def add_context(record, context={}):

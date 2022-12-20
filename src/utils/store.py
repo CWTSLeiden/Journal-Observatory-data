@@ -1,11 +1,10 @@
-from configparser import ConfigParser
 from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
 from utils.graph import pad_graph
 from utils.namespace import PAD, PPO, PADNamespaceManager
 from utils.print import print_verbose
-from utils.utils import ROOT_DIR
+from utils import job_config as config
 import requests
 
 
@@ -16,8 +15,6 @@ def bnode_to_sparql(node):
 
 
 def sparql_store(update=False, nm=None):
-    config = ConfigParser()
-    config.read(f"{ROOT_DIR}/config/job.conf")
     query_endpoint = config.get("store", "query")
     update_endpoint = config.get("store", "update")
     if update:
@@ -73,19 +70,23 @@ def clear_by_creator(graph, creators):
     """
     result = graph.query(query)
     pads = [p.pad for p in result]
-    print(f"clear {len(pads)} PADs")
+    print_verbose(f"clear {len(pads)} PADs")
     clear_pads(graph, pads)
 
 
 def add_ontology(graph : ConjunctiveGraph):
     print_verbose("Add ontology")
-    ppo_id = PPO.ontology
-    pad_id = PAD.ontology
     batchgraph = pad_graph()
-    batchgraph.parse(source=f"{ROOT_DIR}/ontology/ppo_ontology.ttl", publicID=ppo_id)
-    batchgraph.parse(source=f"{ROOT_DIR}/ontology/pad_framework.ttl", publicID=pad_id)
-    graph.update(f"clear graph <{ppo_id}>")
-    graph.update(f"clear graph <{pad_id}>")
+    graph.update(f"clear graph <{PPO.ontology}>")
+    batchgraph.parse(
+        source=config.get("store", "ppo_ontology")
+        publicID=PPO.ontology
+    )
+    graph.update(f"clear graph <{PAD.ontology}>")
+    batchgraph.parse(
+        source=config.get("store", "pad_ontology")
+        publicID=PAD.ontology
+    )
     graph.addN(batchgraph.quads())
 
 

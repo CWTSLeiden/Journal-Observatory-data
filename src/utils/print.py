@@ -1,4 +1,4 @@
-from utils.utils import job_config as config
+from utils import job_config as config
 
 
 def print_verbose(message, **kwargs):

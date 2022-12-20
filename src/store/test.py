@@ -1,7 +1,7 @@
-from utils.utils import file_to_json, ROOT_DIR
+from utils import ROOT_DIR
 import json
 from store.convert import graph_to_pad, pad_add_creation_docinfo
-from store.convert_json import json_to_graph
+from store.convert_json import file_to_json, json_to_graph
 
 def dataset_convert_test(dataset, files, context, queries, item, creator_id):
     record = file_to_json(files[item])

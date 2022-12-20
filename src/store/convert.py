@@ -3,7 +3,6 @@ from pyparsing.exceptions import ParseException
 from rdflib import DCTERMS, URIRef, Literal, XSD
 from tqdm import tqdm as progress
 from utils.graph import pad_graph
-from utils.print import print_graph
 from utils.store import sparql_store
 import datetime
 import re

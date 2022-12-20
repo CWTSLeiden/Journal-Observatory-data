@@ -1,9 +1,9 @@
 from rdflib import Graph
 from utils.namespace import PADNamespaceManager
 from utils.graph import pad_graph
-from utils.print import print_graph, print_verbose
-from store.convert import batch_convert, read_query_file
-from utils.utils import job_config as config
+from utils.print import print_verbose
+from store.convert import batch_convert, graph_to_pad, read_query_file
+from utils import job_config as config
 
 def wikidata_journal_list(limit, sparql_endpoint, debug=False, test_item=0):
     limit_str = f"LIMIT {limit}" if limit else ""
@@ -39,15 +39,9 @@ def queries_replace(base_queries : list, replacements : dict):
 
 def wikidata_journal_to_pad(journal : str, queries : list):
     journal_queries = queries_replace(queries, {"journal_id": journal})
-    pad = pad_graph(nm=PADNamespaceManager())
-    for query in journal_queries:
-        try:
-            pad.update(query)
-        except(Exception) as e:
-            print(f"Error during parsing:\n\n{query}\n")
-            raise(e)
-    return pad
+    return graph_to_pad(pad_graph(nm=PADNamespaceManager()), journal_queries)
         
+
 def wikidata_journal_convert(journals : list, queries : list, sparql_endpoint, batchsize, creator_id=None):
     queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
     def record_to_pad(record : str):

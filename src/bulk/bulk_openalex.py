@@ -68,7 +68,7 @@ def openalex_api_bulk(api_conf, destination):
 
 
 if __name__ == "__main__":
-    from utils.utils import job_config as config
+    from utils import job_config as config
 
     email = config.get("main", "email")
     bulk_url = config.get("openalex", "bulk_url", fallback="https://api.openalex.org/venues")

@@ -1,6 +1,6 @@
 from store import convert_doaj , convert_issnl , convert_openalex , convert_publisher_peer_review , convert_sherpa_romeo, convert_wikidata
 from utils.store import clear_default_graph, graphdb_add_namespaces, sparql_store, add_ontology
-from utils.utils import job_config as config
+from utils import job_config as config
 
 if __name__ == "__main__":
     debug = config.getboolean("main", "debug", fallback=False)

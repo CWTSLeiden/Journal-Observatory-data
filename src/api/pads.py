@@ -196,7 +196,6 @@ class PADsView(ApiResource):
             where {{{base_query}}}
             {self.query_limit_offset()}
         """
-        print(query)
         total_query = f"select (count(*) as ?count) where {{{base_query}}}"
         return query, total_query
 

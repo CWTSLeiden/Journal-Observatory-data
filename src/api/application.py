@@ -1,15 +1,12 @@
-from configparser import ConfigParser
 from flasgger import Swagger
 from flask import Flask, request
 from flask.json import jsonify
 from marshmallow import ValidationError
-from utils.utils import ROOT_DIR
+from utils import api_config
 
 # Construct and configure the Flask application
 api = Flask(__name__)
-config = ConfigParser()
-config.read(f"{ROOT_DIR}/config/api.conf")
-api.config.update(dict(config["main"]))
+api.config.update(dict(api_config["main"]))
 
 # Construct and configure the Swagger documentation
 doc_config = {

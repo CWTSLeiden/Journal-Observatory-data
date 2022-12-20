@@ -3,18 +3,6 @@ from utils.namespace import PADNamespaceManager
 import re
 
 
-def get_mapping(key, mapping={}, reverse=False):
-    if reverse:
-        rev_mapping = mapping
-        mapping = {}
-        for k, v in rev_mapping:
-            if type(v) == str:
-                mapping[v] = k
-    if not reverse:
-        key = re.sub("[-/ _]", "", key)
-    return mapping.get(key)
-
-
 def pad_graph(id=None, nm=None, store="default"):
     graph = ConjunctiveGraph(store=store, identifier=id)
     graph.namespace_manager = nm or PADNamespaceManager()

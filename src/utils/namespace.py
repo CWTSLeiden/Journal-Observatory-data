@@ -20,6 +20,7 @@ PRISM = Namespace("http://prismstandard.org/namespaces/basic/2.0/")
 PRO = Namespace("http://purl.org/spar/pro/")
 RDFG = Namespace("http://www.w3.org/2004/03/trix/rdfg-1/")
 ROMEO = Namespace("https://v2.sherpa.ac.uk/id/")
+SCHEMA = Namespace("https://schema.org/")
 SCHEMA1 = Namespace("http://schema.org/")
 STM = Namespace("https://osf.io/7j6ck/")
 WD = Namespace("http://www.wikidata.org/entity/")
@@ -28,7 +29,7 @@ WIKIBASE = Namespace("http://wikiba.se/ontology#")
 DCTERMS = DCTERMS
 XSD = XSD
 RDF = RDF
-RDFS = RDF
+RDFS = RDFS
 
 
 class PADNamespaceManager(NamespaceManager):

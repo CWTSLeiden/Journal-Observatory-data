@@ -64,7 +64,7 @@ def doaj_write_record_to_file(record, destination):
         
 
 if __name__ == "__main__":
-    from utils.utils import job_config as config
+    from utils import job_config as config
 
     bulk_url = config.get("doaj", "bulk_url", fallback="https://doaj.org/public-data-dump/journal")
     bulk_dir = config.get("doaj", "bulk_path", fallback="~/")

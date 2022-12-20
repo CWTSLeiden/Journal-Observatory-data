@@ -106,7 +106,6 @@ class ApiResource(MethodView):
                 self.total = 0
             self.check_paging()
         except ValueError:
-            print(total_query)
             abort(500, "error in query")
 
     def query_limit_offset(self):

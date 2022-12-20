@@ -1,12 +1,11 @@
-from utils.namespace import PADNamespaceManager, PAD, PPO, DCTERMS, FABIO, PRISM, XSD
-from utils.graph import pad_graph
-from rdflib import Literal, URIRef
-from rdflib.namespace._RDF import RDF
-from store.convert import batch_convert
-from utils.print import print_verbose
 from bulk.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
 from os import path
-from utils.utils import job_config as config
+from rdflib import Literal, URIRef
+from store.convert import batch_convert
+from utils import job_config as config
+from utils.graph import pad_graph
+from utils.namespace import PADNamespaceManager, PAD, PPO, DCTERMS, FABIO, PRISM, XSD, RDF
+from utils.print import print_verbose
 
 
 def issnl_tuple_to_pad(issnl, issn, date):

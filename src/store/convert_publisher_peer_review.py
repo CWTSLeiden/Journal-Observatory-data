@@ -1,9 +1,8 @@
 from store.convert import read_query_file
-from store.convert_json import json_files_convert
+from store.convert_json import file_to_json, json_files_convert
 from utils.print import print_verbose
-from utils.utils import job_config as config
+from utils import job_config as config
 from glob import glob
-from utils.utils import file_to_json
 
 def convert_publisher_peer_review(debug=False):
     print_verbose("Convert dataset: publisher_peer_review")
