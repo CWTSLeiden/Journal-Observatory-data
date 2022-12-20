@@ -35,7 +35,7 @@ insert {
     graph sub:assertion {
         ?journal ppo:hasOrganization ?publisher .
         ?publisher a pro:publisher ;
-            schema:name ?publisher . 
+            schema:name ?publisher_name . 
         ?journal ppo:hasOrganization ?society .
         ?society a ppo:Society ;
             schema:name ?society_name .
@@ -54,15 +54,14 @@ where {
 # Identifier
 insert {
     graph sub:assertion {
-        ?journal ?idtype ?id .
+        ?journal ?idtype ?pid .
         ?journal ppo:hasOpenalexId ?journal .
     }
 }
 where {
     ?journal a rdfg:Graph ;
-        ?idtype ?id .
-    bind(if(?idtype in (ppo:hasWikidataId, ppo:hasFatcatId), encode_for_uri(iri(?id)), ?id) as ?id) .
-    filter (?idtype in (prism:issn, fabio:hasIssnL, ppo:hasWikidataId, ppo:hasFatcatId))
+        openalex:external_identifier [ ?idtype ?id ] .
+    bind(if(?idtype in (ppo:hasWikidataId, ppo:hasFatcatId, ppo:hasOpenalexId), iri(?id), ?id) as ?pid) .
 }
 
 # Dissemination Policy

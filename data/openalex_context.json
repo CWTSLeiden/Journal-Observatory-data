@@ -14,7 +14,8 @@
             "issn_l": "fabio:hasIssnL",
             "issn": "prism:issn",
             "wikidata": "ppo:hasWikidataId",
-            "fatcat": "ppo:hasFatcatId"
+            "fatcat": "ppo:hasFatcatId",
+            "openalex": "ppo:hasOpenalexId"
         }
     },
     "display_name": "openalex:name",
