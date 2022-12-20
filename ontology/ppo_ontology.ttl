@@ -139,6 +139,27 @@ ppo:optInBy a rdf:Property ;
     rdfs:label "opt-In By"@en ;
     rdfs:comment "Relation that signifies the permission of persons holding a publishing role for a specific thing to be made publicly accessible."@en .
 
+ppo:hasOpenalexId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label ""@en ;
+    rdfs:comment ""@en .
+
+ppo:hasFatcatId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label ""@en ;
+    rdfs:comment ""@en .
+
+ppo:hasWikidataId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label ""@en ;
+    rdfs:comment ""@en .
+
 dcterms:license a rdf:Property ;
     rdfs:domain ppo:Assertion ;
     rdfs:range xsd:IRI ;
@@ -191,13 +212,6 @@ prism:doi a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
     rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
-
-openalex:venueId a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:anyURI ;
     rdfs:label ""@en ;
     rdfs:comment ""@en .
 

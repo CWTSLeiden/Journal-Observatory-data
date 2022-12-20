@@ -288,6 +288,39 @@ ppo:optInBy a rdf:Property ;
     rdfs:comment "Relation that signifies the permission of persons holding a publishing role for a specific thing to be made publicly accessible."@en .
 #+end_src
 
+** ppo:hasOpenalexId                                                      :property:
+
+#+begin_src ttl
+ppo:hasOpenalexId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label ""@en ;
+    rdfs:comment ""@en .
+#+end_src
+
+** ppo:hasFatcatId                                                        :property:
+
+#+begin_src ttl
+ppo:hasFatcatId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label ""@en ;
+    rdfs:comment ""@en .
+#+end_src
+
+** ppo:hasWikidataId                                                      :property:
+
+#+begin_src ttl
+ppo:hasWikidataId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label ""@en ;
+    rdfs:comment ""@en .
+#+end_src
+
 * Other ontologies
 ** dcterms:license                                                        :property:
 
@@ -380,17 +413,6 @@ prism:doi a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
     rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
-#+end_src
-
-** openalex:venueId                                                       :property:
-
-#+begin_src ttl
-openalex:venueId a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:anyURI ;
     rdfs:label ""@en ;
     rdfs:comment ""@en .
 #+end_src
