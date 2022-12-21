@@ -8,10 +8,10 @@ def convert_publisher_peer_review(debug=False):
     print_verbose("Convert dataset: publisher_peer_review")
     dataset_config = config["publisher_peer_review"]
 
-    bulk_path = dataset_config.getpath("bulk_path")
-    files = glob(f"{bulk_path}/data/*.json")
-    context = file_to_json(dataset_config.getpath("context_file"))
-    queries = read_query_file(dataset_config.getpath("convert_file"))
+    data_path = dataset_config.getpath("data_path", fallback="data/publisher_peer_review")
+    files = glob(f"{data_path}/data/*.json")
+    context = file_to_json(dataset_config.getpath("context_file", fallback="resources/publisher_peer_review_context.json"))
+    queries = read_query_file(dataset_config.getpath("convert_file", fallback="resources/publisher_peer_review_convert.sparql))
     limit = dataset_config.getint("limit", fallback=None)
     batchsize = dataset_config.getint("batchsize", fallback=100)
     creator_id = config.get("main", "identifier", fallback=None)

@@ -66,14 +66,29 @@ def load_publishers_excel_file(file, mapping={}):
 if __name__ == "__main__":
     from utils import job_config as config
     
-    bulk_path = config.getpath("publisher_peer_review", "bulk_path")
-    files = glob(f"{bulk_path}/xlsx/*.xlsx")
-    data_path = f"{bulk_path}/data"
+    data_location = config.getpath("publisher_peer_review", "data_location", fallback="data/publisher_peer_review/xlsx")
+    data_path = config.getpath("publisher_peer_review", "data_path", fallback="data/publisher_peer_review")
+    files = glob(f"{data_location}/*.xlsx")
+    data_path = f"{data_path}/data"
     os.makedirs(data_path, exist_ok=True)
     
-    mapping_file = config.getpath("publisher_peer_review", "mapping_file")
-    with open(mapping_file) as f:
-        mapping = json.load(f)
+    mapping = {
+        "springer nature": "https://springernature.com",
+        "nature": "https://nature.com",
+        "wiley": "https://wiley.com",
+        "elife": "https://elifesciences.org",
+        "ieee": "https://www.ieee.org",
+        "cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "cc-by": "https://creativecommons.org/licenses/by/4.0",
+        "cc-by-nc": "https://creativecommons.org/licenses/by-nc/4.0",
+        "cc-by-nc-nd": "https://creativecommons.org/licenses/by-nc-nd/4.0",
+        "cc-by-nc-sa": "https://creativecommons.org/licenses/by-nc-sa/4.0",
+        "cc-by-nd": "https://creativecommons.org/licenses/by-nd/4.0",
+        "cc-by-sa": "https://creativecommons.org/licenses/by-sa/4.0",
+        "doaj": "https://doaj.org",
+        "openalex": "https://openalex.org",
+        "sherparomeo": "https://v2.sherpa.ac.uk"
+    }
     
     for file in files:
         file_name = os.path.basename(file)

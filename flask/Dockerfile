@@ -9,7 +9,6 @@ RUN pip install -r requirements.txt
 # Copy application
 COPY ./src/api /app/src/api
 COPY ./src/utils /app/src/utils
-COPY ./config /app/config
 COPY ./resources /app/resources
 COPY ./flask/start.sh /docker-entrypoint.sh
 

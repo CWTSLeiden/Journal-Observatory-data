@@ -10,7 +10,7 @@ if not ROOT_DIR:
 
 class CustomConfigParser(ConfigParser):
     def getpath(self, section, option, **kwargs):
-        base = self.get("main", "root_dir", fallback=ROOT_DIR)
+        base = os.getenv('APP_ROOT', self.get("main", "root_dir", fallback=ROOT_DIR))
         path = self.get(section, option, **kwargs)
         if len(path) > 0:
             if not path[0] in ("/", "~", "$"):

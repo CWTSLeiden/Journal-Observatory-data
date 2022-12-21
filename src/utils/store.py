@@ -18,9 +18,9 @@ def bnode_to_sparql(node):
 def sparql_store(update=False, nm=None):
     query_endpoint = os.getenv("APP_SPARQL_QUERY_ENDPOINT") or config.get("store", "query")
     if update:
-        update_endpoint = os.getenv("APP_SPARQL_UPDATE_ENDPOINT") or config.get("store", "update")
-        username = config.get("store", "username")
-        password = config.get("store", "password")
+        update_endpoint = os.getenv("APP_SPARQL_UPDATE_ENDPOINT", config.get("store", "update"))
+        username = os.getenv("APP_SPARQL_USERNAME", config.get("store", "username", fallback=""))
+        password = os.getenv("APP_SPARQL_PASSWORD", config.get("store", "password", fallback=""))
         db = SPARQLUpdateStore(
             node_to_sparql=bnode_to_sparql,
             query_endpoint=query_endpoint,
@@ -80,12 +80,12 @@ def add_ontology(graph : ConjunctiveGraph):
     batchgraph = pad_graph()
     graph.update(f"clear graph <{PPO.ontology}>")
     batchgraph.parse(
-        source=config.get("store", "ppo_ontology"),
+        source=config.getpath("store", "ppo_ontology", fallback="ontology/ppo_ontology.ttl"),
         publicID=PPO.ontology
     )
     graph.update(f"clear graph <{PAD.ontology}>")
     batchgraph.parse(
-        source=config.get("store", "pad_ontology"),
+        source=config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
         publicID=PAD.ontology
     )
     graph.addN(batchgraph.quads())

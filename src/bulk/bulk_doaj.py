@@ -66,16 +66,16 @@ def doaj_write_record_to_file(record, destination):
 if __name__ == "__main__":
     from utils import job_config as config
 
-    bulk_url = config.get("doaj", "bulk_url", fallback="https://doaj.org/public-data-dump/journal")
-    bulk_dir = config.getpath("doaj", "bulk_path", fallback="~/")
-    bulk_import_compress = config.getboolean("doaj", "bulk_compress", fallback=False)
+    data_location = config.get("doaj", "data_location", fallback="https://doaj.org/public-data-dump/journal")
+    data_path = config.getpath("doaj", "data_path", fallback="data/doaj")
+    bulk_import_compress = config.getboolean("doaj", "data_compress", fallback=False)
 
-    if os.path.exists(bulk_dir):
-        print(f"Import directory {bulk_dir} exists")
-    os.makedirs(bulk_dir, exist_ok=True)
-    doaj_download_bulk_file(bulk_url, bulk_dir)
-    doaj_parse_bulk_files(bulk_dir)
+    if os.path.exists(data_path):
+        print(f"Import directory {data_path} exists")
+    os.makedirs(data_path, exist_ok=True)
+    doaj_download_bulk_file(data_location, data_path)
+    doaj_parse_bulk_files(data_path)
     if bulk_import_compress:
         datestamp = date.today().strftime("%Y%m%d")
-        data_archive = os.path.join(bulk_dir, f"doaj_{datestamp}.tgz")
-        compress_data_files(bulk_dir, data_archive)
+        data_archive = os.path.join(data_path, f"doaj_{datestamp}.tgz")
+        compress_data_files(data_path, data_archive)

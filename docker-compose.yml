@@ -13,6 +13,8 @@ services:
       context: .
       dockerfile: ./flask/Dockerfile
     container_name: flask
+    volumes:
+      - config:/app/config
     environment:
       - APP_ENVIRONMENT=develop
       - APP_HOST=0.0.0.0

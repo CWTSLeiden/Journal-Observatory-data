@@ -5,13 +5,13 @@ from datetime import date
 from bulk import compress_data_files, dump_file
 
 
-def write_log(bulk_dir, url, limit, cursor, code):
+def write_log(data_path, url, limit, cursor, code):
     """
     Write a line in the log_file in tsv format.
     """
     datestamp = date.today().strftime("%Y%m%d")
     log_file = f"sherpa_romeo_bulk_{datestamp}.tsv"
-    log_dir = os.path.join(bulk_dir, "log")
+    log_dir = os.path.join(data_path, "log")
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, log_file)
     if not os.path.exists(log_path):
@@ -56,7 +56,7 @@ def openalex_api_bulk(api_conf, destination):
         next_cursor, code, results = openalex_api_cursor(api_base=api_url,
                                                          cursor=cursor,
                                                          email=api_email)
-        write_log(bulk_dir, api_url, "200", cursor, code)
+        write_log(data_path, api_url, "200", cursor, code)
         if code == 200 and results:
             print(f"OK: {api_url}?{cursor}")
             openalex_write_records_to_file(data_dir, results)
@@ -70,18 +70,18 @@ def openalex_api_bulk(api_conf, destination):
 if __name__ == "__main__":
     from utils import job_config as config
 
-    email = config.get("main", "email")
-    bulk_url = config.get("openalex", "bulk_url", fallback="https://api.openalex.org/venues")
-    bulk_dir = config.getpath("openalex", "bulk_path", fallback="~/")
-    bulk_import_compress = config.getboolean("openalex", "bulk_compress", fallback=False)
+    email = config.get("main", "email", fallback="")
+    data_location = config.get("openalex", "data_location", fallback="https://api.openalex.org/venues")
+    data_path = config.getpath("openalex", "data_path", fallback="data/openalex")
+    bulk_import_compress = config.getboolean("openalex", "data_compress", fallback=False)
     verbose = config.getboolean("main", "verbose", fallback=False)
 
-    if os.path.exists(bulk_dir):
-        print(f"Import directory {bulk_dir} exists")
-    os.makedirs(bulk_dir, exist_ok=True)
-    api_conf = {"url": bulk_url, "email": email }
-    openalex_api_bulk(api_conf, bulk_dir)
+    if os.path.exists(data_path):
+        print(f"Import directory {data_path} exists")
+    os.makedirs(data_path, exist_ok=True)
+    api_conf = {"url": data_location, "email": email }
+    openalex_api_bulk(api_conf, data_path)
     if bulk_import_compress:
         datestamp = date.today().strftime("%Y%m%d")
-        data_archive = os.path.join(bulk_dir, f"openalex_{datestamp}.tgz")
-        compress_data_files(bulk_dir, data_archive)
+        data_archive = os.path.join(data_path, f"openalex_{datestamp}.tgz")
+        compress_data_files(data_path, data_archive)

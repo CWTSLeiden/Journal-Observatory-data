@@ -32,10 +32,10 @@ def convert_issnl(debug=False):
     print_verbose("Convert dataset: issnl")
     dataset_config = config["issnl"]
 
-    bulk_dir = dataset_config.getpath("bulk_path", fallback="~/issnl")
+    data_path = dataset_config.getpath("data_path", fallback="data/issnl")
     limit = dataset_config.getint("limit", fallback=None)
     batchsize = dataset_config.getint("batchsize", fallback=500)
-    file = get_issnl_file(bulk_dir)
+    file = get_issnl_file(data_path)
     creator_id = config.get("main", "identifier", fallback=None)
 
     if debug:

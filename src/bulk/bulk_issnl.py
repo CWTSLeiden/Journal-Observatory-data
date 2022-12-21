@@ -3,14 +3,14 @@ import csv
 from tqdm import tqdm as progress
 
 
-def get_issnl_file(bulk_dir):
+def get_issnl_file(data_path):
     "Obtain the right file from the bulk import directory."
-    file = glob.glob(f"{bulk_dir}/*ISSN-to-ISSN-L.txt")
+    file = glob.glob(f"{data_path}/*ISSN-to-ISSN-L.txt")
     try:
         return file[0]
     except IndexError:
         print("ISSN-to-ISSN-L.txt file not found. Please obtain it from https://issn.org")
-        print(f"and store it in {bulk_dir}/")
+        print(f"and store it in {data_path}/")
         return ""
 
 

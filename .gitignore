@@ -5,3 +5,5 @@ __pycache__
 *.db
 /test/
 .dir-locals.el
+/data/
+!/data/publisher_peer_review/xlsx

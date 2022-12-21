@@ -6,13 +6,13 @@ from datetime import date
 from bulk import compress_data_files, dump_file
 
 
-def write_log(bulk_dir, url, limit, offset, code):
+def write_log(data_path, url, limit, offset, code):
     """
     Write a line in the log_file in tsv format.
     """
     datestamp = date.today().strftime("%Y%m%d")
     log_file = f"sherpa_romeo_bulk_{datestamp}.tsv"
-    log_dir = os.path.join(bulk_dir, "log")
+    log_dir = os.path.join(data_path, "log")
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, log_file)
     if not os.path.exists(log_path):
@@ -86,7 +86,7 @@ def sherpa_romeo_import_bulk_file_thread(api_conf, destination, limit, offset, o
         print(f"get   items {offset} - {offset + limit}")
         url, code, content = sherpa_romeo_api_bulk(api_conf, limit, offset)
         records = content.get("items")
-        write_log(bulk_dir, url, limit, offset, code)
+        write_log(data_path, url, limit, offset, code)
         if code == 200 and records:
             print(f"write items {offset} - {offset + limit}")
             sherpa_romeo_write_records_to_file(destination, records)
@@ -147,20 +147,20 @@ def sherpa_romeo_get_issns(sherpa_romeo_issns):
 if __name__ == "__main__":
     from utils import job_config as config
 
-    api_base = config.get("sherpa_romeo", "bulk_url", fallback="https://v2.sherpa.ac.uk/cgi")
-    api_key = config.get("sherpa_romeo", "bulk_key", fallback="")
-    bulk_dir = config.getpath("sherpa_romeo", "bulk_path", fallback="~/")
-    bulk_import_compress = config.getboolean("sherpa_romeo", "bulk_compress", fallback=False)
+    api_base = config.get("sherpa_romeo", "data_location", fallback="https://v2.sherpa.ac.uk/cgi")
+    api_key = config.get("sherpa_romeo", "data_password", fallback="")
+    data_path = config.getpath("sherpa_romeo", "data_path", fallback="data/sherpa_romeo")
+    bulk_import_compress = config.getboolean("sherpa_romeo", "data_compress", fallback=False)
     verbose = config.getboolean("main", "verbose", fallback=False)
 
     if not api_key:
         print(f"No API key set.")
-    if os.path.exists(bulk_dir):
-        print(f"Import directory {bulk_dir} exists")
-    os.makedirs(bulk_dir, exist_ok=True)
+    if os.path.exists(data_path):
+        print(f"Import directory {data_path} exists")
+    os.makedirs(data_path, exist_ok=True)
     api_conf = {"url": api_base, "key": api_key}
-    sherpa_romeo_import_bulk_file(api_conf, bulk_dir, limit=100, offset=0, max=-1, thread_count=10)
+    sherpa_romeo_import_bulk_file(api_conf, data_path, limit=100, offset=0, max=-1, thread_count=10)
     if bulk_import_compress:
         datestamp = date.today().strftime("%Y%m%d")
-        data_archive = os.path.join(bulk_dir, f"sherpa_romeo_{datestamp}.tgz")
-        compress_data_files(bulk_dir, data_archive)
+        data_archive = os.path.join(data_path, f"sherpa_romeo_{datestamp}.tgz")
+        compress_data_files(data_path, data_archive)
