@@ -1,3 +1,4 @@
+pyright
 pyld>=2.0.3
 rdflib>=5.0.0
 requests>=2.27.1
@@ -6,3 +7,4 @@ openpyxl
 flask
 marshmallow
 flasgger
+gunicorn

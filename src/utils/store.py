@@ -1,3 +1,4 @@
+import os
 from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
@@ -15,9 +16,9 @@ def bnode_to_sparql(node):
 
 
 def sparql_store(update=False, nm=None):
-    query_endpoint = config.get("store", "query")
-    update_endpoint = config.get("store", "update")
+    query_endpoint = os.getenv("APP_SPARQL_QUERY_ENDPOINT") or config.get("store", "query")
     if update:
+        update_endpoint = os.getenv("APP_SPARQL_UPDATE_ENDPOINT") or config.get("store", "update")
         username = config.get("store", "username")
         password = config.get("store", "password")
         db = SPARQLUpdateStore(

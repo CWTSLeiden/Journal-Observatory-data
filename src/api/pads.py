@@ -157,7 +157,7 @@ class PADsView(ApiResource):
             query_results = self.db.query(query)
         except Exception:
             print(query)  # TODO: for debugging
-            abort(500, "error in query")
+            abort(500, f"error in query {query}")
         for r in query_results:
             if len(r) == 1: r = r[0]
             self.results.append(r)

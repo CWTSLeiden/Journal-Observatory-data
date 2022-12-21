@@ -105,8 +105,9 @@ class ApiResource(MethodView):
             except IndexError:
                 self.total = 0
             self.check_paging()
-        except ValueError:
-            abort(500, "error in query")
+        except ValueError as e:
+            raise(e)
+            # abort(500, f"error in query {total_query}")
 
     def query_limit_offset(self):
         """
@@ -127,14 +128,17 @@ class ApiResource(MethodView):
         data = {"meta": dict(self.meta), "results": self.results}
         from api.application import api
         if api.config.get("DEBUG"):
-            data = debug_urls(data, api.config.get("host", "http://localhost:5000"))
+            data = debug_pad_urls(data)
         return make_response(data, 200, {'Content-Type': 'application/json'})
 
 
-def debug_urls(result, debug_url):
-    original_url = "https://journalobservatory.org"
+def debug_pad_urls(result):
+    import os
+    from utils.namespace import PAD
+    port = os.getenv("APP_PORT") or "5000"
+    debug_url = f"http://localhost:{port}/pad/"
     if type(result) == dict:
         string = json.dumps(result)
-        string = string.replace(original_url, debug_url)
+        string = string.replace(str(PAD), debug_url)
         return json.loads(string)
-    return(result.replace(original_url, debug_url))
+    return(result.replace(str(PAD), debug_url))
