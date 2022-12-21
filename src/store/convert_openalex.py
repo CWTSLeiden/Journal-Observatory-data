@@ -8,10 +8,10 @@ def convert_openalex(debug=False):
     print_verbose("Convert dataset: openalex")
     dataset_config = config["openalex"]
 
-    bulk_path = dataset_config.get("bulk_path")
+    bulk_path = dataset_config.getpath("bulk_path")
     files = glob(f"{bulk_path}/data/*.json")
-    context = file_to_json(dataset_config.get("context_file"))
-    queries = read_query_file(dataset_config.get("convert_file"))
+    context = file_to_json(dataset_config.getpath("context_file"))
+    queries = read_query_file(dataset_config.getpath("convert_file"))
     limit = dataset_config.getint("limit", fallback=None)
     batchsize = dataset_config.getint("batchsize", fallback=100)
     creator_id = config.get("main", "identifier", fallback=None)

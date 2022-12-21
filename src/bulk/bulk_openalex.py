@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     email = config.get("main", "email")
     bulk_url = config.get("openalex", "bulk_url", fallback="https://api.openalex.org/venues")
-    bulk_dir = config.get("openalex", "bulk_path", fallback="~/")
+    bulk_dir = config.getpath("openalex", "bulk_path", fallback="~/")
     bulk_import_compress = config.getboolean("openalex", "bulk_compress", fallback=False)
     verbose = config.getboolean("main", "verbose", fallback=False)
 

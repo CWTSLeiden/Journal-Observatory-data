@@ -66,12 +66,12 @@ def load_publishers_excel_file(file, mapping={}):
 if __name__ == "__main__":
     from utils import job_config as config
     
-    bulk_path = config.get("publisher_peer_review", "bulk_path")
+    bulk_path = config.getpath("publisher_peer_review", "bulk_path")
     files = glob(f"{bulk_path}/xlsx/*.xlsx")
     data_path = f"{bulk_path}/data"
     os.makedirs(data_path, exist_ok=True)
     
-    mapping_file = config.get("publisher_peer_review", "mapping_file")
+    mapping_file = config.getpath("publisher_peer_review", "mapping_file")
     with open(mapping_file) as f:
         mapping = json.load(f)
     

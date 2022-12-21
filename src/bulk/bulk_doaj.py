@@ -67,7 +67,7 @@ if __name__ == "__main__":
     from utils import job_config as config
 
     bulk_url = config.get("doaj", "bulk_url", fallback="https://doaj.org/public-data-dump/journal")
-    bulk_dir = config.get("doaj", "bulk_path", fallback="~/")
+    bulk_dir = config.getpath("doaj", "bulk_path", fallback="~/")
     bulk_import_compress = config.getboolean("doaj", "bulk_compress", fallback=False)
 
     if os.path.exists(bulk_dir):

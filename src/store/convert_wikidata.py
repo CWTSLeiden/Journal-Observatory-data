@@ -46,7 +46,7 @@ def convert_wikidata(debug=False):
 
     sparql_endpoint = dataset_config.get("bulk_url")
     limit = dataset_config.getint("limit", fallback=None)
-    queries = read_query_file(dataset_config.get("convert_file"))
+    queries = read_query_file(dataset_config.getpath("convert_file"))
     batchsize = dataset_config.getint("batchsize", fallback=100)
     creator_id = config.get("main", "identifier", fallback=None)
 

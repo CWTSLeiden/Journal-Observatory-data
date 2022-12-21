@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
     api_base = config.get("sherpa_romeo", "bulk_url", fallback="https://v2.sherpa.ac.uk/cgi")
     api_key = config.get("sherpa_romeo", "bulk_key", fallback="")
-    bulk_dir = config.get("sherpa_romeo", "bulk_path", fallback="~/")
+    bulk_dir = config.getpath("sherpa_romeo", "bulk_path", fallback="~/")
     bulk_import_compress = config.getboolean("sherpa_romeo", "bulk_compress", fallback=False)
     verbose = config.getboolean("main", "verbose", fallback=False)
 
