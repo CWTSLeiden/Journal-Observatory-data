@@ -165,7 +165,7 @@ print(g.serialize(format="turtle").strip())
 }
 #+end_example
 
-=result approach 1=
+=->=
 #+call: jld-to-ttl(approach1)
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
@@ -197,7 +197,7 @@ In theory, we do not need the "nest" key from the example. It has no actual valu
 }
  #+end_example
  
-=result approach 2=
+=->=
 #+call: jld-to-ttl(approach2)
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
@@ -231,7 +231,7 @@ However, because there is no ambiguity using the same key name in a different ne
 }
 #+end_example
 
-=result approach 3=
+=->=
 #+call: jld-to-ttl(approach3)
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
@@ -274,7 +274,7 @@ The "key" property of "nest1" and the key property of "nest2" might have differe
 }
  #+end_example
  
-=result approach 4=
+=->=
 #+call: jld-to-ttl(approach4)
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
