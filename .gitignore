@@ -1,9 +1,10 @@
 *.lock
-/.ipynb_checkpoints/
 *.bkp
 __pycache__
-*.db
-/test/
+test/*
 .dir-locals.el
-/data/
-!/data/publisher_peer_review/xlsx
+.python-version
+data/*
+!data/publisher_peer_review
+data/publisher_peer_review/*
+!data/publisher_peer_review/xlsx/
