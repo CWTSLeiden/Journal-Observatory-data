@@ -45,7 +45,7 @@ Data sources which provide a SPARQL endpoint only need a list of platform identi
 
 ** Api
 
-[[file:docs/job_prototype-PAD Service.drawio.png]]
+[[file:docs/job_prototype-PAD_Service.drawio.png]]
 
 The API module serves PADs over a REST Api endpoint. It is meant to provide simple access to the PADs stored in the triple store, as a limited alternative to the SPARQL endpoint. 
 
