@@ -91,8 +91,8 @@ ppo:PlatformShape a sh:NodeShape ;
         sh:nodeKind sh:BlankNodeOrIRI ;
     ] .
 
-ppo:DisseminationPolicyShape a sh:NodeShape ;
-    sh:targetClass ppo:DisseminationPolicy ;
+ppo:PublicationPolicyShape a sh:NodeShape ;
+    sh:targetClass ppo:PublicationPolicy ;
     sh:nodeKind sh:BlankNodeOrIRI ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:disseminatesVersion ;
@@ -143,11 +143,11 @@ ppo:ArticlePublishingChargesShape a sh:NodeShape ;
     ] .
 
 
-ppo:DisseminationElsewherePolicyShape a sh:NodeShape ;
+ppo:PublicationElsewherePolicyShape a sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:targetClass ppo:DisseminationElsewherePolicy ;
+    sh:targetClass ppo:PublicationElsewherePolicy ;
     sh:property [ a sh:PropertyShape ;
-        sh:path ppo:disseminationLocation ;
+        sh:path ppo:publicationLocation ;
         sh:class ppo:PlatformType ;
         sh:nodeKind sh:BlankNodeOrIRI ;
     ] ;
@@ -157,22 +157,22 @@ ppo:DisseminationElsewherePolicyShape a sh:NodeShape ;
         sh:nodeKind sh:IRI ;
     ] .
 
-ppo:DisseminationElsewherePolicyProhibitedShape a sh:NodeShape ;
+ppo:PublicationElsewherePolicyProhibitedShape a sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:targetClass ppo:DisseminationElsewherePolicyProhibited ;
+    sh:targetClass ppo:PublicationElsewherePolicyProhibited ;
     sh:not [
-        sh:class ppo:DisseminationElsewherePolicyMandatory ;
-        sh:class ppo:DisseminationElsewherePolicyAllowed ;
+        sh:class ppo:PublicationElsewherePolicyMandatory ;
+        sh:class ppo:PublicationElsewherePolicyAllowed ;
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:
     ] .
 
-ppo:DisseminationElsewherePolicyMandatoryShape a sh:NodeShape ;
+ppo:PublicationElsewherePolicyMandatoryShape a sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:targetClass ppo:DisseminationElsewherePolicyMandatory ;
+    sh:targetClass ppo:PublicationElsewherePolicyMandatory ;
     sh:not [
-        sh:class ppo:DisseminationElsewherePolicyProhibited ;
+        sh:class ppo:PublicationElsewherePolicyProhibited ;
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path dcterms:license ;
@@ -185,11 +185,11 @@ ppo:DisseminationElsewherePolicyMandatoryShape a sh:NodeShape ;
         sh:nodeKind sh:BlankNodeOrIRI ;
     ] .
 
-ppo:DisseminationElsewherePolicyAllowedShape a sh:NodeShape ;
+ppo:PublicationElsewherePolicyAllowedShape a sh:NodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:targetClass ppo:DisseminationElsewherePolicyAllowed ;
+    sh:targetClass ppo:PublicationElsewherePolicyAllowed ;
     sh:not [
-        sh:class ppo:DisseminationElsewherePolicyProhibited ;
+        sh:class ppo:PublicationElsewherePolicyProhibited ;
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:hasEmbargo ;
@@ -197,7 +197,7 @@ ppo:DisseminationElsewherePolicyAllowedShape a sh:NodeShape ;
         sh:nodeKind sh:Literal ;
     ] ;
     sh:property [ a sh:PropertyShape ;
-        sh:path ppo:disseminationCondition ;
+        sh:path ppo:publicationCondition ;
         sh:datatype xsd:string ;
         sh:nodeKind sh:Literal ;
     ] ;

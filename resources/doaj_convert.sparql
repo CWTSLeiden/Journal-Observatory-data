@@ -63,11 +63,11 @@ where {
     optional { ?publisher schema:name ?publisher_name } .
 }
 
-# Dissemination Policy
+# Publication Policy
 insert {
     graph sub:assertion {
-        ?journal ppo:hasPolicy sub:disseminationPolicy .
-        sub:disseminationPolicy a ppo:DisseminationPolicy ;
+        ?journal ppo:hasPolicy sub:publicationPolicy .
+        sub:publicationPolicy a ppo:PublicationPolicy ;
             ppo:hasAPC ?apc ;
             ppo:hasCopyrightOwner ?copyright_owner ;
             dcterms:license ?license ;

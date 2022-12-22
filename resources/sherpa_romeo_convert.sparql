@@ -139,11 +139,11 @@ where {
 }
 
 
-# Dissemination Policy
+# Publication Policy
 insert {
     graph sub:assertion {
-        ?romeo_id ppo:hasPolicy ?disseminationpolicy .
-        ?disseminationpolicy a ppo:DisseminationPolicy ;
+        ?romeo_id ppo:hasPolicy ?publicationpolicy .
+        ?publicationpolicy a ppo:PublicationPolicy ;
             ppo:openAccessAllowed ?oaallowed ;
             ppo:hasOpenAccessFee ?oafee ;
             ppo:disseminatesVersion ppo:publishedVersion ;
@@ -159,7 +159,7 @@ where {
     ?journal romeo:hasPublisherPolicy ?publisher_policy .
     ?publisher_policy romeo:hasPermittedOA ?policy .
     ?policy romeo:articleVersion "published" .
-    bind(bnode() as ?disseminationpolicy)
+    bind(bnode() as ?publicationpolicy)
 
     optional { ?policy romeo:oaProhibited ?oaprohibited
         values (?oaprohibited ?oaallowed) {

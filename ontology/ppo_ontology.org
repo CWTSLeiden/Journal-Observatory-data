@@ -121,12 +121,12 @@ ppo:Policy a rdfs:Class ;
     rdfs:comment "A collection of rules and allowances that the platform maintains."@en .
 #+end_src
 
-** ppo:DisseminationPolicy                                                   :class:
+** ppo:PublicationPolicy                                                   :class:
 
 #+begin_src ttl
-ppo:DisseminationPolicy rdfs:subClassOf ppo:Policy ;
-    rdfs:label "Dissemination Policy"@en ;
-    rdfs:comment "Rules and allowances that a platform maintains during the dissemination of a scholarly article."@en .
+ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
+    rdfs:label "Publication Policy"@en ;
+    rdfs:comment "Rules and allowances that a platform maintains during the publication of a scholarly article."@en .
 #+end_src
 
 ** ppo:EvaluationPolicy                                                      :class:
