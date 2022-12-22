@@ -280,7 +280,7 @@ The "key" property of "nest1" and the key property of "nest2" might have differe
 =result approach 4=
 #+call: jld-to-ttl(approach4)
 #+RESULTS:
-#+begin_example ttl
+#+begin_example
 @prefix ex: <https://example.org/> .
 
 ex:example ex:nest1 [ ex:nest1_key "value1" ] ;
