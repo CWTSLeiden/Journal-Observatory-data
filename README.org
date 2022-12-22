@@ -25,7 +25,7 @@ For each data source, the data can be downloaded by setting the appropriate conf
 
 ** Store
 
-[[file:docs/job_prototype-Translation.drawio.png]]
+[[file:docs/img/job_prototype-Translation.drawio.png]]
 
 
 The store module converts platform-data from various sources into separate PADs. Currently, the following sources are supported:
@@ -45,7 +45,7 @@ Data sources which provide a SPARQL endpoint only need a list of platform identi
 
 ** Api
 
-[[file:docs/job_prototype-PAD_Service.drawio.png]]
+[[file:docs/img/job_prototype-PAD_Service.drawio.png]]
 
 The API module serves PADs over a REST Api endpoint. It is meant to provide simple access to the PADs stored in the triple store, as a limited alternative to the SPARQL endpoint. 
 
