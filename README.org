@@ -168,12 +168,12 @@ print(g.serialize(format="turtle").strip())
 =result approach 1=
 #+call: jld-to-ttl(approach1)
 #+RESULTS:
-#+begin_example ttl
+#+begin_src ttl
 @prefix ex: <https://example.org/> .
 
 ex:example ex:nest [ ex:key1 "value1" ;
             ex:key2 "value2" ] .
-#+end_example
+#+end_src
 
 In theory, we do not need the "nest" key from the example. It has no actual value, so the "key1" and "key2" properties could be properties of =ex:example= as well:
 
@@ -201,7 +201,7 @@ In theory, we do not need the "nest" key from the example. It has no actual valu
 =result approach 2=
 #+call: jld-to-ttl(approach2)
 #+RESULTS:
-#+begin_example ttl
+#+begin_example
 @prefix ex: <https://example.org/> .
 
 ex:example ex:nest_key1 "value1" ;
@@ -236,7 +236,7 @@ However, because there is no ambiguity using the same key name in a different ne
 =result approach 3=
 #+call: jld-to-ttl(approach3)
 #+RESULTS:
-#+begin_example ttl
+#+begin_example
 @prefix ex: <https://example.org/> .
 
 ex:example ex:key "value1",
