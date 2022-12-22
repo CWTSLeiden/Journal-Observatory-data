@@ -25,9 +25,6 @@ For each data source, the data can be downloaded by setting the appropriate conf
 
 ** Store
 
-[[file:docs/img/job_prototype-Translation.drawio.png]]
-
-
 The store module converts platform-data from various sources into separate PADs. Currently, the following sources are supported:
 
 - Openalex (JSON, from bulk module result)
@@ -37,6 +34,8 @@ The store module converts platform-data from various sources into separate PADs.
 - ISSNL (CSV, from bulk module result)
 - Wikidata (SPARQL, directly from endpoint)
 
+[[file:docs/img/job_prototype-Translation.drawio.png]]
+
 Translation between JSON data and PADs is relatively easy to extend. The functions in =json_convert.py= provide a generic way to add a context to a JSON document, and then converting the resulting document by providing a SPARQL query which inserts the appropriate graphs.
 
 CSV data is currently handled by converting the data into JSON using a custom script, and then following the same procedure as outlined above. 
@@ -45,9 +44,9 @@ Data sources which provide a SPARQL endpoint only need a list of platform identi
 
 ** Api
 
-[[file:docs/img/job_prototype-PAD_Service.drawio.png]]
-
 The API module serves PADs over a REST Api endpoint. It is meant to provide simple access to the PADs stored in the triple store, as a limited alternative to the SPARQL endpoint. 
+
+[[file:docs/img/job_prototype-PAD_Service.drawio.png]]
 
 The API serves two types of information:
 1. A list of PADs, which can be constructed using some basic filters.
