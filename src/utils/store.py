@@ -6,7 +6,6 @@ from utils.graph import pad_graph
 from utils.namespace import PAD, PPO, PADNamespaceManager
 from utils.print import print_verbose
 from utils import job_config as config
-import requests
 
 
 def bnode_to_sparql(node):
@@ -89,14 +88,3 @@ def add_ontology(graph : ConjunctiveGraph):
         publicID=PAD.ontology
     )
     graph.addN(batchgraph.quads())
-
-
-def graphdb_add_namespaces(query_endpoint):
-    if "/repositories/" in query_endpoint:
-        print_verbose("Add namespaces to GraphDB")
-        for prefix, uri in dict(PADNamespaceManager().namespaces()).items():
-            if prefix not in ("this", "sub"):
-                url = f"{query_endpoint}/namespaces/{prefix}"
-                requests.put(url, data=uri)
-    else:
-        print_verbose("Endpoint is not a GraphDB instance, no namespaces added.")

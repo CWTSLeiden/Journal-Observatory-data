@@ -5,7 +5,8 @@ services:
     image: khaller/graphdb-free
     container_name: graphdb
     volumes:
-      - $HOME/CWTS/Apps/graphdb/databases:/opt/graphdb/data/repositories
+      - ./ontology:/opt/graphdb/ontology
+      # - $HOME/CWTS/Apps/graphdb/databases:/opt/graphdb/data/repositories
     ports:
       - 7200:7200
   pad_api:
@@ -14,7 +15,7 @@ services:
       dockerfile: ./pad_api/Dockerfile
     container_name: pad_api
     volumes:
-      - config:/app/config
+      - ./config:/app/config
     environment:
       - APP_ENVIRONMENT=develop
       - APP_HOST=0.0.0.0
