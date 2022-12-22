@@ -10,7 +10,7 @@ RUN pip install -r requirements.txt
 COPY ./src/api /app/src/api
 COPY ./src/utils /app/src/utils
 COPY ./resources /app/resources
-COPY ./flask/start.sh /docker-entrypoint.sh
+COPY ./pad_api/start.sh /docker-entrypoint.sh
 
 # Start application
 ENTRYPOINT ["/bin/sh", "/docker-entrypoint.sh"]

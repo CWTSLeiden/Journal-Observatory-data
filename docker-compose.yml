@@ -8,11 +8,11 @@ services:
       - $HOME/CWTS/Apps/graphdb/databases:/opt/graphdb/data/repositories
     ports:
       - 7200:7200
-  flask:
+  pad_api:
     build:
       context: .
-      dockerfile: ./flask/Dockerfile
-    container_name: flask
+      dockerfile: ./pad_api/Dockerfile
+    container_name: pad_api
     volumes:
       - config:/app/config
     environment:
