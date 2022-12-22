@@ -92,37 +92,37 @@ docker-compose up pad_api
 
 PADs are not designed to be used independently of each other, as they describe some aspects of a platform. This platform has an identifier, which we picked as the ISSN-L. However, there can be multiple PADs that describe a single platform, therefore the ISSN-L is not suitable for identifying a PAD. There are a few options for PAD identifiers:
 
-1. Blank nodes
+*** 1. Blank nodes
 In RDF, an object or subject in a triple can be a 'blank node', this is a unique identifier that is only usable within the context of that triple store. Most serialization formats obfuscate the actual identifier. Blank nodes are mostly used for the purposes of nesting and ordering of items.
 
 *Pros*:
-Blank nodes can be generated within the SPARQL query that converts the data into PADs. The query stays relatively simple.
+- Blank nodes can be generated within the SPARQL query that converts the data into PADs. The query stays relatively simple.
 *Cons*:
-Because identifiers are generated at random at each step of the query, poorly defined queries can lead to duplication of data. Queries can get relatively complex when trying to work around this duplication.
-When serializing, the data can become hard to read.
-Identifiers do not carry over outside of linked data. There is no url-scheme to refer to the PAD outside of the RDF store.
+- Because identifiers are generated at random at each step of the query, poorly defined queries can lead to duplication of data. Queries can get relatively complex when trying to work around this duplication.
+- When serializing, the data can become hard to read.
+- Identifiers do not carry over outside of linked data. There is no url-scheme to refer to the PAD outside of the RDF store.
 
-2. UUIDs
+*** 2. UUIDs
 A UUID is a random string of letters and numbers, which is extremely unlikely to produce collisions. Combining this with an url-scheme like <https://journalobservatory.org/[UUID]> gives us both a proper identifier and a url to incorporate into the Journal Observatory API.
 
 *Pros*:
-The UUID carries over outside of the context of RDF. The identifier can be used in other data formats.
-The identifier can be generated using SPARQL.
+- The UUID carries over outside of the context of RDF. The identifier can be used in other data formats.
+- The identifier can be generated using SPARQL.
 *Cons*:
-The UUID has no semantic value.
-The UUID needs to be generated before constructing the PAD and injected during the SPARQL query. This can be done using prefixes, but makes constructing the RDF store slightly problematic. Alternatively, the UUID can be generated within the SPARQL query, but this makes constructing the query properly more complex.
+- The UUID has no semantic value.
+- The UUID needs to be generated before constructing the PAD and injected during the SPARQL query. This can be done using prefixes, but makes constructing the RDF store slightly problematic. Alternatively, the UUID can be generated within the SPARQL query, but this makes constructing the query properly more complex.
 
-3. Identifier scheme
+*** 3. Identifier scheme
 When converting the data, we have some properties that are mandatory for creating a PAD: The ISSN-L of the journal that is being asserted, the name of the data-source of the assertion and the timestamp at which moment the assertion was created. Combining this in the following url-schema: <https://journalobservatory.org/[issn-l]/[data-source]/[timestamp]> gives us a proper identifier.
 
 *Pros*:
-The identifier has a semantic value.
-The identifier creates an hierarchical schema for the Journal Observatory API.
-The identifier can be generated using SPARQL.
+- The identifier has a semantic value.
+- The identifier creates an hierarchical schema for the Journal Observatory API.
+- The identifier can be generated using SPARQL.
 *Cons*:
-There is a chance of identifier collisions.
-The identifier is dependent on the quality of its parts (malformed timestamps/issn/etc).
-Adds complexity to the SPARQL query.
+- There is a chance of identifier collisions.
+- The identifier is dependent on the quality of its parts (malformed timestamps/issn/etc).
+- Adds complexity to the SPARQL query.
 ** =@context=
 
 To transform JSON into RDF, generally the only thing that is needed is to add a context. In JSON-LD, this context is just syntactic sugar, it provides short names for identifiers. We can use it to transform JSON into JSON-LD by defining the JSON keys as shortcuts for proper identifiers.
@@ -135,6 +135,7 @@ On of the main uses for JSON is defining nested data. RDF does support nesting, 
 
 See the following example:
 
+=json-ld-to-turtle()=
 #+name: jld-to-ttl
 #+begin_src python :results output :wrap example ttl :var record=approach1
 import json
@@ -146,6 +147,7 @@ g = Graph().parse(data=record, format="json-ld")
 print(g.serialize(format="turtle").strip())
 #+end_src
 
+=approach 1=
 #+name: approach1
 #+begin_example json
 {
@@ -162,6 +164,8 @@ print(g.serialize(format="turtle").strip())
   }
 }
 #+end_example
+
+=result approach 1=
 #+call: jld-to-ttl(approach1)
 #+RESULTS:
 #+begin_example ttl
@@ -173,6 +177,7 @@ ex:example ex:nest [ ex:key1 "value1" ;
 
 In theory, we do not need the "nest" key from the example. It has no actual value, so the "key1" and "key2" properties could be properties of =ex:example= as well:
 
+=approach 2=
 #+name: approach2
 #+begin_example json
 {
@@ -192,8 +197,9 @@ In theory, we do not need the "nest" key from the example. It has no actual valu
   }
 }
  #+end_example
+ 
+=result approach 2=
 #+call: jld-to-ttl(approach2)
-
 #+RESULTS:
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
@@ -204,6 +210,7 @@ ex:example ex:nest_key1 "value1" ;
 
 However, because there is no ambiguity using the same key name in a different nested structure in JSON, this can lead to ambiguity in RDF:
 
+=approach 3=
 #+name: approach3
 #+begin_example json
 {
@@ -225,8 +232,9 @@ However, because there is no ambiguity using the same key name in a different ne
   }
 }
 #+end_example
-#+call: jld-to-ttl(approach3)
 
+=result approach 3=
+#+call: jld-to-ttl(approach3)
 #+RESULTS:
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
@@ -237,6 +245,7 @@ ex:example ex:key "value1",
 
 The "key" property of "nest1" and the key property of "nest2" might have different meanings in the JSON structure, but this meaning is lost in the conversion to RDF. A better way to deal with this is to use 'scoped contexts' to mirror the nested structure of the JSON:
 
+=approach 4=
 #+name: approach4
 #+begin_example json
 {
@@ -267,8 +276,9 @@ The "key" property of "nest1" and the key property of "nest2" might have differe
   }
 }
  #+end_example
+ 
+=result approach 4=
 #+call: jld-to-ttl(approach4)
-
 #+RESULTS:
 #+begin_example ttl
 @prefix ex: <https://example.org/> .
