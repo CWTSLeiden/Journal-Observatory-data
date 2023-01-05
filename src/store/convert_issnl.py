@@ -36,21 +36,25 @@ def convert_issnl(debug=False):
     limit = dataset_config.getint("limit", fallback=None)
     batchsize = dataset_config.getint("batchsize", fallback=500)
     file = get_issnl_file(data_path)
-    creator_id = config.get("main", "identifier", fallback=None)
+    creator_id = config.get("main", "identifier", fallback="")
 
     if debug:
         print_verbose("No test function for convert_issnl")
         return False
     file_base = path.basename(file)
     date = f"{file_base[:4]}-{file_base[4:6]}-{file_base[6:8]}"
-    bulk = issnl_parse_bulk_file(file, identicals=False)
-    if limit:
-        bulk = bulk[:limit]
-    def record_to_pad(record : tuple[str, str]):
-        issnl, issn = record
-        pad = issnl_tuple_to_pad(issnl, issn, date)
-        pad = pad_add_creation_docinfo(pad, creator_id)
-        return pad
-    batch_convert(bulk, record_to_pad, batchsize)
+    try:
+        bulk = issnl_parse_bulk_file(file, identicals=False)
+        if limit:
+            bulk = bulk[:limit]
+        def record_to_pad(record : tuple[str, str]):
+            issnl, issn = record
+            pad = issnl_tuple_to_pad(issnl, issn, date)
+            pad = pad_add_creation_docinfo(pad, creator_id)
+            return pad
+        batch_convert(bulk, record_to_pad, batchsize)
+    except FileNotFoundError:
+        print(f"No file found at {file}")
+        return False
     return True
 

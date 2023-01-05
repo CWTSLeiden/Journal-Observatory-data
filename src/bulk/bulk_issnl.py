@@ -30,11 +30,10 @@ def issnl_parse_bulk_file(file, identicals=True):
         identicals: include records in the list where issnl == issn
     """
     store = []
-    if file and progress:
-        with open(file, "r") as f:
-            for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file"):
-                t = line_to_issnl(line, identicals)
-                if t:
-                    store.append(t)
+    with open(file, "r") as f:
+        for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file"):
+            t = line_to_issnl(line, identicals)
+            if t:
+                store.append(t)
     return store
 

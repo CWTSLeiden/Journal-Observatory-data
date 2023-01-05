@@ -1,3 +1,8 @@
+if __name__ == "__main__":
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 from utils.print import print_verbose
 from store.convert import read_query_file, queries_replace
 from store.convert_sparql import sparql_journal_convert, sparql_journal_to_pad, sparql_platform_list
@@ -9,7 +14,7 @@ def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
         select ?platform
         where {{ 
             service <{sparql_endpoint}> {{
-                ?journal wdt:P31 wd:Q5633421 . 
+                ?platform wdt:P31 wd:Q5633421 . 
             }}
         }}
     """
@@ -37,6 +42,8 @@ def convert_wikidata(debug=False):
             return pad
         return False
     journals = wikidata_journal_list(sparql_endpoint, limit=limit)
+    if len(journals) == 0:
+        raise ValueError(f"No journal records found at {sparql_endpoint}")
     sparql_journal_convert(journals, queries, sparql_endpoint, batchsize, creator_id)
 
 

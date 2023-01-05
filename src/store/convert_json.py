@@ -35,7 +35,7 @@ def json_to_graph(record : dict, context : dict) -> ConjunctiveGraph:
     return graph
 
 
-def json_files_convert(files : list[str], context : dict, queries : list[str], batchsize=100, creator_id=None):
+def json_files_convert(files : list[str], context : dict, queries : list[str], batchsize=100, creator_id=""):
     def file_to_pad(record : str) -> ConjunctiveGraph:
         graph = json_to_graph(file_to_json(record), context)
         pad = graph_to_pad(graph, queries, clean=True)
