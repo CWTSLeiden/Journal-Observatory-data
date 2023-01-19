@@ -3,10 +3,11 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+from rdflib import Dataset
 from utils.print import print_verbose
 from store.convert import read_query_file, queries_replace
 from store.convert_sparql import sparql_journal_convert, sparql_journal_to_pad, sparql_platform_list
-from utils import job_config as config
+from utils import pad_config as config
 
 
 def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
@@ -21,7 +22,7 @@ def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
     return sparql_platform_list(journal_query, limit, offset)
 
 
-def convert_wikidata(debug=False):
+def convert_wikidata(db : Dataset, debug=False):
     print_verbose("Convert dataset: wikidata")
     dataset_config = config["wikidata"]
 
@@ -44,8 +45,9 @@ def convert_wikidata(debug=False):
     journals = wikidata_journal_list(sparql_endpoint, limit=limit)
     if len(journals) == 0:
         raise ValueError(f"No journal records found at {sparql_endpoint}")
-    sparql_journal_convert(journals, queries, sparql_endpoint, batchsize, creator_id)
+    sparql_journal_convert(db, journals, queries, sparql_endpoint, batchsize, creator_id)
 
 
 if __name__ == "__main__":
-    convert_wikidata()
+    from utils.store import sparql_store_config
+    convert_wikidata(sparql_store_config(config, update=True))

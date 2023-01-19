@@ -1,11 +1,10 @@
 from pyparsing.exceptions import ParseException
-from rdflib import DCTERMS, URIRef, Literal, XSD
+from rdflib import DCTERMS, Dataset, URIRef, Literal, XSD
 from rdflib.graph import ConjunctiveGraph
 from tqdm import tqdm as progress
 from typing import TypeVar, Callable
-from utils.graph import pad_graph
 from utils.namespace import PADNamespaceManager, PAD
-from utils.store import sparql_store
+from utils.pad import PADGraph
 import datetime
 import re
 
@@ -74,7 +73,7 @@ def pad_add_creation_docinfo(pad : ConjunctiveGraph, creator_id : str="") -> Con
         
 
 R = TypeVar('R')
-def batch_convert(records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100):
+def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100):
     """
     Meta function to upload data to the SPARQL store.
     Because every addN call to the store is a single HTTP request,
@@ -85,11 +84,10 @@ def batch_convert(records : list[R], record_to_pad : Callable[[R], ConjunctiveGr
     - limit: total number of records to be converted
     - batchsize: number of pads contained in a batch
     """
-    sparqlstore = sparql_store(update=True)
     total = len(records)
     if batchsize > total: batchsize = total
     for n in progress(range(0, total, batchsize), unit_scale=batchsize):
-        batchgraph = pad_graph()
+        batchgraph = PADGraph()
         for record in records[n:n+batchsize]:
             pad = record_to_pad(record)
             batchgraph.addN(pad.quads())

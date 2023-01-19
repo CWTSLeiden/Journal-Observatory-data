@@ -1,10 +1,11 @@
+from glob import glob
+from rdflib import Dataset
 from store.convert import read_query_file
 from store.convert_json import file_to_json, json_files_convert
+from utils import pad_config as config
 from utils.print import print_verbose
-from utils import job_config as config
-from glob import glob
 
-def convert_sherpa_romeo(debug=False):
+def convert_sherpa_romeo(db : Dataset, debug=False):
     print_verbose("Convert dataset: sherpa_romeo")
     dataset_config = config["sherpa_romeo"]
 
@@ -24,5 +25,5 @@ def convert_sherpa_romeo(debug=False):
         from store.test import dataset_convert_test
         item = dataset_config.getint("test_item", fallback=0)
         return dataset_convert_test("sherpa_romeo", files, context, queries, item, creator_id)
-    json_files_convert(files, context, queries, batchsize, creator_id)
+    json_files_convert(db, files, context, queries, batchsize, creator_id)
     return True

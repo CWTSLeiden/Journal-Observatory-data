@@ -1,7 +1,8 @@
 from flask.helpers import make_response
 from flask import abort
 from flask.views import MethodView
-from utils.store import sparql_store
+from utils.store import sparql_store_config
+from utils import pad_config
 from marshmallow import Schema, ValidationError, fields, EXCLUDE, post_load, validates, validate
 import json
 
@@ -77,7 +78,7 @@ class ApiResource(MethodView):
         self.results = []
         self.meta = ResultsMeta()
         self.schema = MetaSchema()
-        self.db = sparql_store()
+        self.db = sparql_store_config(pad_config)
 
     def check_paging(self):
         """

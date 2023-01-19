@@ -3,16 +3,16 @@ from flask.helpers import make_response
 from flask.views import MethodView
 from rdflib import ConjunctiveGraph
 from rdflib.graph import ConjunctiveGraph
-from utils.graph import pad_graph, add_graph_context
-from utils.namespace import PADNamespaceManager, PAD
-from utils.store import sparql_store
+from utils.namespace import PAD
+from utils.pad import PADGraph
+from utils.store import sparql_store_config
+from utils import pad_config
 import json
 
 
 class PADView(MethodView):
     def __init__(self):
-        self.graph = ConjunctiveGraph()
-        self.db = sparql_store()
+        self.db = sparql_store_config(pad_config)
 
     def get(self, id):
         """
@@ -76,15 +76,12 @@ class PADView(MethodView):
         Extract a PAD or a named graph of a PAD based on its identifier.
         The identifier should be passed without the url prefix.
         """
-        id = PAD[id]
-        graph = pad_graph(nm=PADNamespaceManager(this=id))
+        pad = PADGraph(identifier=PAD[id])
         if sub:
-            add_graph_context(graph, self.db.get_context(f"{id}/{sub}"))
+            pad.build(self.db, pad.SUB[sub])
         else:
-            add_graph_context(graph, self.db.get_context(f"{id}/docinfo"))
-            add_graph_context(graph, self.db.get_context(f"{id}/assertion"))
-            add_graph_context(graph, self.db.get_context(f"{id}/provenance"))
-        return graph
+            pad.build(self.db, sub)
+        return pad
 
     @staticmethod
     def api_pad_graphical(graph : ConjunctiveGraph):

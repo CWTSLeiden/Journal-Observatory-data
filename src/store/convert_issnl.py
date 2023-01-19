@@ -1,19 +1,18 @@
 from bulk.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
 from os import path
-from rdflib import Literal, URIRef
+from rdflib import Literal, URIRef, Dataset
 from store.convert import batch_convert, pad_add_creation_docinfo
-from utils import job_config as config
-from utils.graph import pad_graph
-from utils.namespace import PADNamespaceManager, PAD, PPO, DCTERMS, FABIO, PRISM, XSD, RDF
+from utils import pad_config as config
+from utils.namespace import PAD, PPO, DCTERMS, FABIO, PRISM, XSD, RDF
+from utils.pad import PADGraph
 from utils.print import print_verbose
 
 
 def issnl_tuple_to_pad(issnl, issn, date):
-    jobnamespace = PADNamespaceManager()
-    pad = pad_graph(nm=jobnamespace)
+    pad = PADGraph()
     platform = URIRef(f"https://issn.org/{issnl}")
-    THIS = pad.namespace_manager.THIS[""]
-    SUB = pad.namespace_manager.SUB
+    THIS = pad.THIS
+    SUB = pad.SUB
     pad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))
     pad.add((THIS, PAD.hasAssertion, SUB.assertion, SUB.docinfo))
     pad.add((THIS, PAD.hasProvenance, SUB.provenance, SUB.docinfo))
@@ -28,7 +27,7 @@ def issnl_tuple_to_pad(issnl, issn, date):
     return pad
 
 
-def convert_issnl(debug=False):
+def convert_issnl(db : Dataset, debug=False):
     print_verbose("Convert dataset: issnl")
     dataset_config = config["issnl"]
 
@@ -52,7 +51,7 @@ def convert_issnl(debug=False):
             pad = issnl_tuple_to_pad(issnl, issn, date)
             pad = pad_add_creation_docinfo(pad, creator_id)
             return pad
-        batch_convert(bulk, record_to_pad, batchsize)
+        batch_convert(db, bulk, record_to_pad, batchsize)
     except FileNotFoundError:
         print(f"No file found at {file}")
         return False

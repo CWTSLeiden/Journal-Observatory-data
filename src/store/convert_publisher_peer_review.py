@@ -1,10 +1,11 @@
+from glob import glob
+from rdflib import Dataset
 from store.convert import read_query_file
 from store.convert_json import file_to_json, json_files_convert
+from utils import pad_config as config
 from utils.print import print_verbose
-from utils import job_config as config
-from glob import glob
 
-def convert_publisher_peer_review(debug=False):
+def convert_publisher_peer_review(db : Dataset, debug=False):
     print_verbose("Convert dataset: publisher_peer_review")
     dataset_config = config["publisher_peer_review"]
 
@@ -24,5 +25,5 @@ def convert_publisher_peer_review(debug=False):
         from store.test import dataset_convert_test
         item = dataset_config.getint("test_item", fallback=0)
         return dataset_convert_test("publisher_peer_review", files, context, queries, item, creator_id)
-    json_files_convert(files, context, queries, batchsize, creator_id)
+    json_files_convert(db, files, context, queries, batchsize, creator_id)
     return True

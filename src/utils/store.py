@@ -1,11 +1,12 @@
+from configparser import ConfigParser
 import os
 from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
-from utils.graph import pad_graph
 from utils.namespace import PAD, PPO, PADNamespaceManager
+from utils.pad import PADGraph
 from utils.print import print_verbose
-from utils import job_config as config
+from utils import pad_config as config
 
 
 def bnode_to_sparql(node):
@@ -14,17 +15,13 @@ def bnode_to_sparql(node):
     return node.n3()
 
 
-def sparql_store(update=False, nm=None):
-    query_endpoint = os.getenv("APP_SPARQL_QUERY_ENDPOINT") or config.get("store", "query")
-    if update:
-        update_endpoint = os.getenv("APP_SPARQL_UPDATE_ENDPOINT", config.get("store", "update"))
-        username = os.getenv("APP_SPARQL_USERNAME", config.get("store", "username", fallback=""))
-        password = os.getenv("APP_SPARQL_PASSWORD", config.get("store", "password", fallback=""))
+def sparql_store(query_endpoint : str, update_endpoint : str="", credentials=("", "")) -> Dataset:
+    if update_endpoint:
         db = SPARQLUpdateStore(
             node_to_sparql=bnode_to_sparql,
             query_endpoint=query_endpoint,
             update_endpoint=update_endpoint,
-            auth=(username, password)
+            auth=credentials
         )
     else:
         db = SPARQLStore(
@@ -32,8 +29,18 @@ def sparql_store(update=False, nm=None):
             query_endpoint=query_endpoint
         )
     graph = Dataset(store=db)
-    graph.namespace_manager = (nm or PADNamespaceManager())
+    graph.namespace_manager = PADNamespaceManager()
     return graph
+
+
+def sparql_store_config(config : ConfigParser, update=False) -> Dataset:
+    query_endpoint = os.getenv("APP_SPARQL_QUERY_ENDPOINT", config.get("store", "query"))
+    if update:
+        update_endpoint = os.getenv("APP_SPARQL_UPDATE_ENDPOINT", config.get("store", "update"))
+        username = os.getenv("APP_SPARQL_USERNAME", config.get("store", "username", fallback=""))
+        password = os.getenv("APP_SPARQL_PASSWORD", config.get("store", "password", fallback=""))
+        return sparql_store(query_endpoint, update_endpoint, (username, password))
+    return sparql_store(query_endpoint)
 
 
 def clear_default_graph(graph, confirm=False):
@@ -76,7 +83,7 @@ def clear_by_creator(graph, creators):
 
 def add_ontology(graph : ConjunctiveGraph):
     print_verbose("Add ontology")
-    batchgraph = pad_graph()
+    batchgraph = PADGraph()
     graph.update(f"clear graph <{PPO.ontology}>")
     batchgraph.parse(
         source=config.getpath("store", "ppo_ontology", fallback="ontology/ppo_ontology.ttl"),

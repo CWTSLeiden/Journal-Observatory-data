@@ -1,9 +1,11 @@
+from rdflib import Dataset
 from rdflib.graph import ConjunctiveGraph
 from store.convert import graph_to_pad, batch_convert, pad_add_creation_docinfo
 from utils.namespace import PADNamespaceManager
+from utils.pad import PADGraph
 from pyld import jsonld
-from utils.graph import pad_graph
 import json
+
 
 
 def file_to_json(file : str) -> dict :
@@ -28,17 +30,17 @@ def json_to_graph(record : dict, context : dict) -> ConjunctiveGraph:
     """
     Convert a json record to a graph.
     """
-    graph = pad_graph()
+    graph = PADGraph()
     record = add_context(record, context)
     record = jsonld.compact(record, record["@context"])
     graph.parse(data=json.dumps(record), format='json-ld')
     return graph
 
 
-def json_files_convert(files : list[str], context : dict, queries : list[str], batchsize=100, creator_id=""):
+def json_files_convert(db : Dataset, files : list[str], context : dict, queries : list[str], batchsize=100, creator_id=""):
     def file_to_pad(record : str) -> ConjunctiveGraph:
         graph = json_to_graph(file_to_json(record), context)
         pad = graph_to_pad(graph, queries, clean=True)
         pad = pad_add_creation_docinfo(pad, creator_id)
         return pad
-    batch_convert(files, file_to_pad, batchsize)
+    batch_convert(db, files, file_to_pad, batchsize)
