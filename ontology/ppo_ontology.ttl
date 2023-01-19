@@ -68,6 +68,22 @@ ppo:hasPolicy a rdf:Property ;
     rdfs:label "has Policy"@en ;
     rdfs:comment "The property relating a Platform to a specific Policy."@en .
 
+ppo:documentVersion a rdf:Class ;
+    rdfs:label "Document version"@en ;
+    rdfs:comment "The version of a publishable document."@en .
+
+ppo:publishedVersion a ppo:documentVersion ;
+    rdfs:label "Published version"@en ;
+    rdfs:comment "The published version of a publishable document."@en .
+
+ppo:acceptedVersion a ppo:documentVersion ;
+    rdfs:label "Accepted version"@en ;
+    rdfs:comment "The accepted version of a publishable document."@en .
+
+ppo:submittedVersion a ppo:documentVersion ;
+    rdfs:label "Submitted version"@en ;
+    rdfs:comment "The submitted version of a publishable document."@en .
+
 ppo:anonymousTo a rdf:Property ;
     rdfs:domain pro:PublishingRole ;
     rdfs:range pro:PublishingRole ;

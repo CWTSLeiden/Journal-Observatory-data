@@ -71,7 +71,7 @@ insert {
             ppo:hasAPC ?apc ;
             ppo:hasCopyrightOwner ?copyright_owner ;
             dcterms:license ?license ;
-            ppo:disseminatesVersion [ a ppo:publishedVersion ] .
+            ppo:disseminatesVersion ppo:publishedVersion .
         
         ?apc schema:url ?apc_url ;
             ppo:apc ?apc_price ;

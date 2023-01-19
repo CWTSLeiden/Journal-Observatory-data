@@ -121,7 +121,7 @@ ppo:Policy a rdfs:Class ;
     rdfs:comment "A collection of rules and allowances that the platform maintains."@en .
 #+end_src
 
-** ppo:PublicationPolicy                                                   :class:
+** ppo:PublicationPolicy                                                     :class:
 
 #+begin_src ttl
 ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
@@ -163,6 +163,38 @@ ppo:hasPolicy a rdf:Property ;
     rdfs:range ppo:Policy ;
     rdfs:label "has Policy"@en ;
     rdfs:comment "The property relating a Platform to a specific Policy."@en .
+#+end_src
+
+** ppo:documentVersion                                                       :class:
+
+#+begin_src ttl
+ppo:documentVersion a rdf:Class ;
+    rdfs:label "Document version"@en ;
+    rdfs:comment "The version of a publishable document."@en .
+#+end_src
+
+** ppo:publishedVersion                                                 :individual:
+
+#+begin_src ttl
+ppo:publishedVersion a ppo:documentVersion ;
+    rdfs:label "Published version"@en ;
+    rdfs:comment "The published version of a publishable document."@en .
+#+end_src
+
+** ppo:acceptedVersion                                                  :individual:
+
+#+begin_src ttl
+ppo:acceptedVersion a ppo:documentVersion ;
+    rdfs:label "Accepted version"@en ;
+    rdfs:comment "The accepted version of a publishable document."@en .
+#+end_src
+
+** ppo:submittedVersion                                                 :individual:
+
+#+begin_src ttl
+ppo:submittedVersion a ppo:documentVersion ;
+    rdfs:label "Submitted version"@en ;
+    rdfs:comment "The submitted version of a publishable document."@en .
 #+end_src
 
 ** ppo:anonymousTo                                                        :property:
@@ -337,7 +369,7 @@ dcterms:license a rdf:Property ;
 cc:license rdfs:subPropertyOf dcterms:license .
 #+end_src
 
-** dcterms:created                                                      :property:
+** dcterms:created                                                        :property:
 
 #+begin_src ttl
 dcterms:created a rdf:Property ;
@@ -346,7 +378,7 @@ dcterms:created a rdf:Property ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/created> .
 #+end_src
 
-** dcterms:creator                                                      :property:
+** dcterms:creator                                                        :property:
 
 #+begin_src ttl
 dcterms:creator a rdf:Property ;
