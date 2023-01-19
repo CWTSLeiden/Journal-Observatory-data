@@ -145,7 +145,7 @@ def sherpa_romeo_get_issns(sherpa_romeo_issns):
 
 
 if __name__ == "__main__":
-    from utils import job_config as config
+    from utils import pad_config as config
 
     api_base = config.get("sherpa_romeo", "data_location", fallback="https://v2.sherpa.ac.uk/cgi")
     api_key = config.get("sherpa_romeo", "data_password", fallback="")

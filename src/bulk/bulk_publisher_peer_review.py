@@ -64,7 +64,7 @@ def load_publishers_excel_file(file, mapping={}):
 
 
 if __name__ == "__main__":
-    from utils import job_config as config
+    from utils import pad_config as config
     
     data_location = config.getpath("publisher_peer_review", "data_location", fallback="data/publisher_peer_review/xlsx")
     data_path = config.getpath("publisher_peer_review", "data_path", fallback="data/publisher_peer_review")

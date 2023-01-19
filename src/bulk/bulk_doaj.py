@@ -64,7 +64,7 @@ def doaj_write_record_to_file(record, destination):
         
 
 if __name__ == "__main__":
-    from utils import job_config as config
+    from utils import pad_config as config
 
     data_location = config.get("doaj", "data_location", fallback="https://doaj.org/public-data-dump/journal")
     data_path = config.getpath("doaj", "data_path", fallback="data/doaj")

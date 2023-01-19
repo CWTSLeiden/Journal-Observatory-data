@@ -18,6 +18,9 @@ class CustomConfigParser(ConfigParser):
         return path
 
 
+pad_config = CustomConfigParser()
+pad_config.read(f"{ROOT_DIR}/config/pad.conf")
+
 job_config = CustomConfigParser()
 job_config.read(f"{ROOT_DIR}/config/job.conf")
 
