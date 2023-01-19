@@ -1,0 +1,67 @@
+{% macro obj_to_li(val, super) -%}
+    {% if val is iterable and (val is not string and val is not mapping) %}
+        <ul>
+            {% for v in val %}
+                <li>{{ obj_to_li(v, super) }}</li>
+            {% endfor %}
+        </ul>
+    {% elif super | selectattr("@id", "equalto", val["@id"]) | list %}
+        <ul>
+            {% for g in super | selectattr("@id", "equalto", val["@id"]) %}
+                {{ graph_to_li(g, super) }}
+            {% endfor %}
+        </ul>
+    {% elif val["@id"] %}
+        {{ val["@id"] | urlize }}
+    {% elif val["@value"] %}
+        {{ val["@value"] | urlize }}
+    {% else %}
+        {{ val | urlize }}
+    {% endif %}
+{%- endmacro %}
+
+{% macro prop_to_li(prop, val, super, key=None, src_graph=None) -%}
+    {% if prop != "@id" and "ppo:_" not in prop %}
+        <li>
+            {% if prop == key %}
+                {{ obj_to_li(val, super) }}
+            {% else %}
+                <dt>{{ prop }}</dt>
+                <dd>{{ obj_to_li(val, super)}}</dd>
+            {% endif %}
+            {% if src_graph %}
+                {{ src(src_graph) }}
+            {% endif %}
+        </li>
+    {% endif %}
+{%- endmacro %}
+
+{% macro graph_to_li(graph, super) -%}
+    <li>{{ graph["@id"] | urlize }}{{ src(graph) }}
+        <ul>
+            {% for prop, val in graph.items() %}
+                {{ prop_to_li(prop, val, super) }}
+            {% endfor %}
+        </ul>
+    </li>
+{%- endmacro %}
+
+{% macro pgraph_to_li(graph, super, p=None) -%}
+    {% for prop, val in graph.items() %}
+        {{ prop_to_li(prop, val, super, key=p, src_graph=graph) }}
+    {% endfor %}
+{%- endmacro %}
+
+{% macro src(graph) -%}
+    {% if graph["ppo:_src"] %}
+        <src>
+        {% if graph["ppo:_src"] is iterable and (graph["ppo:_src"] is not string and graph["ppo:_src"] is not mapping) %}
+            <src-short>[{{graph["ppo:_src"] | list | length }}]</src-short>
+            <src-long>[{{ graph["ppo:_src"] | list | map(attribute="@id") | join(', ') }}]</src-long>
+        {% else %}
+            <src-short>[1]</src-short>
+            <src-long>[{{ graph["ppo:_src"]["@id"] }}]</src-long>
+        {% endif %}
+        </src>
+    {% endif %}
+{%- endmacro %}

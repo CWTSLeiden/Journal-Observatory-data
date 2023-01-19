@@ -1,0 +1,101 @@
+{% from 'pad_macro.html' import pgraph_to_li, pgraph_to_ul, graph_to_li, graph_to_ul %}
+<html>
+    <head></head>
+    <style>
+     body { padding: 1em; font-family: monospace; font-size: 1.3em; }
+     section { border-radius: 1em; padding: 1em 2em; margin-bottom: 1em; }
+     title { display: block; font-size: 2em; text-align: center; padding-bottom: 1em}
+     h2 { font-size: 1em; font-weight: normal; text-decoration: underline }
+     dt { display: inline-block; width: 15em; font-weight: bold; overflow: hidden; text-overflow: ellipsis; position: absolute}
+     dd { display: inline; margin-left: 15em; }
+     src { float: right; opacity: 0.5; font-style: italic; }
+     src-long { display: none }
+     li:hover src-long { display: inline }
+     li:hover src-short { display: none }
+    </style>
+    <body>
+        <section>
+            <title>{{ (metadata | selectattr("schema:name") | first)["schema:name"] }}</title>
+            Pad ID: {{ pad_id | urlize }}
+        </section>
+        <section style="background-color: #eee">
+            <h1>Metadata</h1>
+                <subsection><h2>Name</h2>
+                    <ul>
+                        {% for item in metadata | selectattr("schema:name") %}
+                            {{ pgraph_to_li(item, metadata, "schema:name") }}
+                        {% endfor %}
+                    </ul>
+                </subsection>
+                <subsection><h2>Url</h2>
+                    <ul>
+                        {% for item in metadata | selectattr("schema:url") %}
+                            {{ pgraph_to_li(item, metadata, "schema:url") }}
+                        {% endfor %}
+                    </ul>
+                </subsection>
+                <subsection><h2>Keyword</h2>
+                    <ul>
+                        {% for item in metadata | selectattr("ppo:hasKeyword") %}
+                            {{ pgraph_to_li(item, metadata, "ppo:hasKeyword") }}
+                        {% endfor %}
+                    </ul>
+                </subsection>
+                <subsection><h2>Identifiers</h2>
+                    <ul>
+                        {% for i in identifier %}
+                            {{ pgraph_to_li(i, identifier)}}
+                        {% endfor %}
+                    </ul>
+                </subsection>
+                <subsection><h2>Organizations</h2>
+                    <ul>
+                        {% for org in organizations %}
+                            {{ graph_to_li(org, organizations)}}
+                        {% endfor %}
+                    </ul>
+                </subsection>
+        </section>
+
+        <section style="background-color:#2c9ac5; color:#fff">
+            <h1>Policies</h1>
+            {% if policies | selectattr("@type", "equalto", "ppo:PublicationPolicy") | list %}
+                <subsection><h2>Publishing Policies</h2>
+                    <ol>
+                        {% for policy in policies | selectattr("@type", "equalto", "ppo:PublicationPolicy") %}
+                            {{ graph_to_li(policy, policies)}}
+                        {% endfor %}
+                    </ol>
+                </subsection>
+            {% endif %}
+            {% if policies | selectattr("@type", "in", ["ppo:PublicationElsewhereAllowed", "ppo:PublicationElsewhereMandatory", "ppo:PublicationElsewhereProhibited"]) | list %}
+                <subsection><h2>Publication Elsewhere Policies</h2>
+                    <ol>
+                        {% for policy in policies | selectattr("@type", "in", ["ppo:PublicationElsewhereAllowed", "ppo:PublicationElsewhereMandatory", "ppo:PublicationElsewhereProhibited"]) %}
+                            {{ graph_to_li(policy, policies)}}
+                        {% endfor %}
+                    </ol>
+            {% endif %}
+            {% if policies | selectattr("@type", "equalto", "ppo:EvaluationPolicy") | list %}
+                <subsection><h2>Evaluation Policies</h2>
+                    <ol>
+                        {% for policy in policies | selectattr("@type", "equalto", "ppo:EvaluationPolicy") %}
+                            {{ graph_to_li(policy, policies)}}
+                        {% endfor %}
+                    </ol>
+                </subsection>
+            {% endif %}
+        </section>
+
+        <section style="background-color:#e64428; color:#fff">
+            <h1>Provenance</h1>
+            <subsection><h2>Sources</h2>
+                <ul>
+                    {% for s in sources %}
+                        {{ graph_to_li(s, sources)}}
+                    {% endfor %}
+                </ul>
+            </subsection>
+        </section>
+    </body>
+</html>
