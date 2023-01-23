@@ -46,7 +46,7 @@ def unify_pads(db : Dataset, pad_ids : set[URIRef], include_source=True):
         unipad.add_context(assertion, SUB.assertion)
         if include_source:
             unipad.add_context(assertion)
-            unipad.add_context(unipad, db.get_context(f"{pad_id}/provenance"))
+            unipad.add_context(db.get_context(f"{pad_id}/provenance"))
         unipad.add((SUB.assertion, PAD.hasSourcePAD, pad_id, SUB.provenance))
     unipad.update("""
         delete { ?platform ?p ?o . }

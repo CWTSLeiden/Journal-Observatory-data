@@ -32,7 +32,7 @@ def graphdb_add_namespaces(graphdb_host, repo_id, auth={}):
     for prefix, uri in dict(PADNamespaceManager().namespaces()).items():
         if prefix not in ("this", "sub"):
             url = f"{graphdb_host}/repositories/{repo_id}/namespaces/{prefix}"
-            requests.put(url, data=uri)
+            requests.put(url, data=uri, headers=headers)
     return True
 
 

@@ -69,16 +69,16 @@ def display_pad(pad_id, db):
             ?b ppo:_src ?creator .
         }
         where {
-            graph ?a { ?s a ppo:Platform ; ?p ?o } .
+            ?pad a pad:PAD ;
+                pad:hasAssertion ?assertion .
+            graph ?assertion { ?s a ppo:Platform ; ?p ?o } .
+            ?p rdfs:subPropertyOf ?type.
+            filter(?type in (dcterms:identifier))
             optional { 
                 graph ?g { ?s a ppo:Platform ; ?p ?o } .
                 ?g dcterms:creator ?creator
-            } .
-            {
-                ?p rdfs:subPropertyOf ?type.
-                filter(?type in (dcterms:identifier))
                 bind(bnode() as ?b)
-            }
+            } .
         }
     """
     organizations_query = """
