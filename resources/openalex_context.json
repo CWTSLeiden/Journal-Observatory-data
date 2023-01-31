@@ -2,11 +2,11 @@
     "id": "@id",
     "created_date": {
         "@id": "schema:dateCreated",
-        "@type": "xsd:dateTime"
+        "@type": "xsd:date"
     },
     "updated_date": {
         "@id": "schema:dateModified",
-        "@type": "xsd:dateTime"
+        "@type": "xsd:date"
     },
     "ids": {
         "@id": "openalex:external_identifier",
