@@ -13,11 +13,11 @@
         "@context": {
             "date_created": {
                 "@id": "schema:dateCreated",
-                "@type": "xsd:dateTime"
+                "@type": "xsd:date"
             },
             "date_updated": {
                 "@id": "schema:dateModified",
-                "@type": "xsd:dateTime"
+                "@type": "xsd:date"
             }
         }
     },

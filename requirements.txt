@@ -4,13 +4,13 @@
 #
 #    pip-compile
 #
-attrs==22.1.0
+attrs==22.2.0
     # via jsonschema
-cachetools==5.2.0
+cachetools==5.3.0
     # via pyld
-certifi==2022.6.15
+certifi==2022.12.7
     # via requests
-charset-normalizer==2.0.12
+charset-normalizer==3.0.1
     # via requests
 click==8.1.3
     # via flask
@@ -22,11 +22,11 @@ flask==2.2.2
     # via
     #   -r requirements.in
     #   flasgger
-frozendict==2.3.2
+frozendict==2.3.4
     # via pyld
 gunicorn==20.1.0
     # via -r requirements.in
-idna==3.3
+idna==3.4
     # via requests
 isodate==0.6.1
     # via rdflib
@@ -36,9 +36,9 @@ jinja2==3.1.2
     # via flask
 jsonschema==4.17.3
     # via flasgger
-lxml==4.9.1
+lxml==4.9.2
     # via pyld
-markupsafe==2.1.1
+markupsafe==2.1.2
     # via
     #   jinja2
     #   werkzeug
@@ -50,30 +50,29 @@ nodeenv==1.7.0
     # via pyright
 openpyxl==3.0.10
     # via -r requirements.in
-packaging==22.0
+packaging==23.0
     # via marshmallow
 pyld==2.0.3
     # via -r requirements.in
 pyparsing==3.0.9
     # via rdflib
-pyright==1.1.285
+pyright==1.1.290
     # via -r requirements.in
-pyrsistent==0.19.2
+pyrsistent==0.19.3
     # via jsonschema
 pyyaml==6.0
     # via flasgger
-rdflib==5.0.0
+rdflib==6.2.0
     # via -r requirements.in
-requests==2.27.1
+requests==2.28.2
     # via -r requirements.in
 six==1.16.0
     # via
     #   flasgger
     #   isodate
-    #   rdflib
-tqdm==4.64.0
+tqdm==4.64.1
     # via -r requirements.in
-urllib3==1.26.10
+urllib3==1.26.14
     # via requests
 werkzeug==2.2.2
     # via flask

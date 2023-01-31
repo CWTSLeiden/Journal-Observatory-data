@@ -1,3 +1,8 @@
+if __name__ == "__main__":
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 from glob import glob
 from rdflib import Dataset
 from store.convert import read_query_file
@@ -27,3 +32,8 @@ def convert_publisher_peer_review(db : Dataset, debug=False):
         return dataset_convert_test("publisher_peer_review", files, context, queries, item, creator_id)
     json_files_convert(db, files, context, queries, batchsize, creator_id)
     return True
+
+
+if __name__ == "__main__":
+    from utils.store import sparql_store_config
+    convert_publisher_peer_review(sparql_store_config(config, update=True))
