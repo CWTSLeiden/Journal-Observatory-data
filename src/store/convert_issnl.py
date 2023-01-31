@@ -1,3 +1,8 @@
+if __name__ == "__main__":
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 from bulk.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
 from os import path
 from rdflib import Literal, URIRef, Dataset
@@ -57,3 +62,7 @@ def convert_issnl(db : Dataset, debug=False):
         return False
     return True
 
+
+if __name__ == "__main__":
+    from utils.store import sparql_store_config
+    convert_issnl(sparql_store_config(config, update=True))

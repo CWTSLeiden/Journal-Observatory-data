@@ -1,4 +1,4 @@
-from store import convert_doaj , convert_issnl , convert_openalex , convert_publisher_peer_review , convert_sherpa_romeo, convert_wikidata
+from store import convert_doaj, convert_issnl, convert_openalex, convert_publisher_peer_review, convert_sherpa_romeo, convert_wikidata
 from utils.store import clear_default_graph, sparql_store_config, add_ontology
 from utils.graphdb import graphdb_add_namespaces, graphdb_setup_repository
 from utils import pad_config as config
@@ -14,20 +14,16 @@ if __name__ == "__main__":
     graphdb_auth = {}
     if graphdb_username and graphdb_password:
         graphdb_auth = {"username": graphdb_username, "password": graphdb_password}
-    graphdb_setup_repository(graphdb_host, "pad", graphdb_config, auth=graphdb_auth)
-    graphdb_add_namespaces(graphdb_host, "pad", auth=graphdb_auth)
+        graphdb_setup_repository(graphdb_host, "pad", graphdb_config, auth=graphdb_auth)
+        graphdb_add_namespaces(graphdb_host, "pad", auth=graphdb_auth)
 
     db = sparql_store_config(config, update=True)
     clear_default_graph(db, confirm=True)
 
     add_ontology(db)
-    convert_functions = (
-        convert_doaj,
-        convert_openalex,
-        convert_publisher_peer_review,
-        convert_sherpa_romeo,
-        convert_issnl,
-        convert_wikidata
-    )
-    for convert_function in convert_functions:
-        convert_function(db, debug=debug)
+    convert_doaj(db, debug=debug)
+    convert_openalex(db, debug=debug)
+    convert_publisher_peer_review(db, debug=debug)
+    convert_sherpa_romeo(db, debug=debug)
+    convert_issnl(db, debug=debug)
+    convert_wikidata(db, debug=debug)
