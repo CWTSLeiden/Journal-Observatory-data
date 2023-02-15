@@ -1,5 +1,6 @@
 import glob
 import csv
+import threading
 from tqdm import tqdm as progress
 
 
@@ -30,8 +31,9 @@ def issnl_parse_bulk_file(file, identicals=True):
         identicals: include records in the list where issnl == issn
     """
     store = []
+    noprogress = threading.current_thread() is not threading.main_thread()
     with open(file, "r") as f:
-        for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file"):
+        for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file", disabled=noprogress):
             t = line_to_issnl(line, identicals)
             if t:
                 store.append(t)

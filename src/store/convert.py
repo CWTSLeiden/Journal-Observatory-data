@@ -2,6 +2,7 @@ from pyparsing.exceptions import ParseException
 from rdflib import DCTERMS, Dataset, URIRef, Literal, XSD
 from rdflib.graph import ConjunctiveGraph
 from tqdm import tqdm as progress
+import threading
 from typing import TypeVar, Callable
 from utils.namespace import PADNamespaceManager, PAD
 from utils.pad import PADGraph
@@ -86,7 +87,8 @@ def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Call
     """
     total = len(records)
     if batchsize > total: batchsize = total
-    for n in progress(range(0, total, batchsize), unit_scale=batchsize):
+    noprogress = threading.current_thread() is not threading.main_thread()
+    for n in progress(range(0, total, batchsize), unit_scale=batchsize, disable=noprogress):
         batchgraph = PADGraph()
         for record in records[n:n+batchsize]:
             pad = record_to_pad(record)
