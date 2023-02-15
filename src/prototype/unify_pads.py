@@ -7,13 +7,12 @@ from rdflib import Dataset
 from rdflib.graph import ConjunctiveGraph
 from rdflib.term import URIRef
 from store.convert import batch_convert
-from utils.graphdb import graphdb_add_namespaces, graphdb_set_free_access, graphdb_setup_repository
+from utils.graphdb import graphdb_add_namespaces, graphdb_setup_repository
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils.store import clear_default_graph, sparql_store_config, add_ontology
 from utils.namespace import PAD, RDF
 from utils import ROOT_DIR, job_config, pad_config
-from tqdm import tqdm as progress
 
 
 def cluster_pairs(pad_pairs):
@@ -100,7 +99,6 @@ if __name__ == "__main__":
     debug = job_config.getboolean("main", "debug", fallback=False)
 
     graphdb_host = job_config.get("store", "host", fallback="http://localhost:7200")
-    graphdb_endpoint = job_config.get("store", "query", fallback=f"{graphdb_host}/repositories/pad")
     graphdb_config = job_config.getpath("store", "config", fallback="config/graphdb-pad-config.ttl")
     graphdb_username = job_config.get("store", "username", fallback="")
     graphdb_password = job_config.get("store", "password", fallback="")

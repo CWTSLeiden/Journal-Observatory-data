@@ -21,7 +21,8 @@ services:
       - APP_ENVIRONMENT=develop
       - APP_HOST=0.0.0.0
       - APP_PORT=5001
-      - APP_SPARQL_QUERY_ENDPOINT=http://graphdb:7200/repositories/job
-      - APP_SPARQL_UPDATE_ENDPOINT=http://graphdb:7200/repositories/job/statements
+      - APP_SPARQL_HOST=http://graphdb:7200
+      - APP_SPARQL_QUERY_PATH=/repositories/job
+      - APP_SPARQL_UPDATE_PATH=/repositories/job/statements
     ports:
       - 5001:5001

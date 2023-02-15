@@ -7,7 +7,6 @@ if __name__ == "__main__":
     debug = config.getboolean("main", "debug", fallback=False)
 
     graphdb_host = config.get("store", "host", fallback="http://localhost:7200")
-    graphdb_endpoint = config.get("store", "query", fallback=f"{graphdb_host}/repositories/pad")
     graphdb_config = config.getpath("store", "config", fallback="config/graphdb-pad-config.ttl")
     graphdb_username = config.get("store", "username", fallback="")
     graphdb_password = config.get("store", "password", fallback="")

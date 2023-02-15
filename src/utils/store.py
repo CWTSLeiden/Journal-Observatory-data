@@ -34,9 +34,12 @@ def sparql_store(query_endpoint : str, update_endpoint : str="", credentials=(""
 
 
 def sparql_store_config(config : ConfigParser, update=False) -> Dataset:
-    query_endpoint = os.getenv("APP_SPARQL_QUERY_ENDPOINT", config.get("store", "query"))
+    host = os.getenv("APP_SPARQL_HOST", config.get("store", "host"))
+    query_path = os.getenv("APP_SPARQL_QUERY_PATH", config.get("store", "query_path"))
+    query_endpoint = f"{host}{query_path}"
     if update:
-        update_endpoint = os.getenv("APP_SPARQL_UPDATE_ENDPOINT", config.get("store", "update"))
+        update_path = os.getenv("APP_SPARQL_UPDATE_PATH", config.get("store", "update_path"))
+        update_endpoint = f"{host}{update_path}"
         username = os.getenv("APP_SPARQL_USERNAME", config.get("store", "username", fallback=""))
         password = os.getenv("APP_SPARQL_PASSWORD", config.get("store", "password", fallback=""))
         return sparql_store(query_endpoint, update_endpoint, (username, password))
