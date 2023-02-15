@@ -93,8 +93,8 @@ ppo:anonymousTo a rdf:Property ;
 ppo:interactsWith a owl:SymmetricProperty ;
     rdfs:domain pro:PublishingRole ;
     rdfs:range pro:PublishingRole ;
-    rdfs:label "The relation that signifies that the subject can interact with the object during the review process."@en ;
-    rdfs:comment ""@en .
+    rdfs:label ""@en ;
+    rdfs:comment "The relation that signifies that the subject can interact with the object during the review process."@en .
 
 ppo:possibleDecision a rdf:Property ;
     rdfs:domain ppo:EvaluationPolicy ;

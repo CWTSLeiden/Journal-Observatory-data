@@ -149,7 +149,7 @@ insert {
             ppo:disseminatesVersion ppo:publishedVersion ;
             dcterms:license ?license ;
             ppo:hasCopyrightOwner ?copyright_owner ;
-            ppo:embargo ?embargoduration .
+            ppo:hasEmbargo ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
@@ -195,7 +195,7 @@ insert {
             ppo:hasCopyrightOwner ?copyright_owner ;
             ppo:condition ?condition ;
             ppo:location ?location ;
-            ppo:embargo ?embargoduration .
+            ppo:hasEmbargo ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
