@@ -52,8 +52,8 @@ where {
     ?record a rdfg:Graph .
     ?record dcterms:identifier ?journal .
     ?record stm:metadata ?metadata .
-    optional { ?metadata schema:name ?name } .
-    optional { ?metadata stm:hasPublisher ?publisher } .
+    optional { ?metadata stm:journalName ?name } .
+    optional { ?metadata ppo:hasPublisher ?publisher } .
     optional { ?metadata ?hasissn ?issn . 
         filter ( ?hasissn in (prism:issn, prism:eIssn, fabio:hasIssnL) )
     } .

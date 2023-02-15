@@ -82,7 +82,7 @@ if __name__ == "__main__":
         "springer nature": "https://springernature.com",
         "nature": "https://nature.com",
         "wiley": "https://wiley.com",
-        "elife": "https://elifesciences.org",
+        "elife sciences publications ltd": "https://elifesciences.org",
         "ieee": "https://www.ieee.org",
         "cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
         "cc-by": "https://creativecommons.org/licenses/by/4.0",
