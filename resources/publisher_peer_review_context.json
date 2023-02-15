@@ -1,7 +1,7 @@
 {
-    "@base": "https://osf.io/68rnz/",
-    "@vocab": "https://osf.io/68rnz/",
-    "stm": "https://osf.io/68rnz/",
+    "@base": "https://osf.io/7j6ck/",
+    "@vocab": "https://osf.io/7j6ck/",
+    "stm": "https://osf.io/7j6ck/",
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "fabio": "http://purl.org/spar/fabio/",
