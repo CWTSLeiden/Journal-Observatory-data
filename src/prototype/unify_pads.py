@@ -48,7 +48,8 @@ def unify_pads(db : Dataset, pad_ids : set[URIRef], include_source=True):
         if include_source:
             unipad.add_context(assertion)
             unipad.add_context(db.get_context(f"{pad_id}/provenance"))
-        unipad.add((SUB.assertion, PAD.hasSourcePAD, pad_id, SUB.provenance))
+            unipad.add_context(db.get_context(f"{pad_id}/docinfo"))
+        unipad.add((SUB.assertion, PAD.hasSourceAssertion, assertion.identifier, SUB.provenance))
     unipad.update("""
         delete { ?platform ?p ?o . }
         insert { graph ?g { sub:platform ?p ?o . } }
@@ -84,7 +85,7 @@ def pad_clusters(db : Dataset):
 
 def store_unipads(source_db, target_db, debug=False):
     def cluster_to_pad(cluster) -> ConjunctiveGraph:
-        return unify_pads(source_db, cluster, include_source=True)
+        return unify_pads(source_db, cluster, include_source=False)
     clusters = pad_clusters(source_db)
     if debug:
         unipad = cluster_to_pad(clusters[0])
