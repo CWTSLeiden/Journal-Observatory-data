@@ -50,4 +50,5 @@ def convert_wikidata(db : Dataset, debug=False):
 
 if __name__ == "__main__":
     from utils.store import sparql_store_config
-    convert_wikidata(sparql_store_config(config, update=True))
+    debug = config.getboolean("main", "debug", fallback=False)
+    convert_wikidata(sparql_store_config(config, update=True), debug)

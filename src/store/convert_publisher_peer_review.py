@@ -36,4 +36,5 @@ def convert_publisher_peer_review(db : Dataset, debug=False):
 
 if __name__ == "__main__":
     from utils.store import sparql_store_config
-    convert_publisher_peer_review(sparql_store_config(config, update=True))
+    debug = config.getboolean("main", "debug", fallback=False)
+    convert_publisher_peer_review(sparql_store_config(config, update=True), debug)

@@ -65,4 +65,5 @@ def convert_issnl(db : Dataset, debug=False):
 
 if __name__ == "__main__":
     from utils.store import sparql_store_config
-    convert_issnl(sparql_store_config(config, update=True))
+    debug = config.getboolean("main", "debug", fallback=False)
+    convert_issnl(sparql_store_config(config, update=True), debug)
