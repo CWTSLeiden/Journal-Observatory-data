@@ -1,3 +1,8 @@
+if __name__ == "__main__":
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 import os
 import re
 from bulk import dump_file
@@ -17,6 +22,8 @@ def clean_val(val, mapping={}):
         return val
     if mapping.get(val.lower()):
         return { "@id": mapping.get(val.lower()) }
+    if re.match("^https?://", val):
+        return { "@id": val }
     return val
 
 
@@ -50,7 +57,7 @@ def load_publishers_excel_file(file, mapping={}):
                 record["provenance"] = {}
             record["provenance"][key] = val
         for col in worksheet.iter_cols(1, worksheet.max_column):
-            if col[row].value == None:
+            if col[row].value is None:
                 continue
             cat = clean_key(col[category_row].value, mapping)
             key = clean_key(col[property_row].value, mapping)
