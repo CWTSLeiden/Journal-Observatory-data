@@ -20,11 +20,11 @@ def clean_val(val, mapping={}):
         elif val == 0:
             return False
         return val
-    if mapping.get(val.lower()):
-        return { "@id": mapping.get(val.lower()) }
-    if re.match("^https?://", val):
-        return { "@id": val }
-    return val
+    if mapping.get(val.strip().lower()):
+        return { "@id": mapping.get(val.strip().lower()) }
+    if re.match("^https?://", val.strip()):
+        return { "@id": val.strip() }
+    return val.strip()
 
 
 def clean_key(key, mapping={}):

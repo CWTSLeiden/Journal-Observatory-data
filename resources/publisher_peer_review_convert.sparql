@@ -10,7 +10,8 @@ where {
         optional { ?metadata prism:issn ?pissn . }
         optional { ?metadata prism:eIssn ?eissn . }
         optional { ?metadata fabio:hasIssnL ?lissn . }
-        bind(iri(concat("https://issn.org/", replace(coalesce(?lissn, ?pissn, ?eissn), " ", ""))) as ?journal)
+        bind(coalesce(?lissn, ?pissn, ?eissn) as ?issn)
+        bind(if(bound(?issn), iri(concat("https://issn.org/", ?issn)), bnode()) as ?journal)
     }
 }
 
