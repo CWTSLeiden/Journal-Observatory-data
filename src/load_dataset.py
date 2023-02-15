@@ -20,6 +20,7 @@ if __name__ == "__main__":
     clear_default_graph(db, confirm=True)
 
     add_ontology(db)
+    # TODO: Multithreading
     convert_doaj(db, debug=debug)
     convert_openalex(db, debug=debug)
     convert_publisher_peer_review(db, debug=debug)
