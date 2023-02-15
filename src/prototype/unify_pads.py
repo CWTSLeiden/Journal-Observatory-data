@@ -4,8 +4,10 @@ if __name__ == "__main__":
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from rdflib import Dataset
+from rdflib.graph import ConjunctiveGraph
 from rdflib.term import URIRef
-from utils.graphdb import graphdb_add_namespaces, graphdb_setup_repository
+from store.convert import batch_convert
+from utils.graphdb import graphdb_add_namespaces, graphdb_set_free_access, graphdb_setup_repository
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils.store import clear_default_graph, sparql_store_config, add_ontology
@@ -66,29 +68,32 @@ def pad_clusters(db : Dataset):
         graph ?assertion2 { ?platform2 a ppo:Platform }
         ?pad1 pad:hasAssertion ?assertion1 .
         ?pad2 pad:hasAssertion ?assertion2 .
-        filter(?pad1 != ?pad2) .
+        # filter(?pad1 != ?pad2) .
     }
     """
     result = db.query(pad_eq_query)
     pad_same_query = """
     select ?pad1 ?pad2 where
-    { ?pad1 pad:assertsSamePlatform+ ?pad2 filter(?pad1 != ?pad2) }
+    {
+        ?pad1 pad:assertsSamePlatform+ ?pad2
+        # filter(?pad1 != ?pad2)
+    }
     """
     pairs = list(result.graph.query(pad_same_query))
     return cluster_pairs(pairs)
 
 
 def store_unipads(source_db, target_db, debug=False):
+    def cluster_to_pad(cluster) -> ConjunctiveGraph:
+        return unify_pads(source_db, cluster, include_source=True)
     clusters = pad_clusters(source_db)
     if debug:
-        unipad = unify_pads(source_db, clusters[0], include_source=True)
+        unipad = cluster_to_pad(clusters[0])
         unipad.serialize(f"{ROOT_DIR}/test/unipad.trig", format="trig")
         unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
     else:
         print_verbose("Store unipads")
-        for cluster in progress(clusters):
-            unipad = unify_pads(source_db, cluster, include_source=True)
-            target_db.addN(unipad.quads())
+        batch_convert(target_db, clusters, cluster_to_pad, 100)
 
 
 if __name__ == "__main__":
