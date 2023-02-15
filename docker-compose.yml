@@ -7,7 +7,7 @@ services:
     volumes:
       - ./ontology:/opt/graphdb/ontology
       - ./config/graphdb:/opt/graphdb/conf
-      # - $HOME/CWTS/Apps/graphdb/databases:/opt/graphdb/data/repositories
+      # ./databases:/opt/graphdb/data/repositories
     ports:
       - 7200:7200
   pad_api:
