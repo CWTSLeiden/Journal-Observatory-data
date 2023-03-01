@@ -97,4 +97,8 @@ def add_ontology(graph : ConjunctiveGraph):
         source=config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
         publicID=PAD.ontology
     )
+    batchgraph.parse(
+        source=config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl"),
+        publicID=PAD.ontology
+    )
     graph.addN(batchgraph.quads())

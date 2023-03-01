@@ -16,9 +16,9 @@ insert {
             schema:name ?title ;
             schema:url ?platform_url ;
             ?pidtype ?pid ;
-            ppo:hasWikidataId ?journal ;
-            ppo:hasPaywall ?paywall ;
-            ppo:hasOrganization ?publisher .
+            wd:id ?journal ;
+            ppo:isOpenAccess ?openaccess ;
+            dcterms:publisher ?publisher .
         ?publisher a pro:publisher ;
             schema:name ?publisher_name ;
             schema:url ?pubilsher_url .
@@ -53,10 +53,10 @@ WHERE {
         } .
         optional {
             ?journal wdt:6954 ?onlineaccessstatus .
-            values ( ?onlineaccessstatus ?paywall ) {
-                (wd:Q910845 true)
-                (wd:Q24707952 false)
-                (wd:Q232932 false)
+            values ( ?onlineaccessstatus ?openaccess ) {
+                (wd:Q910845 false)
+                (wd:Q24707952 true)
+                (wd:Q232932 true)
             }
         }
         filter (?journal = <$journal_id>)

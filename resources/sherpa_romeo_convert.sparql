@@ -8,7 +8,7 @@ insert {
     }
 
     graph sub:provenance {
-        sub:assertion cc:license <https://creativecommons.org/licenses/by-nc-nd/4.0/> ;
+        sub:assertion dcterms:license <https://creativecommons.org/licenses/by-nc-nd/4.0/> ;
             dcterms:created ?date ;
             dcterms:creator <https://v2.sherpa.ac.uk/romeo> .
     }
@@ -36,7 +36,7 @@ where {
 # Identifier
 insert {
     graph sub:assertion {
-        ?romeo_id romeo:id ?romeo_id ;
+        ?romeo_id ppo:hasSherpaRomeoId ?romeo_id ;
             prism:issn ?pissn ;
             prism:eIssn ?eissn .
     }
@@ -52,7 +52,7 @@ where {
 # Organization
 insert {
     graph sub:assertion {
-        ?romeo_id ppo:hasOrganization ?publisher .
+        ?romeo_id dcterms:publisher ?publisher .
         ?publisher a pro:publisher ; 
             schema:name ?publisher_name ;
             schema:addressCountry ?publisher_country ;
@@ -90,7 +90,7 @@ where {
 
 insert {
     graph ?graph {
-        ?policy ppo:hasEmbargo ?embargoduration
+        ?policy fabio:hasEmbargoDuration ?embargoduration
     }
 }
 where {
@@ -146,10 +146,10 @@ insert {
         ?publicationpolicy a ppo:PublicationPolicy ;
             ppo:openAccessAllowed ?oaallowed ;
             ppo:hasOpenAccessFee ?oafee ;
-            ppo:disseminatesVersion ppo:publishedVersion ;
+            ppo:appliesToVersion pso:published ;
             dcterms:license ?license ;
             ppo:hasCopyrightOwner ?copyright_owner ;
-            ppo:hasEmbargo ?embargoduration .
+            fabio:hasEmbargoDuration ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
@@ -178,24 +178,24 @@ where {
         ?copyright_owner a ?copyright_owner_type .
     } .
     optional { ?policy dcterms:license ?license } .
-    optional { ?policy ppo:hasEmbargo ?embargoduration } .
+    optional { ?policy fabio:hasEmbargoDuration ?embargoduration } .
 }
 
 # Publication Elsewhere Policy
 insert {
     graph sub:assertion {
         ?romeo_id ppo:hasPolicy ?publicationelsewhereprohibited .
-        ?publicationelsewhereprohibited a ppo:PublicationElsewhereProhibited .
+        ?publicationelsewhereprohibited a ppo:PublicationElsewhereProhibitedPolicy .
 
         ?romeo_id ppo:hasPolicy ?publicationelsewhereallowed .
-        ?publicationelsewhereallowed a ppo:PublicationElsewhereAllowed ;
+        ?publicationelsewhereallowed a ppo:PublicationElsewhereAllowedPolicy ;
             dcterms:creator ?publisher ;
             ppo:appliesToVersion ?articleversion ;
             dcterms:license ?license ;
             ppo:hasCopyrightOwner ?copyright_owner ;
             ppo:condition ?condition ;
             ppo:location ?location ;
-            ppo:hasEmbargo ?embargoduration .
+            fabio:hasEmbargoDuration ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
@@ -213,9 +213,9 @@ where {
     }
     optional { ?policy romeo:articleVersion ?_articleversion .
         values (?_articleversion ?articleversion) {
-            ("submitted" ppo:submittedVersion)
-            ("accepted" ppo:acceptedVersion)
-            ("published" ppo:publishedVersion)
+            ("submitted" pso:submitted)
+            ("accepted" pso:accepted-for-publication)
+            ("published" pso:published)
         }
     } .
     optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
@@ -224,5 +224,5 @@ where {
     optional { ?policy romeo:condition ?condition } .
     optional { ?policy romeo:hasPermittedLocation [ romeo:PermittedLocation ?location ] } .
     optional { ?policy ppo:hasLicense ?license } .
-    optional { ?policy ppo:hasEmbargo ?embargoduration } .
+    optional { ?policy fabio:hasEmbargoDuration ?embargoduration } .
 }

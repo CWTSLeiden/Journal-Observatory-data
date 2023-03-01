@@ -25,7 +25,7 @@ insert {
     }
 
     graph sub:provenance {
-        sub:assertion cc:license ?license ;
+        sub:assertion dcterms:license ?license ;
             dcterms:created ?date ;
             dcterms:creator ?creator .
     }
@@ -35,7 +35,7 @@ where {
     ?record ppo:provenance ?provenance .
     ?provenance dcterms:created ?date ;
         dcterms:creator ?creator ;
-        cc:license ?license .
+        dcterms:license ?license .
 }
 
 # Metadata
@@ -43,7 +43,7 @@ insert {
     graph sub:assertion {
         ?journal a ppo:Platform ;
             schema:name ?name ;
-            ppo:hasOrganization ?publisher ;
+            dcterms:publisher ?publisher ;
             ?hasissn ?issn .
         ?publisher a pro:publisher .
     }
@@ -66,7 +66,7 @@ insert {
             ppo:hasPolicy ?policy .
 
         ?policy a ppo:EvaluationPolicy ;
-            ppo:postPublicationCommenting ?ppc_value .
+            ppo:covers ?ppc .
 
         ?policy ppo:involves sub:author .
         sub:author a pro:Author ;
@@ -141,9 +141,10 @@ where {
         bind(ppo:identifiedTo as ?author_an_curator) .
     }
 
-    optional { ?record stm:postPublicationCommenting ?ppc . }
-    optional { ?ppc stm:onInvitation true . bind("On invitation" as ?ppc_value) }
-    optional { ?ppc stm:open true . bind("Open" as ?ppc_value) }
+    optional { ?record stm:postPublicationCommenting [ stm:onInvitation true ] .
+        bind(ppo:postPublicationCommentingOnInvitation as ?ppc) }
+    optional { ?record stm:postPublicationCommenting [ stm:open true ] .
+        bind(ppo:postPublicationCommentingOpen as ?ppc) }
 
     optional { ?record stm:reviewerInteractsWith ?riw . }
     optional { ?riw stm:authors true .

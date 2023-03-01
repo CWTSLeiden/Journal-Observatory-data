@@ -8,7 +8,7 @@ insert {
     }
 
     graph sub:provenance {
-        sub:assertion cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+        sub:assertion dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
             dcterms:created ?date ;
             dcterms:creator <https://doaj.org> .
     }
@@ -47,7 +47,7 @@ where {
 # Organization
 insert {
     graph sub:assertion {
-        ?journal ppo:hasOrganization ?publisher .
+        ?journal dcterms:publisher ?publisher .
 
         ?publisher a pro:publisher ; 
             schema:name ?publisher_name ;
@@ -68,13 +68,15 @@ insert {
     graph sub:assertion {
         ?journal ppo:hasPolicy sub:publicationPolicy .
         sub:publicationPolicy a ppo:PublicationPolicy ;
-            ppo:hasAPC ?apc ;
+            ppo:isOpenAccess true ;
+            ppo:hasArticlePublishingCharges ?apc ;
             ppo:hasCopyrightOwner ?copyright_owner ;
             dcterms:license ?license ;
-            ppo:disseminatesVersion ppo:publishedVersion .
+            ppo:appliesToVersion pso:published .
         
-        ?apc schema:url ?apc_url ;
-            ppo:apc ?apc_price ;
+        ?apc a ppo:ArticlePublishingCharges ;
+            schema:url ?apc_url ;
+            schema:price ?apc_price ;
             ?apc_p ?apc_o .
 
         ?copyright_owner a ?copyright_owner_type .
@@ -83,7 +85,7 @@ insert {
 where {
     ?journal a rdfg:Graph .
 
-    optional { ?journal doaj:hasArticlePublishingCharges ?apc } .
+    optional { ?journal ppo:hasArticlePublishingCharges ?apc } .
     optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
     optional { ?apc schema:url ?apc_url } .
     optional { ?apc doaj:ArticlePublishingChargesApply false . bind(0 as ?apc_price) } .

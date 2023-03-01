@@ -68,10 +68,10 @@
                     </ol>
                 </subsection>
             {% endif %}
-            {% if policies | selectattr("@type", "in", ["ppo:PublicationElsewhereAllowed", "ppo:PublicationElsewhereMandatory", "ppo:PublicationElsewhereProhibited"]) | list %}
+            {% if policies | selectattr("@type", "in", ["ppo:PublicationElsewhereAllowedPolicy", "ppo:PublicationElsewhereMandatoryPolicy", "ppo:PublicationElsewhereProhibitedPolicy"]) | list %}
                 <subsection><h2>Publication Elsewhere Policies</h2>
                     <ol>
-                        {% for policy in policies | selectattr("@type", "in", ["ppo:PublicationElsewhereAllowed", "ppo:PublicationElsewhereMandatory", "ppo:PublicationElsewhereProhibited"]) %}
+                        {% for policy in policies | selectattr("@type", "in", ["ppo:PublicationElsewhereAllowedPolicy", "ppo:PublicationElsewhereMandatoryPolicy", "ppo:PublicationElsewhereProhibitedPolicy"]) %}
                             {{ graph_to_li(policy, policies)}}
                         {% endfor %}
                     </ol>

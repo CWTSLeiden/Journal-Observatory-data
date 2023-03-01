@@ -33,7 +33,7 @@ def issnl_parse_bulk_file(file, identicals=True):
     store = []
     noprogress = threading.current_thread() is not threading.main_thread()
     with open(file, "r") as f:
-        for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file", disabled=noprogress):
+        for line in progress(csv.DictReader(f, delimiter='\t'), desc="Parse bulk file", disable=noprogress):
             t = line_to_issnl(line, identicals)
             if t:
                 store.append(t)

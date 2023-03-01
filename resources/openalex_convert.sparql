@@ -8,7 +8,7 @@ insert {
     }
 
     graph sub:provenance {
-        sub:assertion cc:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+        sub:assertion dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
             dcterms:created ?date ;
             dcterms:creator <https://openalex.org> .
     }
@@ -33,22 +33,22 @@ where {
 # Organizations
 insert {
     graph sub:assertion {
-        ?journal ppo:hasOrganization ?publisher .
+        ?journal dcterms:publisher ?publisher .
         ?publisher a pro:publisher ;
             schema:name ?publisher_name . 
-        ?journal ppo:hasOrganization ?society .
+        ?journal dcterms:relation ?society .
         ?society a ppo:Society ;
-            schema:name ?society_name .
+            schema:name ?society_name ;
+            schema:url ?society_url .
     }
 }
 where {
     ?journal a rdfg:Graph .
-    optional { ?journal openalex:publisher_name ?publisher_name
-        bind(bnode() as ?publisher)
-    } . 
-    optional { ?journal openalex:society ?society .
-        ?society schema:name ?society_name
-    } .
+
+    optional { ?journal openalex:host_organization ?publisher } .
+    optional { ?journal openalex:publisher_name ?publisher_name} . 
+    optional { ?journal openalex:society ?society . bind(str(?society) as ?society_url) } .
+    optional { ?society schema:name ?society_name } .
 }
 
 # Identifier
@@ -61,7 +61,7 @@ insert {
 where {
     ?journal a rdfg:Graph ;
         openalex:external_identifier [ ?idtype ?id ] .
-    bind(if(?idtype in (ppo:hasWikidataId, ppo:hasFatcatId, ppo:hasOpenalexId), iri(?id), ?id) as ?pid) .
+    bind(if(?idtype in (wd:id, ppo:hasFatcatId, ppo:hasOpenalexId), iri(?id), ?id) as ?pid) .
 }
 
 # Publication Policy
@@ -69,10 +69,10 @@ insert {
     graph sub:assertion {
         ?journal ppo:hasPolicy sub:publicationPolicy .
         sub:publicationPolicy a ppo:PublicationPolicy ;
-            ppo:hasAPC ?apc .
+            ppo:hasArticlePublishingCharges ?apc .
         
         ?apc a ppo:ArticlePublishingCharges ;
-            ppo:apc ?apc_price ;
+            schema:price ?apc_price ;
             schema:priceCurrency "USD" .
     }
 }
@@ -80,4 +80,16 @@ where {
     ?journal a rdfg:Graph ;
         openalex:apc_usd ?apc_price .
     bind(bnode() as ?apc)
+}
+
+insert {
+    graph sub:assertion {
+        ?journal ppo:hasPolicy sub:publicationPolicy .
+        sub:publicationPolicy a ppo:PublicationPolicy ;
+            ppo:isOpenAccess ?openaccess .
+    }
+}
+where {
+    ?journal a rdfg:Graph ;
+        openalex:is_oa ?openaccess .
 }

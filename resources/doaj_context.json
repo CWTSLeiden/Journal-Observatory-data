@@ -64,7 +64,7 @@
         "@id": "doaj:Publisher"
     },
     "apc": {
-        "@id": "doaj:hasArticlePublishingCharges",
+        "@id": "ppo:hasArticlePublishingCharges",
         "@context": {
             "has_apc": {
                 "@id": "doaj:ArticlePublishingChargesApply",

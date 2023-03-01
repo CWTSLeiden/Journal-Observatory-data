@@ -71,7 +71,7 @@ ppo:PlatformShape a sh:NodeShape ;
         sh:minCount 1
     ] ;
     sh:property [ a sh:PropertyShape ;
-        sh:path ppo:hasOrganization ;
+        sh:path dcterms:relation ;
         sh:class dcterms:Agent ;
         sh:nodeKind sh:BlankNodeOrIRI ;
     ] ;
