@@ -4,8 +4,6 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 
-@prefix cc: <http://creativecommons.org/ns#> .
-
 @prefix dcterms: <http://purl.org/dc/terms/> .
 
 @prefix pad: <https://purl.org/cwts/pad/> .
@@ -34,6 +32,12 @@ pad:hasAssertion a owl:FunctionalProperty ;
     rdfs:label "has Assertion"@en ;
     rdfs:comment "The property relating a Platform Assertion Document to an Assertion."@en .
 
+pad:hasSourceAssertion a owl:FunctionalProperty ;
+    rdfs:domain pad:Assertion ;
+    rdfs:range pad:Assertion ;
+    rdfs:label "has Source Assertion"@en ;
+    rdfs:comment "The property relating a Platform Assertion to a source Assertion where its data originated."@en .
+
 pad:hasProvenance a owl:FunctionalProperty ;
     rdfs:domain pad:PAD ;
     rdfs:range pad:Provenance ;
@@ -56,8 +60,6 @@ dcterms:license a rdf:Property ;
     rdfs:domain pad:Assertion ;
     rdfs:range xsd:IRI ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> .
-
-cc:license rdfs:subPropertyOf dcterms:license .
 
 dcterms:created a rdf:Property ;
     rdfs:domain pad:Assertion ;

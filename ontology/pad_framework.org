@@ -2,7 +2,7 @@
 
 * Namespaces
 
-** Standard
+** Common
 
 #+begin_src ttl
 @prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
@@ -10,12 +10,6 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-#+end_src
-
-** Creative Commons <<<cc>>>
-
-#+begin_src ttl
-@prefix cc: <http://creativecommons.org/ns#> .
 #+end_src
 
 ** Dublin Core terms <<<dcterms>>>
@@ -78,6 +72,16 @@ pad:hasAssertion a owl:FunctionalProperty ;
     rdfs:comment "The property relating a Platform Assertion Document to an Assertion."@en .
 #+end_src
 
+* pad:hasSourceAssertion                                                   :property:
+
+#+begin_src ttl
+pad:hasSourceAssertion a owl:FunctionalProperty ;
+    rdfs:domain pad:Assertion ;
+    rdfs:range pad:Assertion ;
+    rdfs:label "has Source Assertion"@en ;
+    rdfs:comment "The property relating a Platform Assertion to a source Assertion where its data originated."@en .
+#+end_src
+
 * pad:hasProvenance                                                        :property:
 
 #+begin_src ttl
@@ -115,12 +119,6 @@ dcterms:license a rdf:Property ;
     rdfs:domain pad:Assertion ;
     rdfs:range xsd:IRI ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> .
-#+end_src
-
-* cc:license                                                               :property:
-
-#+begin_src ttl
-cc:license rdfs:subPropertyOf dcterms:license .
 #+end_src
 
 * dcterms:created                                                          :property:

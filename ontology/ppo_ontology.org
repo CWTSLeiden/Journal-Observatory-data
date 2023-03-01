@@ -2,7 +2,7 @@
 
 * Namespaces
 
-** Standard
+** Common
 
 #+begin_src ttl
 @prefix rdfg: <http://www.w3.org/2004/03/trix/rdfg-1/> .
@@ -12,100 +12,160 @@
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 #+end_src
 
-** Creative Commons <<<cc>>>
+** Directory of Open Access Journals
 
-#+begin_src ttl
-@prefix cc: <http://creativecommons.org/ns#> .
-#+end_src
-
-** Directory of Open Access Journals <<<doaj>>>
-
+<<<doaj>>>
 #+begin_src ttl
 @prefix doaj: <https://doaj.org/> .
 #+end_src
 
-** Dublin Core <<<dc>>>
+** Dublin Core 
+
+<<<dc>>>
 
 #+begin_src ttl
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 #+end_src
 
-** Dublin Core terms <<<dcterms>>>
+** Dublin Core terms 
+
+<<<dcterms>>>
 
 #+begin_src ttl
 @prefix dcterms: <http://purl.org/dc/terms/> .
 #+end_src
 
-** FRBR-aligned Bibliographic Ontology <<<fabio>>>
+** FRBR-aligned Bibliographic Ontology 
+
+<<<fabio>>>
 
 #+begin_src ttl
 @prefix fabio: <http://purl.org/spar/fabio/> .
 #+end_src
 
-** Publishing Platform Ontology <<<ppo>>>
+** Friend of a friend 
+
+<<<foaf>>>
+
+#+begin_src ttl
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+#+end_src
+
+** Publishing Platform Ontology 
+
+<<<ppo>>>
 
 #+begin_src ttl
 @prefix ppo: <https://purl.org/cwts/ppo/> .
 #+end_src
 
-** Publication Roles Ontology <<<pro>>>
+** Publication Roles Ontology 
+
+<<<pro>>>
 
 #+begin_src ttl
 @prefix pro: <https://purl.org/spar/pro/> .
 #+end_src
 
-** Library of Congress <<<loc>>>
+** Publication Status Ontology 
+
+<<<pso>>>
+
+#+begin_src ttl
+@prefix pso: <https://purl.org/spar/pso/> .
+#+end_src
+
+** Library of Congress 
+
+<<<loc>>>
 
 #+begin_src ttl
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
 #+end_src
 
-** OpenAlex <<<openalex>>>
+** OpenAlex 
+
+<<<openalex>>>
 
 #+begin_src ttl
 @prefix openalex: <https://openalex.org/> .
 #+end_src
 
-** Prismstandard <<<prism>>>
+** Prismstandard 
+
+<<<prism>>>
 
 #+begin_src ttl
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
 #+end_src
 
-** Sherpa-Romeo <<<romeo>>>
+** Sherpa-Romeo 
+
+<<<romeo>>>
 
 #+begin_src ttl
 @prefix romeo: <https://v2.sherpa.ac.uk/id/> .
 #+end_src
 
-** Schema <<<schema>>>
+** Schema 
+
+<<<schema>>>
 
 #+begin_src ttl
 @prefix schema: <https://schema.org/> .
 #+end_src
 
-** Wikidata <wd>
+** Wikidata 
+
+<<<wd>>>
 
 #+begin_src ttl
 @prefix wd: <http://www.wikidata.org/entity/> .
 #+end_src
 
-** XSD <<<xsd>>>
+** XSD 
+
+<<<xsd>>>
 
 #+begin_src ttl
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 #+end_src
 
 * Publishing Platform Ontology
-** ppo:Platform                                                              :class:
+** Classes
+*** ppo:ArticlePublishingCharges
+
+#+begin_src ttl
+ppo:ArticlePublishingCharges a rdf:Class ;
+    rdfs:label "Article Publishing Charges"@en ;
+    rdfs:comment "Article Processing Charges (APCs) are publication fees charged to authors of scholarly articles during the publication process."@en .
+#+end_src
+
+*** ppo:EvaluationPolicy
+
+#+begin_src ttl
+ppo:EvaluationPolicy rdfs:subClassOf ppo:Policy ;
+    rdfs:label "Evaluation Policy"@en ;
+    rdfs:comment "A collection of rules and allowances that a platform maintains during the evaluation of a scholarly article."@en .
+#+end_src
+
+*** ppo:OptIn
+
+#+begin_src ttl
+ppo:OptIn a rdfs:Class ;
+    rdfs:label "Opt-In"@en ;
+    rdfs:comment "The work is made publicly available with the permission of all persons holding a publishing role that has an ppo:optInBy relation with this individual."@en .
+#+end_src
+
+*** ppo:Platform
 
 #+begin_src ttl
 ppo:Platform a rdfs:Class ;
     rdfs:label "Platform"@en ;
-    rdfs:comment "A platform that plays some role in the publishing process (e.g. publication, hosting, reviewing, etc.)."@en .
+    rdfs:comment "A scholarly communication platform that plays some role in the publishing process (e.g. publication, hosting, reviewing, etc.)."@en .
 #+end_src
 
-** ppo:PlatformType                                                          :class:
+*** ppo:PlatformType
 
 #+begin_src ttl
 ppo:PlatformType a rdfs:Class ;
@@ -113,91 +173,74 @@ ppo:PlatformType a rdfs:Class ;
     rdfs:comment "The role that a platform can fulfill during the publication process."@en .
 #+end_src
 
-** ppo:Policy                                                                :class:
+*** ppo:Policy
 
 #+begin_src ttl
 ppo:Policy a rdfs:Class ;
     rdfs:label "Policy"@en ;
-    rdfs:comment "A collection of rules and allowances that the platform maintains."@en .
+    rdfs:comment "A collection of rules and allowances that a platform maintains."@en .
 #+end_src
 
-** ppo:PublicationPolicy                                                     :class:
+*** ppo:PublicAccessability
 
 #+begin_src ttl
-ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
-    rdfs:label "Publication Policy"@en ;
-    rdfs:comment "Rules and allowances that a platform maintains during the publication of a scholarly article."@en .
+ppo:PublicAccessability a rdfs:Class ;
+    rdfs:label "Public Accessibility"@en ;
+    rdfs:comment "Object that describes the public accessability of an entity."@en .
 #+end_src
 
-** ppo:EvaluationPolicy                                                      :class:
-
-#+begin_src ttl
-ppo:EvaluationPolicy rdfs:subClassOf ppo:Policy ;
-    rdfs:label "Evaluation Policy"@en ;
-    rdfs:comment "Rules and allowances that a platform maintains during the evaluation of a scholarly article."@en .
-#+end_src
-
-** ppo:PublicationElsewherePolicy                                            :class:
+*** ppo:PublicationElsewherePolicy
 
 #+begin_src ttl
 ppo:PublicationElsewherePolicy rdfs:subClassOf ppo:Policy ;
     rdfs:label "Publication Elsewhere Policy"@en ;
-    rdfs:comment "Rules and allowances that a platform maintains with regard to other platforms."@en .
+    rdfs:comment "A collection of rules and allowances that a platform maintains regarding publication of works on other platforms."@en .
 #+end_src
 
-** ppo:hasPlatformType                                                    :property:
+*** ppo:PublicationElsewhereAllowedPolicy
 
 #+begin_src ttl
-ppo:hasPlatformType a rdf:Property ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range ppo:PlatformType ;
-    rdfs:label "has Platform Type"@en ;
-    rdfs:comment "The property relating a Platform to a specific platform type."@en .
+ppo:PublicationElsewhereAllowedPolicy rdfs:subClassOf ppo:PublicationElsewherePolicy ;
+    rdfs:label "Publication Elsewhere Allowed Policy"@en ;
+    rdfs:comment "A collection of rules and allowances that a platform maintains regarding allowing publication of works on other platforms."@en .
 #+end_src
 
-** ppo:hasPolicy                                                          :property:
+*** ppo:PublicationElsewhereProhibitedPolicy
 
 #+begin_src ttl
-ppo:hasPolicy a rdf:Property ;
-    rdfs:domain ppo:Platform, ppo:PlatformType ;
-    rdfs:range ppo:Policy ;
-    rdfs:label "has Policy"@en ;
-    rdfs:comment "The property relating a Platform to a specific Policy."@en .
+ppo:PublicationElsewhereProhibitedPolicy rdfs:subClassOf ppo:PublicationElsewherePolicy ;
+    rdfs:label "Publication Elsewhere Prohibited Policy"@en ;
+    rdfs:comment "A collection of rules and allowances that a platform maintains regarding prohibition of publication of works on other platforms."@en .
 #+end_src
 
-** ppo:documentVersion                                                       :class:
+*** ppo:PublicationElsewhereMandatoryPolicy
 
 #+begin_src ttl
-ppo:documentVersion a rdf:Class ;
-    rdfs:label "Document version"@en ;
-    rdfs:comment "The version of a publishable document."@en .
+ppo:PublicationElsewhereMandatoryPolicy rdfs:subClassOf ppo:PublicationElsewherePolicy ;
+    rdfs:label "Publication Elsewhere Mandatory Policy"@en ;
+    rdfs:comment "A collection of rules and allowances that a platform maintains regarding mandating of publication of works on other platforms."@en .
 #+end_src
 
-** ppo:publishedVersion                                                 :individual:
+*** ppo:PublicationPolicy
 
 #+begin_src ttl
-ppo:publishedVersion a ppo:documentVersion ;
-    rdfs:label "Published version"@en ;
-    rdfs:comment "The published version of a publishable document."@en .
+ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
+    rdfs:label "Publication Policy"@en ;
+    rdfs:comment "A collection of rules and allowances that a platform maintains during the publication of a scholarly article."@en .
 #+end_src
 
-** ppo:acceptedVersion                                                  :individual:
+** Properties
+*** ppo:appliesToVersion
 
 #+begin_src ttl
-ppo:acceptedVersion a ppo:documentVersion ;
-    rdfs:label "Accepted version"@en ;
-    rdfs:comment "The accepted version of a publishable document."@en .
+ppo:appliesToVersion a rdf:Property ;
+    rdfs:domain pro:Policy ;
+    rdfs:range pso:PublicationStatus ;
+    rdfs:label "applies to Version"@en ;
+    rdfs:comment "The version of the Work to which the policy applies."@en .
 #+end_src
 
-** ppo:submittedVersion                                                 :individual:
-
-#+begin_src ttl
-ppo:submittedVersion a ppo:documentVersion ;
-    rdfs:label "Submitted version"@en ;
-    rdfs:comment "The submitted version of a publishable document."@en .
-#+end_src
-
-** ppo:anonymousTo                                                        :property:
+*** ppo:anonymousTo
 
 #+begin_src ttl
 ppo:anonymousTo a rdf:Property ;
@@ -207,47 +250,7 @@ ppo:anonymousTo a rdf:Property ;
     rdfs:comment "The relation that signifies that the subject is not aware of the identity of the object."@en .
 #+end_src
 
-** ppo:interactsWith                                                      :property:
-
-#+begin_src ttl
-ppo:interactsWith a owl:SymmetricProperty ;
-    rdfs:domain pro:PublishingRole ;
-    rdfs:range pro:PublishingRole ;
-    rdfs:label "The relation that signifies that the subject can interact with the object during the review process."@en ;
-    rdfs:comment ""@en .
-#+end_src
-
-** ppo:possibleDecision                                                   :property:
-
-#+begin_src ttl
-ppo:possibleDecision a rdf:Property ;
-    rdfs:domain ppo:EvaluationPolicy ;
-    rdfs:range xsd:String ;
-    rdfs:label "possible Decision"@en ;
-    rdfs:comment "Relation that describes the possible decision that can be made during the evaluation of a work by the platform."@en .
-#+end_src
-
-** ppo:involves                                                           :property:
-
-#+begin_src ttl
-ppo:involves a rdf:Property ;
-    rdfs:domain ppo:Policy ;
-    rdfs:range pro:PublishingRole ;
-    rdfs:label "involves"@en ;
-    rdfs:comment "Relation that describes that the object is involved during the process for a specific policy."@en .
-#+end_src
-
-** ppo:hasInitiator                                                       :property:
-
-#+begin_src ttl
-ppo:hasInitiator rdfs:subPropertyOf ppo:involves ;
-    rdfs:domain ppo:EvaluationPolicy ;
-    rdfs:range pro:PublishingRole ;
-    rdfs:label "has Initiator"@en ;
-    rdfs:comment "Relation that describes the object as the initiator for a specific evaluation policy."@en .
-#+end_src
-
-** ppo:covers                                                             :property:
+*** ppo:covers
 
 #+begin_src ttl
 ppo:covers a rdf:Property ;
@@ -257,49 +260,100 @@ ppo:covers a rdf:Property ;
     rdfs:comment "Relation that signifies that a policy includes restrictions or allowances on a particular type of document related to the work or policy."@en .
 #+end_src
 
-** ppo:PublicAccessability                                                   :class:
+*** ppo:hasArticlePublishingCharges
 
 #+begin_src ttl
-ppo:PublicAccessability a rdfs:Class ;
-    rdfs:label "Public Accessibility"@en ;
-    rdfs:comment "Status that a work can have regarding its public availability."@en .
+ppo:hasArticlePublishingCharges a rdf:Property ;
+    rdfs:domain ppo:PublicationPolicy ;
+    rdfs:range ppo:ArticlePublishingCharges ;
+    rdfs:label "has Article Publishing Charges"@en ;
+    rdfs:comment "A relation linking publication policies to article publising charges."@en .
 #+end_src
 
-** ppo:Accessible                                                       :individual:
+*** ppo:hasCopyrightOwner
 
 #+begin_src ttl
-ppo:Accessible a owl:NamedIndividual ;
-    rdfs:label "Accessible"@en ;
-    rdfs:comment "The work is made publicly available."@en .
+ppo:hasCopyrightOwner a rdf:Property ;
+    rdfs:domain ppo:Policy ;
+    rdfs:range pro:PublishingRole ;
+    rdfs:label "has Copyright Owner"@en ;
+    rdfs:comment "Relation that signifies who retains the copyright over a work when published under the policy."@en .
 #+end_src
 
-** ppo:NotAccessible                                                    :individual:
+*** ppo:hasFatcatId
 
 #+begin_src ttl
-ppo:NotAccessible a owl:NamedIndividual ;
-    rdfs:label "Not Accessible"@en ;
-    rdfs:comment "The work is not made publicly available."@en .
+ppo:hasFatcatId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label "Fatcat Identifier"@en ;
+    rdfs:comment "Relation linking a platform to its Fatcat identifier."@en .
 #+end_src
 
-** ppo:OptIn                                                                 :class:
+*** ppo:hasInitiator
 
 #+begin_src ttl
-ppo:OptIn a rdfs:Class ;
-    rdfs:label "Opt-In"@en ;
-    rdfs:comment "The work is made publicly available with the permission of all persons holding a publishing role that has an ppo:optInBy relation with this individual."@en .
+ppo:hasInitiator rdfs:subPropertyOf ppo:involves ;
+    rdfs:domain ppo:EvaluationPolicy ;
+    rdfs:range pro:PublishingRole ;
+    rdfs:label "has Initiator"@en ;
+    rdfs:comment "Relation that describes the object as the initiator for a specific evaluation policy."@en .
 #+end_src
 
-** ppo:workPubliclyAccessible                                             :property:
+*** ppo:hasOpenalexId
 
 #+begin_src ttl
-ppo:publiclyAccessible a rdf:Property ;
-    rdfs:domain fabio:Work ;
-    rdfs:range ppo:PublicAccessability ;
-    rdfs:label "publicly Accessible"@en ;
-    rdfs:comment "Relation that signifies the public availability of the Document."@en .
+ppo:hasOpenalexId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label "OpenAlex Identifier"@en ;
+    rdfs:comment "Relation linking a platform to its OpenAlex identifier."@en .
 #+end_src
 
-** ppo:identityPubliclyAccessible                                         :property:
+*** ppo:isOpenAccess
+
+#+begin_src ttl
+ppo:isOpenAccess a rdf:Property ;
+    rdfs:domain ppo:PublicationPolicy ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is Open Access"@en ;
+    rdfs:comment "Relation that signifies whether a work that the publication policy covers may be open access or not."@en .
+#+end_src
+
+*** ppo:hasPlatformType
+
+#+begin_src ttl
+ppo:hasPlatformType a rdf:Property ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:string ;
+    rdfs:label "has Platform Type"@en ;
+    rdfs:comment "Relation linking a Platform to a platform type."@en .
+#+end_src
+
+*** ppo:hasPolicy
+
+#+begin_src ttl
+ppo:hasPolicy a rdf:Property ;
+    rdfs:domain ppo:Platform, ppo:PlatformType ;
+    rdfs:range ppo:Policy ;
+    rdfs:label "has Policy"@en ;
+    rdfs:comment "Relation linking a Platform to a Policy."@en .
+#+end_src
+
+*** ppo:hasSherpaRomeoId
+
+#+begin_src ttl
+ppo:hasSherpaRomeoId a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:anyURI ;
+    rdfs:label "Sherpa-Romeo Identifier"@en ;
+    rdfs:comment "Relation linking a platform to its Sherpa Romeo identifier."@en .
+#+end_src
+
+*** ppo:identityPubliclyAccessible
 
 #+begin_src ttl
 ppo:identityPubliclyAccessible a rdf:Property ;
@@ -307,10 +361,30 @@ ppo:identityPubliclyAccessible a rdf:Property ;
     rdfs:range ppo:PublicAccessability ;
     rdfs:subPropertyOf ppo:publiclyAccessible ;
     rdfs:label "identity Publicly Accessible"@en ;
-    rdfs:comment "Relation that signifies the public availability of the publishing role."@en .
+    rdfs:comment "Relation that signifies the public availability of the identity of an Agent."@en .
 #+end_src
 
-** ppo:optInBy                                                            :property:
+*** ppo:interactsWith
+
+#+begin_src ttl
+ppo:interactsWith a owl:SymmetricProperty ;
+    rdfs:domain pro:PublishingRole ;
+    rdfs:range pro:PublishingRole ;
+    rdfs:label "interacts With"@en ;
+    rdfs:comment "Relation that signifies that the subject can interact with the object during the review process."@en .
+#+end_src
+
+*** ppo:involves
+
+#+begin_src ttl
+ppo:involves a rdf:Property ;
+    rdfs:domain ppo:Policy ;
+    rdfs:range pro:PublishingRole ;
+    rdfs:label "involves"@en ;
+    rdfs:comment "Relation that signifies that the object is involved during the process for a specific policy."@en .
+#+end_src
+
+*** ppo:optInBy
 
 #+begin_src ttl
 ppo:optInBy a rdf:Property ;
@@ -320,237 +394,374 @@ ppo:optInBy a rdf:Property ;
     rdfs:comment "Relation that signifies the permission of persons holding a publishing role for a specific thing to be made publicly accessible."@en .
 #+end_src
 
-** ppo:hasOpenalexId                                                      :property:
+*** ppo:postPublicationCommenting
 
 #+begin_src ttl
-ppo:hasOpenalexId a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:anyURI ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+ppo:postPublicationCommenting rdfs:subClassOf fabio:Work ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    rdfs:label "Post Publication Commenting"@en ;
+    rdfs:comment "Allowance of comments on the online published version of the version of record."@en .
 #+end_src
 
-** ppo:hasFatcatId                                                        :property:
+*** ppo:publicationCondition
 
 #+begin_src ttl
-ppo:hasFatcatId a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:anyURI ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+ppo:publicationCondition a rdf:Property ;
+    rdfs:domain ppo:PublicationElsewhereAllowedPolicy ;
+    rdfs:range xsd:string ;
+    rdfs:label "Publication Condition"@en ;
+    rdfs:comment "Relation describing a condition for allowing publication on other platforms."@en .
 #+end_src
 
-** ppo:hasWikidataId                                                      :property:
+*** ppo:workPubliclyAccessible
 
 #+begin_src ttl
-ppo:hasWikidataId a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:anyURI ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+ppo:publiclyAccessible a rdf:Property ;
+    rdfs:domain fabio:Work ;
+    rdfs:range ppo:PublicAccessability ;
+    rdfs:label "publicly Accessible"@en ;
+    rdfs:comment "Relation that signifies the public availability of the Document."@en .
+#+end_src
+
+** Individuals
+*** ppo:Accessible
+
+#+begin_src ttl
+ppo:Accessible a ppo:PublicAccessability; a owl:NamedIndividual ;
+    rdfs:label "Accessible"@en ;
+    rdfs:comment "The work is made publicly available."@en .
+#+end_src
+
+*** ppo:AuthorEditorCommunication
+
+#+begin_src ttl
+ppo:AuthorEditorCommunication a fabio:Work ; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    owl:sameAs fabio:Reply ;
+    owl:sameAs fabio:Letter ;
+    rdfs:label "Author-Editor Communication"@en .
+#+end_src
+
+*** ppo:NotAccessible
+
+#+begin_src ttl
+ppo:NotAccessible a ppo:PublicAccessability; a owl:NamedIndividual ;
+    rdfs:label "Not Accessible"@en ;
+    rdfs:comment "The work is not made publicly available."@en .
+#+end_src
+
+*** ppo:postPublicationCommenting
+
+#+begin_src ttl
+ppo:postPublicationCommentingOpen a ppo:postPublicationCommenting; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    rdfs:label "Post Publication Commenting Open"@en ;
+    rdfs:comment "Post Publication Commenting is open."@en .
+#+end_src
+
+*** ppo:postPublicationCommentingClosed
+
+#+begin_src ttl
+ppo:postPublicationCommentingClosed a ppo:postPublicationCommenting; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    rdfs:label "Post Publication Commenting Closed"@en ;
+    rdfs:comment "Post Publication Commenting is closed."@en .
+#+end_src
+
+*** ppo:postPublicationCommentingOnInvitation
+
+#+begin_src ttl
+ppo:postPublicationCommentingOnInvitation a ppo:postPublicationCommenting; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    rdfs:label "Post Publication Commenting On Invitation"@en ;
+    rdfs:comment "Post Publication Commenting is open on invitation only."@en .
+#+end_src
+
+*** ppo:ReviewReport
+
+#+begin_src ttl
+ppo:ReviewReport a fabio:Work; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    owl:sameAs fabio:Review ;
+    rdfs:label "Review Report"@en .
+#+end_src
+
+*** ppo:ReviewSummary
+
+#+begin_src ttl
+ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    owl:sameAs fabio:ExecutiveSummary ;
+    rdfs:label "Review Summary"@en .
+#+end_src
+
+*** ppo:Society
+
+#+begin_src ttl
+pro:Society a foaf:Organization ;
+    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> ;
+    rdfs:label "Publisher"@en .
+#+end_src
+
+*** ppo:SubmittedManuscript
+
+#+begin_src ttl
+ppo:SubmittedManuscript a fabio:Work; a owl:NamedIndividual ;
+    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
+    owl:sameAs fabio:Manuscript ;
+    rdfs:label "Submitted Manuscript"@en .
 #+end_src
 
 * Other ontologies
-** dcterms:license                                                        :property:
+** Classes
+*** fabio:Work
 
 #+begin_src ttl
-dcterms:license a rdf:Property ;
-    rdfs:domain ppo:Assertion ;
-    rdfs:range xsd:IRI ;
-    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> .
+fabio:Work a rdfs:Class ;
+    rdfs:isDefinedBy <http://purl.org/spar/fabio/Work> ;
+    rdfs:label "Work"@en .
 #+end_src
 
-** cc:license
+*** foaf:Organization
 
 #+begin_src ttl
-cc:license rdfs:subPropertyOf dcterms:license .
+foaf:Organization a rdfs:Class ;
+    rdfs:isDefinedBy <http://xmlns.com/foaf/0.1/Organization> ;
+    rdfs:label "Organization"@en .
 #+end_src
 
-** dcterms:created                                                        :property:
+*** pro:PublishingRole
+
+#+begin_src ttl
+pro:PublishingRole a rdfs:Class ;
+    rdfs:isDefinedBy <https://purl.org/spar/pro/PublishingRole> ;
+    rdfs:label "Publishing Role"@en .
+#+end_src
+
+*** pso:PublicationStatus
+
+#+begin_src ttl
+pso:PublicationStatus a rdf:Class ;
+    rdfs:label "Publication Status"@en ;
+    rdfs:comment "A state or condition that a document may have that relates to the publication of such document."@en .
+#+end_src
+
+** Properties
+*** dcterms:created
 
 #+begin_src ttl
 dcterms:created a rdf:Property ;
     rdfs:domain ppo:Assertion ;
-    rdfs:range xsd:DateTime ;
-    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/created> .
+    rdfs:range xsd:dateTime ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/created> ;
+    rdfs:label "Created on"@en .
 #+end_src
 
-** dcterms:creator                                                        :property:
+*** dcterms:creator
 
 #+begin_src ttl
 dcterms:creator a rdf:Property ;
     rdfs:domain ppo:Assertion ;
     rdfs:range dcterms:Agent ;
-    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/creator> .
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/creator> ;
+    rdfs:label "Creator"@en .
 #+end_src
 
-** dcterms:publisher                                                      :property:
-
-#+begin_src ttl
-dcterms:publisher a rdf:Property ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range dcterms:Agent ;
-    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/publisher> .
-#+end_src
-
-** dcterms:identifier                                                     :property:
+*** dcterms:identifier
 
 #+begin_src ttl
 dcterms:identifier a rdf:Property ;
     rdfs:domain ppo:Platform ;
-    rdfs:range xsd:Literal ;
-    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/identifier> .
+    rdfs:range xsd:literal ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/identifier> ;
+    rdfs:label "Identifier"@en .
 #+end_src
 
-** fabio:hasIssnL                                                         :property:
+*** dcterms:license
+
+#+begin_src ttl
+dcterms:license a rdf:Property ;
+    rdfs:domain ppo:Assertion ;
+    rdfs:range xsd:anyURI ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> ;
+    rdfs:label "License"@en .
+#+end_src
+
+*** dcterms:publisher
+
+#+begin_src ttl
+dcterms:publisher a rdf:Property ;
+    rdfs:subPropertyOf dcterms:relation ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range foaf:Organization ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/publisher> ;
+    rdfs:label "has Publisher"@en .
+#+end_src
+
+*** dcterms:relation
+
+#+begin_src ttl
+dcterms:relation a rdf:Property ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range foaf:Organization ;
+    rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/relation> ;
+    rdfs:label "has Relation"@en .
+#+end_src
+
+*** fabio:hasEmbargoDuration
+
+#+begin_src ttl
+fabio:hasEmbargoDuration a rdf:Property ;
+    rdfs:domain ppo:PublicationPolicy ;
+    rdfs:range xsd:duration ;
+    rdfs:label "has Embargo Duration"@en ;
+    rdfs:comment "The time period for which an entity is embargoed. During this period, the entity should not be published or, in the case of a press release, should not be reported on. For open-access journal articles, the embargo duration specifies that period of time during which availability of the open-access version of the article is delayed by the publisher, following subscription-access availability of the published work."@en .
+#+end_src
+
+*** fabio:hasIssnL
 
 #+begin_src ttl
 fabio:hasIssnL a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
-    rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+    rdfs:range xsd:string ;
+    rdfs:label "Linking ISSN"@en ;
+    rdfs:comment "Linking International Standard Serial Number"@en .
 #+end_src
 
-** prism:issn                                                             :property:
-
-#+begin_src ttl
-prism:issn a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
-#+end_src
-
-** prism:eIssn                                                            :property:
-
-#+begin_src ttl
-prism:eIssn a rdf:Property ;
-    rdfs:subPropertyOf dcterms:identifier ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
-#+end_src
-
-** prism:doi                                                              :property:
+*** prism:doi
 
 #+begin_src ttl
 prism:doi a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
-    rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+    rdfs:range xsd:string ;
+    rdfs:label "DOI"@en ;
+    rdfs:comment "Digital Object Identifier"@en .
 #+end_src
 
-** romeo:id                                                               :property:
+*** prism:eIssn
 
 #+begin_src ttl
-romeo:id a rdf:Property ;
+prism:eIssn a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
-    rdfs:range xsd:anyURI ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+    rdfs:range xsd:string ;
+    rdfs:label "Electronic ISSN"@en ;
+    rdfs:comment "Electronic International Standard Serial Number"@en .
 #+end_src
 
-** wd:id                                                                  :property:
+*** prism:issn
+
+#+begin_src ttl
+prism:issn a rdf:Property ;
+    rdfs:subPropertyOf dcterms:identifier ;
+    rdfs:domain ppo:Platform ;
+    rdfs:range xsd:string ;
+    rdfs:label "Print ISSN"@en ;
+    rdfs:comment "Print International Standard Serial Number"@en .
+#+end_src
+
+*** schema:name
+
+#+begin_src ttl
+schema:name a rdf:Property ;
+    rdfs:range xsd:string ;
+    rdfs:isDefinedBy <http://schema.org/name> ;
+    rdfs:label "Name"@en .
+#+end_src
+
+*** schema:price
+
+#+begin_src ttl
+schema:price a rdf:Property ;
+    rdfs:range xsd:double ;
+    rdfs:isDefinedBy <http://schema.org/price> ;
+    rdfs:label "Price"@en .
+#+end_src
+
+*** schema:priceCurrency
+
+#+begin_src ttl
+schema:priceCurrency a rdf:Property ;
+    rdfs:range xsd:string ;
+    rdfs:isDefinedBy <http://schema.org/priceCurrency> ;
+    rdfs:label "Currency"@en .
+#+end_src
+
+*** schema:url
+
+#+begin_src ttl
+schema:url a rdf:Property ;
+    rdfs:range xsd:anyURI ;
+    rdfs:isDefinedBy <http://schema.org/url> ;
+    rdfs:label "URL"@en .
+#+end_src
+
+*** wd:id
 
 #+begin_src ttl
 wd:id a rdf:Property ;
     rdfs:subPropertyOf dcterms:identifier ;
     rdfs:domain ppo:Platform ;
-    rdfs:range xsd:String ;
-    rdfs:label ""@en ;
-    rdfs:comment ""@en .
+    rdfs:range xsd:string ;
+    rdfs:label "Wikidata Identifier"@en .
 #+end_src
 
-** schema:name                                                            :property:
-
-#+begin_src ttl
-schema:name a rdf:Property ;
-    rdfs:domain ppo:Platform ;
-    rdfs:range xsd:String ;
-    rdfs:isDefinedBy <http://schema.org/name> .
-#+end_src
-
-** pro:PublishingRole                                                        :class:
-
-#+begin_src ttl
-pro:PublishingRole a rdfs:Class ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/PublishingRole> .
-#+end_src
-
-** pro:author                                                           :individual:
+** Individuals
+*** pro:author
 
 #+begin_src ttl
 pro:author a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/author> .
+    rdfs:isDefinedBy <https://purl.org/spar/pro/author> ;
+    rdfs:label "Author"@en .
 #+end_src
 
-** pro:peer-reviewer                                                    :individual:
-
-#+begin_src ttl
-pro:peer-reviewer a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/peer-reviewer> .
-#+end_src
-
-** pro:editor                                                           :individual:
+*** pro:editor
 
 #+begin_src ttl
 pro:editor a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/editor> .
+    rdfs:isDefinedBy <https://purl.org/spar/pro/editor> ;
+    rdfs:label "Editor"@en .
 #+end_src
 
-** pro:publisher                                                        :individual:
+*** pro:peer-reviewer
 
 #+begin_src ttl
-pro:publisher a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> .
+pro:peer-reviewer a pro:PublishingRole ;
+    rdfs:isDefinedBy <https://purl.org/spar/pro/peer-reviewer> ;
+    rdfs:label "Peer Reviewer"@en .
 #+end_src
 
-** fabio:Work                                                                :class:
+*** pro:publisher
 
 #+begin_src ttl
-fabio:Work a rdfs:Class ;
-    rdfs:isDefinedBy <http://purl.org/spar/fabio/Work> .
+pro:publisher a pro:PublishingRole ; a foaf:Organization ;
+    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> ;
+    rdfs:label "Publisher"@en .
 #+end_src
 
-** ppo:ReviewReport                                                     :individual:
+*** pso:accepted-for-publication
 
 #+begin_src ttl
-ppo:ReviewReport a fabio:Work, owl:NamedIndividual ;
-    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    rdfs:label "Review Report"@en .
+ppo:accepted-for-publication a pso:PublicationStatus ;
+    rdfs:label "Accepted version"@en ;
+    rdfs:comment "The status of a work (for example a document or a dataset) once it has been accepted for publication by a publisher or data repository."@en .
 #+end_src
 
-** ppo:ReviewSummary                                                    :individual:
+*** pso:published
 
 #+begin_src ttl
-ppo:ReviewSummary a fabio:Work, owl:NamedIndividual ;
-    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    rdfs:label "Review Summary"@en .
+pso:published a pso:PublicationStatus ;
+    rdfs:label "Published version"@en ;
+    rdfs:comment "The status of material (for example a document or a dataset) that has been published, i.e. made available for people to access, read or use, either freely or for a purchase price or an access fee."@en .
 #+end_src
 
-** ppo:AuthorEditorCommunication                                        :individual:
+*** pso:submitted
 
 #+begin_src ttl
-ppo:AuthorEditorCommunication a fabio:Work, owl:NamedIndividual ;
-    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    rdfs:label "Author-Editor Communication"@en .
-#+end_src
-
-** ppo:SubmittedManuscript                                              :individual:
-
-#+begin_src ttl
-ppo:SubmittedManuscript a fabio:Work, owl:NamedIndividual ;
-    rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    rdfs:label "Submitted Manuscript"@en .
+pso:submitted a pso:PublicationStatus ;
+    rdfs:label "Submitted version"@en ;
+    rdfs:comment "The status of a work (for example a document or a dataset) that has been submitted for publication by the author to a publisher or a data repository, prior to its being accepted or rejected."@en .
 #+end_src
 
