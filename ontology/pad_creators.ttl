@@ -1,0 +1,27 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix pro: <https://purl.org/spar/pro/> .
+
+<https://doaj.org> a dcterms:Agent ;
+    rdfs:label "DOAJ" .
+
+<https://v2.sherpa.ac.uk/romeo> a dcterms:Agent ;
+    rdfs:label "Sherpa-Romeo" .
+
+<https://www.wikidata.org> a dcterms:Agent ;
+    rdfs:label "Wikidata" .
+
+<https://openalex.org> a dcterms:Agent ;
+    rdfs:label "OpenAlex" .
+
+<https://www.ieee.org> a pro:publisher ;
+    rdfs:label "IEEE" .
+
+<https://springernature.com> a pro:publisher ;
+    rdfs:label "Springer" .
+
+<https://www.wiley.com/> a pro:publisher ;
+    rdfs:label "Wiley" .
+
+<https://elifesciences.org/> a pro:publisher ;
+    rdfs:label "eLife" .
