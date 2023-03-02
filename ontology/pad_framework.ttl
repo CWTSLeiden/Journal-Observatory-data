@@ -3,46 +3,31 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-
 @prefix dcterms: <http://purl.org/dc/terms/> .
-
 @prefix pad: <https://purl.org/cwts/pad/> .
-
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-pad:PAD a rdfs:Class ;
-    rdfs:label "Platform Assertion Document"@en ;
-    rdfs:comment ""@en .
-
-pad:Assertion rdfs:subClassOf rdfg:Graph ;
+pad:Assertion a rdfg:Graph ;
     rdfs:label "Assertion"@en ;
     rdfs:comment "Graph that contains statements about a platform."@en .
 
-pad:Provenance rdfs:subClassOf rdfg:Graph ;
-    rdfs:label "Provenance"@en ;
-    rdfs:comment "Graph that contains statements about an Assertion."@en .
-
-pad:PubInfo rdfs:subClassOf rdfg:Graph ;
+pad:PubInfo a rdfg:Graph ;
     rdfs:label "PADInfo"@en ;
     rdfs:comment "Graph that contains statements about a Platform Assertion Document."@en .
+
+pad:PAD a rdfs:Class ;
+    rdfs:label "Platform Assertion Document"@en ;
+    rdfs:comment "A Platform Assertion Document, providing machine readable, tracable way to codify information about scholarly communication platforms."@en .
+
+pad:Provenance a rdfg:Graph ;
+    rdfs:label "Provenance"@en ;
+    rdfs:comment "Graph that contains statements about an Assertion."@en .
 
 pad:hasAssertion a owl:FunctionalProperty ;
     rdfs:domain pad:PAD ;
     rdfs:range pad:Assertion ;
     rdfs:label "has Assertion"@en ;
     rdfs:comment "The property relating a Platform Assertion Document to an Assertion."@en .
-
-pad:hasSourceAssertion a owl:FunctionalProperty ;
-    rdfs:domain pad:Assertion ;
-    rdfs:range pad:Assertion ;
-    rdfs:label "has Source Assertion"@en ;
-    rdfs:comment "The property relating a Platform Assertion to a source Assertion where its data originated."@en .
-
-pad:hasProvenance a owl:FunctionalProperty ;
-    rdfs:domain pad:PAD ;
-    rdfs:range pad:Provenance ;
-    rdfs:label "has Provenance"@en ;
-    rdfs:comment "The property relating a Platform Assertion Document to the Provenance of the Assertion."@en .
 
 pad:hasPubInfo a owl:FunctionalProperty ;
     rdfs:domain pad:PAD ;
@@ -52,21 +37,42 @@ pad:hasPubInfo a owl:FunctionalProperty ;
 
 pad:hasProvenance a owl:FunctionalProperty ;
     rdfs:domain pad:PAD ;
+    rdfs:range pad:Provenance ;
+    rdfs:label "has Provenance"@en ;
+    rdfs:comment "The property relating a Platform Assertion Document to the Provenance of the Assertion."@en .
+
+pad:hasSourceAssertion a owl:FunctionalProperty ;
+    rdfs:domain pad:Assertion ;
+    rdfs:range pad:Assertion ;
+    rdfs:label "has Source Assertion"@en ;
+    rdfs:comment "The property relating a Platform Assertion to a source Assertion where its data originated."@en .
+
+pad:hasSourcePad a owl:FunctionalProperty ;
+    rdfs:domain pad:PAD ;
+    rdfs:range pad:PAD ;
+    rdfs:label "has Source PAD"@en ;
+    rdfs:comment "The property relating a Platform Assertion Document to a source Platform Assertion Document where its data originated."@en .
+
+pad:hasProvenance a owl:FunctionalProperty ;
+    rdfs:domain pad:PAD ;
     rdfs:range xsd:IRI ;
     rdfs:label "source Code"@en ;
     rdfs:comment "The property relating a Platform Assertion Document to the source code by which it was generated."@en .
 
 dcterms:license a rdf:Property ;
-    rdfs:domain pad:Assertion ;
+    rdfs:domain rdfg:Graph ;
     rdfs:range xsd:IRI ;
+    rdfs:label "License"@en ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> .
 
 dcterms:created a rdf:Property ;
-    rdfs:domain pad:Assertion ;
+    rdfs:domain rdfg:Graph ;
     rdfs:range xsd:DateTime ;
+    rdfs:label "Created On"@en ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/created> .
 
 dcterms:creator a rdf:Property ;
-    rdfs:domain pad:Assertion ;
+    rdfs:domain rdfg:Graph ;
     rdfs:range dcterms:Agent ;
+    rdfs:label "Creator"@en ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/creator> .
