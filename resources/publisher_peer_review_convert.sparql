@@ -7,11 +7,16 @@ where {
     graph ?graph {
         ?record a rdfg:Graph .
         ?record stm:metadata ?metadata .
-        optional { ?metadata prism:issn ?pissn . }
-        optional { ?metadata prism:eIssn ?eissn . }
-        optional { ?metadata fabio:hasIssnL ?lissn . }
-        bind(coalesce(?lissn, ?pissn, ?eissn) as ?issn)
-        bind(if(bound(?issn), iri(concat("https://issn.org/", ?issn)), bnode()) as ?journal)
+        optional { ?metadata prism:issn ?pissn .
+            bind(iri(concat("https://portal.issn.org/resource/ISSN/", ?pissn)) as ?journal_pissn)
+        }
+        optional { ?metadata prism:eIssn ?eissn .
+            bind(iri(concat("https://portal.issn.org/resource/ISSN/", ?eissn)) as ?journal_pissn)
+        }
+        optional { ?metadata fabio:hasIssnL ?lissn .
+            bind(iri(concat("https://portal.issn.org/resource/L-ISSN/", ?lissn)) as ?journal_lissn)
+        }
+        bind(coalesce(?journal_lissn, ?journal_lissn, ?journal_lissn, bnode()) as ?journal)
     }
 }
 
