@@ -5,6 +5,9 @@ insert {
             pad:hasProvenance sub:provenance ;
             pad:hasAssertion sub:assertion ;
             pad:hasDocInfo sub:docinfo .
+        sub:provenance a pad:Provenance .
+        sub:assertion a pad:Assertion .
+        sub:docinfo a pad:DocInfo .
     }
 
     graph sub:provenance {
