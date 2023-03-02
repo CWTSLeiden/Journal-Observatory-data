@@ -250,7 +250,7 @@ ppo:ReviewReport a fabio:Work; a owl:NamedIndividual ;
 
 ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    owl:sameAs fabio:ExecutiveSummary .
+    owl:sameAs fabio:ExecutiveSummary ;
     rdfs:comment "Summarized content of the peer review of a work by a peer-reviewer."@en .
 
 pro:Society a foaf:Organization ;

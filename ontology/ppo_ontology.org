@@ -263,8 +263,6 @@ ppo:covers a rdf:Property ;
     rdfs:comment "Relation that signifies that a policy includes restrictions or allowances on a particular type of document related to the work or policy."@en .
 #+end_src
 
-
-
 *** ppo:hasCrossrefId
 
 #+begin_src ttl
@@ -275,7 +273,6 @@ ppo:hasCrossrefId a rdf:Property ;
     rdfs:label "Crossref Identifier"@en ;
     rdfs:comment "Relation linking a platform to its Crossref identifier."@en .
 #+end_src
-
 
 *** ppo:hasDimensionsId
 
@@ -288,7 +285,6 @@ ppo:hasDimensionsId a rdf:Property ;
     rdfs:comment "Relation linking a platform to its Dimensions identifier."@en .
 #+end_src
 
-
 *** ppo:hasScopusId
 
 #+begin_src ttl
@@ -300,7 +296,6 @@ ppo:hasScopusId a rdf:Property ;
     rdfs:comment "Relation linking a platform to its Scopus identifier."@en .
 #+end_src
 
-
 *** ppo:hasMagId
 
 #+begin_src ttl
@@ -311,7 +306,6 @@ ppo:hasMagId a rdf:Property ;
     rdfs:label "Microsoft Academic Graph Identifier"@en ;
     rdfs:comment "Relation linking a platform to its Microsoft Academic Graph identifier."@en .
 #+end_src
-
 
 *** ppo:hasArticlePublishingCharges
 
@@ -546,7 +540,7 @@ ppo:ReviewReport a fabio:Work; a owl:NamedIndividual ;
 #+begin_src ttl
 ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    owl:sameAs fabio:ExecutiveSummary .
+    owl:sameAs fabio:ExecutiveSummary ;
     rdfs:comment "Summarized content of the peer review of a work by a peer-reviewer."@en .
 #+end_src
 
