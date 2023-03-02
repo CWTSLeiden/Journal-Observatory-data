@@ -53,14 +53,14 @@
 * Wiley
 
 #+begin_src ttl
-<https://www.wiley.com/> a pro:publisher ;
+<https://www.wiley.com> a pro:publisher ;
     rdfs:label "Wiley" .
 #+end_src
 
 * eLife
 
 #+begin_src ttl
-<https://elifesciences.org/> a pro:publisher ;
+<https://elifesciences.org> a pro:publisher ;
     rdfs:label "eLife" .
 #+end_src
 
