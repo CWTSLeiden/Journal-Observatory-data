@@ -184,12 +184,12 @@ ppo:Policy a rdfs:Class ;
     rdfs:comment "A collection of rules and allowances that a platform maintains."@en .
 #+end_src
 
-*** ppo:PublicAccessability
+*** ppo:PublicAccessibility
 
 #+begin_src ttl
-ppo:PublicAccessability a rdfs:Class ;
+ppo:PublicAccessibility a rdfs:Class ;
     rdfs:label "Public Accessibility"@en ;
-    rdfs:comment "Object that describes the public accessability of an entity."@en .
+    rdfs:comment "Object that describes the public accessibility of an entity."@en .
 #+end_src
 
 *** ppo:PublicationElsewherePolicy
@@ -411,7 +411,7 @@ ppo:hasSherpaRomeoId a rdf:Property ;
 #+begin_src ttl
 ppo:identityPubliclyAccessible a rdf:Property ;
     rdfs:domain pro:PublishingRole ;
-    rdfs:range ppo:PublicAccessability ;
+    rdfs:range ppo:PublicAccessibility ;
     rdfs:subPropertyOf ppo:publiclyAccessible ;
     rdfs:label "identity Publicly Accessible"@en ;
     rdfs:comment "Relation that signifies the public availability of the identity of an agent."@en .
@@ -471,7 +471,7 @@ ppo:publicationCondition a rdf:Property ;
 #+begin_src ttl
 ppo:publiclyAccessible a rdf:Property ;
     rdfs:domain fabio:Work ;
-    rdfs:range ppo:PublicAccessability ;
+    rdfs:range ppo:PublicAccessibility ;
     rdfs:label "publicly Accessible"@en ;
     rdfs:comment "Relation that signifies the public availability of a work."@en .
 #+end_src
@@ -480,7 +480,7 @@ ppo:publiclyAccessible a rdf:Property ;
 *** ppo:Accessible
 
 #+begin_src ttl
-ppo:Accessible a ppo:PublicAccessability; a owl:NamedIndividual ;
+ppo:Accessible a ppo:PublicAccessibility; a owl:NamedIndividual ;
     rdfs:label "Accessible"@en ;
     rdfs:comment "The work is made publicly available."@en .
 #+end_src
@@ -499,7 +499,7 @@ ppo:AuthorEditorCommunication a fabio:Work ; a owl:NamedIndividual ;
 *** ppo:NotAccessible
 
 #+begin_src ttl
-ppo:NotAccessible a ppo:PublicAccessability; a owl:NamedIndividual ;
+ppo:NotAccessible a ppo:PublicAccessibility; a owl:NamedIndividual ;
     rdfs:label "Not Accessible"@en ;
     rdfs:comment "The work is not made publicly available."@en .
 #+end_src

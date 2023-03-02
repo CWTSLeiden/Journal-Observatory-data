@@ -43,9 +43,9 @@ ppo:Policy a rdfs:Class ;
     rdfs:label "Policy"@en ;
     rdfs:comment "A collection of rules and allowances that a platform maintains."@en .
 
-ppo:PublicAccessability a rdfs:Class ;
+ppo:PublicAccessibility a rdfs:Class ;
     rdfs:label "Public Accessibility"@en ;
-    rdfs:comment "Object that describes the public accessability of an entity."@en .
+    rdfs:comment "Object that describes the public accessibility of an entity."@en .
 
 ppo:PublicationElsewherePolicy rdfs:subClassOf ppo:Policy ;
     rdfs:label "Publication Elsewhere Policy"@en ;
@@ -172,7 +172,7 @@ ppo:hasSherpaRomeoId a rdf:Property ;
 
 ppo:identityPubliclyAccessible a rdf:Property ;
     rdfs:domain pro:PublishingRole ;
-    rdfs:range ppo:PublicAccessability ;
+    rdfs:range ppo:PublicAccessibility ;
     rdfs:subPropertyOf ppo:publiclyAccessible ;
     rdfs:label "identity Publicly Accessible"@en ;
     rdfs:comment "Relation that signifies the public availability of the identity of an agent."@en .
@@ -208,11 +208,11 @@ ppo:publicationCondition a rdf:Property ;
 
 ppo:publiclyAccessible a rdf:Property ;
     rdfs:domain fabio:Work ;
-    rdfs:range ppo:PublicAccessability ;
+    rdfs:range ppo:PublicAccessibility ;
     rdfs:label "publicly Accessible"@en ;
     rdfs:comment "Relation that signifies the public availability of a work."@en .
 
-ppo:Accessible a ppo:PublicAccessability; a owl:NamedIndividual ;
+ppo:Accessible a ppo:PublicAccessibility; a owl:NamedIndividual ;
     rdfs:label "Accessible"@en ;
     rdfs:comment "The work is made publicly available."@en .
 
@@ -223,7 +223,7 @@ ppo:AuthorEditorCommunication a fabio:Work ; a owl:NamedIndividual ;
     rdfs:label "Author-Editor Communication"@en ;
     rdfs:comment "Communication between the author and editor of a work, including editor decision letter and reviewer responses (rebuttals)."@en .
 
-ppo:NotAccessible a ppo:PublicAccessability; a owl:NamedIndividual ;
+ppo:NotAccessible a ppo:PublicAccessibility; a owl:NamedIndividual ;
     rdfs:label "Not Accessible"@en ;
     rdfs:comment "The work is not made publicly available."@en .
 
