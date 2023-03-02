@@ -39,7 +39,6 @@ WHERE {
             values (?idtype ?pidtype) {
                 (wdt:P236 prism:issn)
                 (wdt:P7363 fabio:hasIssnL)
-                (wdt:P1662 ppo:hasDoiPrefix)
                 (wdt:P10283 ppo:hasOpenalexId)
                 (wdt:P8375 ppo:hasCrossrefId)
                 (wdt:P6180 ppo:hasDimensionsId)
@@ -52,7 +51,7 @@ WHERE {
         optional {
             ?journal wdt:P123 ?publisher .
             ?publisher wdt:P31 wd:Q2085381 .
-            optional { ?publisher wdt:P1448 ?publisher_name . } .
+            optional { ?publisher rdfs:label ?publisher_name . filter(langMatches(lang(?publisher_name), "en"))} .
             optional { ?publisher wdt:P856 ?publisher_url . } .
         } .
         optional {
