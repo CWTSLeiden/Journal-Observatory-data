@@ -15,7 +15,7 @@ from utils.print import print_verbose
 
 def issnl_tuple_to_pad(issnl, issn, date):
     pad = PADGraph()
-    platform = URIRef(f"https://www.issn.org/{issnl}")
+    platform = URIRef(f"https://issn.org/{issnl}")
     THIS = pad.THIS
     SUB = pad.SUB
     pad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))
@@ -24,7 +24,7 @@ def issnl_tuple_to_pad(issnl, issn, date):
 
     pad.add((SUB.assertion, DCTERMS.license, URIRef("https://creativecommons.org/publicdomain/zero/1.0/"), SUB.provenance))
     pad.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=XSD.date), SUB.provenance))
-    pad.add((SUB.assertion, DCTERMS.creator, URIRef("https://www.issn.org"), SUB.provenance))
+    pad.add((SUB.assertion, DCTERMS.creator, URIRef("https://issn.org"), SUB.provenance))
     
     pad.add((platform, RDF.type, PPO.Platform, SUB.assertion))
     pad.add((platform, PRISM.issn, Literal(issn), SUB.assertion))
