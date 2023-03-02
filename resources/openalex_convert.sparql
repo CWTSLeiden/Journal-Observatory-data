@@ -48,7 +48,9 @@ insert {
 where {
     ?journal a rdfg:Graph .
 
-    optional { ?journal openalex:host_organization ?publisher } .
+    optional { ?journal openalex:host_organization ?publisher .
+        bind(coalesce(?publisher, bnode()) as ?publisher)
+    } .
     optional { ?journal openalex:publisher_name ?publisher_name} . 
     optional { ?journal openalex:society ?society . bind(str(?society) as ?society_url) } .
     optional { ?society schema:name ?society_name } .
