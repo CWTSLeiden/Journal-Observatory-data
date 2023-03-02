@@ -1,13 +1,13 @@
 from utils import ROOT_DIR
 import json
-from store.convert import graph_to_pad, pad_add_creation_docinfo
+from store.convert import graph_to_pad, pad_add_docinfo
 from store.convert_json import file_to_json, json_to_graph
 
-def dataset_convert_test(dataset, files, context, queries, item, creator_id):
+def dataset_convert_test(dataset, files, context, queries, item, docinfo):
     record = file_to_json(files[item])
     datagraph = json_to_graph(record, context)
     pad = graph_to_pad(json_to_graph(record, context), queries)
-    pad = pad_add_creation_docinfo(pad, creator_id)
+    pad = pad_add_docinfo(pad, docinfo)
     dataset_convert_test_write(dataset, record, datagraph, pad)
     return pad
 

@@ -6,7 +6,7 @@ if __name__ == "__main__":
 from bulk.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
 from os import path
 from rdflib import Literal, URIRef, Dataset
-from store.convert import batch_convert, pad_add_creation_docinfo
+from store.convert import batch_convert, pad_add_docinfo
 from utils import pad_config as config
 from utils.namespace import PAD, PPO, DCTERMS, FABIO, PRISM, XSD, RDF
 from utils.pad import PADGraph
@@ -41,6 +41,8 @@ def convert_issnl(db : Dataset, debug=False):
     batchsize = dataset_config.getint("batchsize", fallback=500)
     file = get_issnl_file(data_path)
     creator_id = config.get("main", "identifier", fallback="")
+    sourcecode_id = config.get("main", "sourcecode", fallback="")
+    docinfo = {"creator": creator_id, "sourcecode": sourcecode_id}
 
     if debug:
         print_verbose("No test function for convert_issnl")
@@ -54,7 +56,7 @@ def convert_issnl(db : Dataset, debug=False):
         def record_to_pad(record : tuple[str, str]):
             issnl, issn = record
             pad = issnl_tuple_to_pad(issnl, issn, date)
-            pad = pad_add_creation_docinfo(pad, creator_id)
+            pad = pad_add_docinfo(pad, docinfo)
             return pad
         batch_convert(db, bulk, record_to_pad, batchsize)
     except FileNotFoundError:
