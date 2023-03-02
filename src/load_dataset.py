@@ -1,3 +1,4 @@
+from tqdm import tqdm
 from store import (
     convert_doaj,
     convert_issnl,
@@ -18,7 +19,7 @@ def run(processes, db, debug=False, multithread=True):
         threads = [Thread(target=p, args=[db, debug]) for p in processes]
         for t in threads:
             t.start()
-        for t in threads:
+        for t in tqdm(threads):
             t.join()
     else:
         for process in processes:
