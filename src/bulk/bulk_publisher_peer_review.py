@@ -81,7 +81,7 @@ if __name__ == "__main__":
     mapping = {
         "springer nature": "https://springernature.com",
         "nature": "https://nature.com",
-        "wiley": "https://wiley.com",
+        "wiley": "https://www.wiley.com",
         "elife sciences publications ltd": "https://elifesciences.org",
         "ieee": "https://www.ieee.org",
         "cc0": "https://creativecommons.org/publicdomain/zero/1.0/",
