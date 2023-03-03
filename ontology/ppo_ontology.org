@@ -744,7 +744,7 @@ pro:publisher a pro:PublishingRole ; a foaf:Organization ;
 *** pso:accepted-for-publication
 
 #+begin_src ttl
-ppo:accepted-for-publication a pso:PublicationStatus ;
+pso:accepted-for-publication a pso:PublicationStatus ;
     rdfs:label "Accepted version"@en ;
     rdfs:comment "The status of a work (for example a document or a dataset) once it has been accepted for publication by a publisher or data repository."@en .
 #+end_src
