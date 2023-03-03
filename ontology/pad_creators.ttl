@@ -20,8 +20,8 @@
 <https://springernature.com> a pro:publisher ;
     rdfs:label "Springer" .
 
-<https://www.wiley.com/> a pro:publisher ;
+<https://www.wiley.com> a pro:publisher ;
     rdfs:label "Wiley" .
 
-<https://elifesciences.org/> a pro:publisher ;
+<https://elifesciences.org> a pro:publisher ;
     rdfs:label "eLife" .

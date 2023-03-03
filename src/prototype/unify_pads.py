@@ -18,7 +18,7 @@ from utils import ROOT_DIR, job_config, pad_config
 def cluster_pairs(pad_pairs):
     clusters = []
     stop = False
-    xor = lambda p, q : bool(p) ^ bool(q)
+    def xor(p, q): return bool(p) ^ bool(q)
     def cluster_find(pad1, pad2):
         for cluster in clusters:
             if xor(pad1 in cluster, pad2 in cluster):

@@ -31,6 +31,8 @@ def convert_wikidata(db : Dataset, debug=False):
     queries = read_query_file(dataset_config.getpath("convert_file", fallback="resources/wikidata_convert.sparql"))
     batchsize = dataset_config.getint("batchsize", fallback=100)
     creator_id = config.get("main", "identifier", fallback="")
+    sourcecode_id = config.get("main", "sourcecode", fallback="")
+    docinfo = {"creator": creator_id, "sourcecode": sourcecode_id}
 
     if debug:
         from store.test import dataset_convert_test_write
@@ -45,7 +47,7 @@ def convert_wikidata(db : Dataset, debug=False):
     journals = wikidata_journal_list(sparql_endpoint, limit=limit)
     if len(journals) == 0:
         raise ValueError(f"No journal records found at {sparql_endpoint}")
-    sparql_journal_convert(db, journals, queries, sparql_endpoint, batchsize, creator_id)
+    sparql_journal_convert(db, journals, queries, sparql_endpoint, batchsize, docinfo)
 
 
 if __name__ == "__main__":

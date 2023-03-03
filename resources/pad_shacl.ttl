@@ -263,7 +263,7 @@ ppo:PublishingRoleShape a sh:NodeShape ;
     ] ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:identityPubliclyAccessible ;
-        sh:class ppo:PublicAccessability ;
+        sh:class ppo:PublicAccessibility ;
         sh:nodeKind sh:BlankNodeOrIRI ;
     ] .
 
@@ -272,7 +272,7 @@ ppo:DocumentTypeShape a sh:NodeShape ;
     sh:targetClass ppo:DocumentType ;
     sh:property [ a sh:PropertyShape ;
         sh:path ppo:documentPubliclyAccessible ;
-        sh:class ppo:PublicAccessability ;
+        sh:class ppo:PublicAccessibility ;
         sh:nodeKind sh:BlankNodeOrIRI ;
     ] .
 

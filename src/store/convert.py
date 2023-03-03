@@ -1,6 +1,7 @@
 from pyparsing.exceptions import ParseException
 from rdflib import DCTERMS, Dataset, URIRef, Literal, XSD
 from rdflib.graph import ConjunctiveGraph
+from rdflib.term import Node
 from tqdm import tqdm as progress
 import threading
 from typing import TypeVar, Callable
@@ -59,15 +60,17 @@ def graph_to_pad(graph : ConjunctiveGraph, queries : list[str], clean=True) -> C
     return graph
 
 
-def pad_add_creation_docinfo(pad : ConjunctiveGraph, creator_id : str="") -> ConjunctiveGraph:
+def pad_add_docinfo(pad : ConjunctiveGraph, docinfo : dict={}) -> ConjunctiveGraph:
     """
     Add dcterms:created and dcterms:creator to a PAD
     """
     date = datetime.date.today()
     THIS = pad.namespace_manager.THIS[""]
     SUB = pad.namespace_manager.SUB
-    if creator_id:
+    if creator_id := docinfo.get("creator"):
         pad.add((THIS, DCTERMS.creator, URIRef(creator_id), SUB.docinfo))
+    if sourcecode_id := docinfo.get("sourcecode"):
+        pad.add((THIS, PAD.sourceCode, URIRef(sourcecode_id), SUB.docinfo))
     pad.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.docinfo))
     pad.add((THIS, PAD.hasDocInfo, SUB.docinfo, SUB.docinfo))
     return pad
