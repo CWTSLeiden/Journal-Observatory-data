@@ -54,34 +54,10 @@ def clear_default_graph(graph, confirm=False):
             confirm = r in ("y", "Y", "yes", "Yes")
         if confirm:
             print_verbose(f"Clear graph {graph.identifier}...", end="")
-            graph.update(f"drop all")
+            graph.update("drop all")
             print_verbose("done")
     else:
         print_verbose(f"Graph {graph.identifier} has no triples.")
-
-
-def clear_pads(graph, pads=[]):
-    update = ""
-    for pad in pads:
-        update = f"drop graph <{pad}/provenance>; "
-        update += f"drop graph <{pad}/assertion>; "
-        update += f"drop graph <{pad}/docinfo>; "
-    graph.update(update)
-
-
-def clear_by_creator(graph, creators):
-    query = f"""
-    SELECT ?pad
-    WHERE {{
-        graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
-        graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
-        filter (?creator in {", ".join(creators)})
-    }}
-    """
-    result = graph.query(query)
-    pads = [p.pad for p in result]
-    print_verbose(f"clear {len(pads)} PADs")
-    clear_pads(graph, pads)
 
 
 def add_ontology(graph : ConjunctiveGraph):

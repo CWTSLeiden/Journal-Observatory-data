@@ -2,7 +2,6 @@ from flask import render_template, request, abort
 from flask.helpers import make_response
 from flask.views import MethodView
 from rdflib import ConjunctiveGraph
-from rdflib.graph import ConjunctiveGraph
 from utils.namespace import PAD
 from utils.pad import PADGraph
 from utils.store import sparql_store_config
