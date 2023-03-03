@@ -1,11 +1,65 @@
-from rdflib import Graph, Namespace
-from rdflib.namespace import NamespaceManager
+from rdflib import Graph, Namespace, URIRef
+from rdflib.namespace import DefinedNamespace, NamespaceManager
 from rdflib.namespace._DCTERMS import DCTERMS
 from rdflib.namespace._XSD import XSD
 from rdflib.namespace._RDF import RDF
 from rdflib.namespace._RDFS import RDFS
 from uuid import uuid4 as uuid
 
+class PPO(DefinedNamespace):
+    _NS = Namespace("https://purl.org/cwts/ppo/")
+    Accessible: URIRef
+    ArticlePublishingCharges: URIRef
+    AuthorEditorCommunication: URIRef
+    EvaluationPolicy: URIRef
+    NotAccessible: URIRef
+    OptIn: URIRef
+    Platform: URIRef
+    PlatformType: URIRef
+    Policy: URIRef
+    PublicAccessability: URIRef
+    PublicationElsewhereAllowedPolicy: URIRef
+    PublicationElsewhereMandatoryPolicy: URIRef
+    PublicationElsewherePolicy: URIRef
+    PublicationElsewhereProhibitedPolicy: URIRef
+    PublicationPolicy: URIRef
+    ReviewReport: URIRef
+    ReviewSummary: URIRef
+    SubmittedManuscript: URIRef
+    anonymousTo: URIRef
+    appliesToVersion: URIRef
+    covers: URIRef
+    hasArticlePublishingCharges: URIRef
+    hasCopyrightOwner: URIRef
+    hasFatcatId: URIRef
+    hasInitiator: URIRef
+    hasOpenalexId: URIRef
+    hasPlatformType: URIRef
+    hasPolicy: URIRef
+    hasSherpaRomeoId: URIRef
+    identityPubliclyAccessible: URIRef
+    interactsWith: URIRef
+    involves: URIRef
+    isOpenAccess: URIRef
+    optInBy: URIRef
+    postPublicationCommenting: URIRef
+    postPublicationCommentingClosed: URIRef
+    postPublicationCommentingOnInvitation: URIRef
+    postPublicationCommentingOpen: URIRef
+    publicationCondition: URIRef
+    publiclyAccessible: URIRef
+
+class PAD(DefinedNamespace):
+    _NS = Namespace("https://journalobservatory.org/pad/")
+    PAD: URIRef
+    Assertion: URIRef
+    Provenance: URIRef
+    PubInfo: URIRef
+    hasAssertion: URIRef
+    hasSourceAssertion: URIRef
+    hasProvenance: URIRef
+    hasPubInfo: URIRef
+    hasProvenance: URIRef
 
 CC = Namespace("http://creativecommons.org/ns#")
 DOAJ = Namespace("https://doaj.org/")
@@ -13,9 +67,7 @@ FABIO = Namespace("http://purl.org/spar/fabio/")
 FC = Namespace("https://fatcat.wiki/")
 ISSN = Namespace("https://issn.org/")
 LOC = Namespace("http://id.loc.gov/ontologies/bibframe/")
-PAD = Namespace("https://journalobservatory.org/pad/")
 OPENALEX = Namespace("https://docs.openalex.org/about-the-data/venue#")
-PPO = Namespace("https://purl.org/cwts/ppo/")
 PRISM = Namespace("http://prismstandard.org/namespaces/basic/2.0/")
 PRO = Namespace("http://purl.org/spar/pro/")
 PSO = Namespace("http://purl.org/spar/pso/")
