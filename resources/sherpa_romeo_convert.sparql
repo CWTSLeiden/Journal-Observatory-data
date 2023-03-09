@@ -87,7 +87,7 @@ where {
         bind(if(?permittedlicense = "cc_by_nc_sa", concat("licenses/by-nc-sa/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
         bind(if(?permittedlicense = "cc_by_nd", concat("licenses/by-nd/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
         bind(if(?permittedlicense = "cc_by_sa", concat("licenses/by-sa/", coalesce(?licenseversion, "4.0")), ?_) as ?license_str)
-        bind(if(bound(?license_str), iri(concat("https://creativecommons.org/", encode_for_uri(?license_str))), ?_) as ?license)
+        bind(if(bound(?license_str), iri(concat("https://creativecommons.org/", encode_for_uri(?license_str), "/")), ?_) as ?license)
     }
 }
 
@@ -197,7 +197,7 @@ insert {
             dcterms:license ?license ;
             ppo:hasCopyrightOwner ?copyright_owner ;
             ppo:condition ?condition ;
-            ppo:location ?location ;
+            ppo:publicationLocation ?location ;
             fabio:hasEmbargoDuration ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
@@ -226,6 +226,6 @@ where {
     } .
     optional { ?policy romeo:condition ?condition } .
     optional { ?policy romeo:hasPermittedLocation [ romeo:PermittedLocation ?location ] } .
-    optional { ?policy ppo:hasLicense ?license } .
+    optional { ?policy dcterms:license ?license } .
     optional { ?policy fabio:hasEmbargoDuration ?embargoduration } .
 }

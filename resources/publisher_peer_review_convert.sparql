@@ -70,9 +70,10 @@ insert {
 
         ?policy a ppo:EvaluationPolicy ;
             ppo:covers ?ppc .
+        ?ppc a ppo:postPublicationCommenting .
 
         ?policy ppo:involves sub:author .
-        sub:author a pro:Author ;
+        sub:author a pro:author ;
             ?author_an_reviewer sub:reviewer ;
             ?author_an_curator sub:curator .
 
@@ -88,10 +89,10 @@ insert {
         ?reviewer_published ppo:optInBy ?reviewer_published_reviewer .
 
         ?policy ppo:involves sub:curator .
-        sub:curator a ppo:Editor .
+        sub:curator a pro:editor .
         sub:curator ppo:identityPubliclyAccessible ?editor_published .
 
-        ?reviewreport a ppo:PeerReviewReport .
+        ?reviewreport a ppo:ReviewReport .
         ?policy ppo:covers ?reviewreport .
         ?reviewreport ppo:publiclyAccessible ?rr_published .
         ?rr_published ppo:optInBy ?rr_published_author .
@@ -102,7 +103,7 @@ insert {
         ?submittedmanuscript ppo:publiclyAccessible ?sm_published .
         ?sm_published ppo:optInBy ?sm_published_author .
 
-        ?reviewsummaries a ppo:ReviewSummaries .
+        ?reviewsummaries a ppo:ReviewSummary .
         ?policy ppo:covers ?reviewsummaries .
         ?reviewsummaries ppo:publiclyAccessible ?rs_published .
 
@@ -148,6 +149,8 @@ where {
         bind(ppo:postPublicationCommentingOnInvitation as ?ppc) }
     optional { ?record stm:postPublicationCommenting [ stm:open true ] .
         bind(ppo:postPublicationCommentingOpen as ?ppc) }
+    optional { ?record stm:postPublicationCommenting [ stm:open false; stm:onInvitation false ] .
+        bind(ppo:postPublicationCommentingClosed as ?ppc) }
 
     optional { ?record stm:reviewerInteractsWith ?riw . }
     optional { ?riw stm:authors true .

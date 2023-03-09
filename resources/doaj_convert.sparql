@@ -110,12 +110,12 @@ where {
             bind(IRI(?license_url) as ?license_iri) .
         }
         bind(if(?license_type = "CC0", IRI("https://creativecommons.org/publicdomain/zero/1.0/"), ?_) as ?cc_license)
-        bind(if(?license_type = "CC BY", IRI("https://creativecommons.org/licenses/by/4.0"), ?_) as ?cc_license)
-        bind(if(?license_type = "CC BY-NC", IRI("https://creativecommons.org/licenses/by-nc/4.0"), ?_) as ?cc_license)
-        bind(if(?license_type = "CC BY-NC-ND", IRI("https://creativecommons.org/licenses/by-nc-nd/4.0"), ?_) as ?cc_license)
-        bind(if(?license_type = "CC BY-NC-SA", IRI("https://creativecommons.org/licenses/by-nc-sa/4.0"), ?_) as ?cc_license)
-        bind(if(?license_type = "CC BY-ND", IRI("https://creativecommons.org/licenses/by-nd/4.0"), ?_) as ?cc_license)
-        bind(if(?license_type = "CC BY-SA", IRI("https://creativecommons.org/licenses/by-sa/4.0"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY", IRI("https://creativecommons.org/licenses/by/4.0/"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-NC", IRI("https://creativecommons.org/licenses/by-nc/4.0/"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-NC-ND", IRI("https://creativecommons.org/licenses/by-nc-nd/4.0/"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-NC-SA", IRI("https://creativecommons.org/licenses/by-nc-sa/4.0/"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-ND", IRI("https://creativecommons.org/licenses/by-nd/4.0/"), ?_) as ?cc_license)
+        bind(if(?license_type = "CC BY-SA", IRI("https://creativecommons.org/licenses/by-sa/4.0/"), ?_) as ?cc_license)
         bind(coalesce(?license_iri, ?cc_license) as ?license)
     } .
 }

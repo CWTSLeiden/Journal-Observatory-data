@@ -541,6 +541,7 @@ ppo:ReviewReport a fabio:Work; a owl:NamedIndividual ;
 ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
     owl:sameAs fabio:ExecutiveSummary ;
+    rdfs:label "Review Summary"@en ;
     rdfs:comment "Summarized content of the peer review of a work by a peer-reviewer."@en .
 #+end_src
 
@@ -797,3 +798,15 @@ pso:submitted a pso:PublicationStatus ;
     rdfs:comment "The status of a work (for example a document or a dataset) that has been submitted for publication by the author to a publisher or a data repository, prior to its being accepted or rejected."@en .
 #+end_src
 
+
+*** cc:license
+
+#+begin_src ttl
+<https://creativecommons.org/publicdomain/zero/1.0> owl:sameAs <https://creativecommons.org/publicdomain/zero/1.0/>
+<https://creativecommons.org/licenses/by/4.0>       owl:sameAs <https://creativecommons.org/licenses/by/4.0/>
+<https://creativecommons.org/licenses/by-nc/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nc/4.0/>
+<https://creativecommons.org/licenses/by-nc-nd/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-nd/4.0/>
+<https://creativecommons.org/licenses/by-nc-sa/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-sa/4.0/>
+<https://creativecommons.org/licenses/by-nd/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nd/4.0/>
+<https://creativecommons.org/licenses/by-sa/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-sa/4.0/>
+#+end_src
