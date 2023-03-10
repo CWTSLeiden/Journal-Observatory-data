@@ -59,7 +59,7 @@
 <<<ppo>>>
 
 #+begin_src ttl
-@prefix ppo: <https://purl.org/cwts/ppo/> .
+@prefix ppo: <http://purl.org/cwts/ppo/> .
 #+end_src
 
 ** Publication Roles Ontology
@@ -67,7 +67,7 @@
 <<<pro>>>
 
 #+begin_src ttl
-@prefix pro: <https://purl.org/spar/pro/> .
+@prefix pro: <http://purl.org/spar/pro/> .
 #+end_src
 
 ** Publication Status Ontology
@@ -75,7 +75,7 @@
 <<<pso>>>
 
 #+begin_src ttl
-@prefix pso: <https://purl.org/spar/pso/> .
+@prefix pso: <http://purl.org/spar/pso/> .
 #+end_src
 
 ** Library of Congress
@@ -549,7 +549,7 @@ ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
 
 #+begin_src ttl
 pro:Society a foaf:Organization ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/publisher> ;
     rdfs:label "Society"@en ;
     rdfs:comment "An organization that exists to promote an academic discipline, profession, or a group of related disciplines."@en .
 #+end_src
@@ -587,7 +587,7 @@ foaf:Organization a rdfs:Class ;
 
 #+begin_src ttl
 pro:PublishingRole a rdfs:Class ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/PublishingRole> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/PublishingRole> ;
     rdfs:label "Publishing Role"@en .
 #+end_src
 
@@ -746,7 +746,7 @@ wd:id a rdf:Property ;
 
 #+begin_src ttl
 pro:author a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/author> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/author> ;
     rdfs:label "Author"@en .
 #+end_src
 
@@ -754,7 +754,7 @@ pro:author a pro:PublishingRole ;
 
 #+begin_src ttl
 pro:editor a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/editor> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/editor> ;
     rdfs:label "Editor"@en .
 #+end_src
 
@@ -762,7 +762,7 @@ pro:editor a pro:PublishingRole ;
 
 #+begin_src ttl
 pro:peer-reviewer a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/peer-reviewer> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/peer-reviewer> ;
     rdfs:label "Peer Reviewer"@en .
 #+end_src
 
@@ -770,7 +770,7 @@ pro:peer-reviewer a pro:PublishingRole ;
 
 #+begin_src ttl
 pro:publisher a pro:PublishingRole ; a foaf:Organization ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/publisher> ;
     rdfs:label "Publisher"@en .
 #+end_src
 
@@ -802,11 +802,11 @@ pso:submitted a pso:PublicationStatus ;
 *** cc:license
 
 #+begin_src ttl
-<https://creativecommons.org/publicdomain/zero/1.0> owl:sameAs <https://creativecommons.org/publicdomain/zero/1.0/>
-<https://creativecommons.org/licenses/by/4.0>       owl:sameAs <https://creativecommons.org/licenses/by/4.0/>
-<https://creativecommons.org/licenses/by-nc/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nc/4.0/>
-<https://creativecommons.org/licenses/by-nc-nd/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-nd/4.0/>
-<https://creativecommons.org/licenses/by-nc-sa/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-sa/4.0/>
-<https://creativecommons.org/licenses/by-nd/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nd/4.0/>
-<https://creativecommons.org/licenses/by-sa/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-sa/4.0/>
+<https://creativecommons.org/publicdomain/zero/1.0> owl:sameAs <https://creativecommons.org/publicdomain/zero/1.0/> .
+<https://creativecommons.org/licenses/by/4.0>       owl:sameAs <https://creativecommons.org/licenses/by/4.0/> .
+<https://creativecommons.org/licenses/by-nc/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nc/4.0/> .
+<https://creativecommons.org/licenses/by-nc-nd/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-nd/4.0/> .
+<https://creativecommons.org/licenses/by-nc-sa/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-sa/4.0/> .
+<https://creativecommons.org/licenses/by-nd/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nd/4.0/> .
+<https://creativecommons.org/licenses/by-sa/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-sa/4.0/> .
 #+end_src

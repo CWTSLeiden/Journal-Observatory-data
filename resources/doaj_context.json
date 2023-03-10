@@ -1,6 +1,6 @@
 {
     "@base": "https://doaj.org/",
-    "ppo": "https://purl.org/cwts/ppo/",
+    "ppo": "http://purl.org/cwts/ppo/",
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "doaj": "https://doaj.org/",

@@ -4,7 +4,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix pad: <https://purl.org/cwts/pad/> .
+@prefix pad: <http://purl.org/cwts/pad/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 pad:Assertion a rdfg:Graph ;

@@ -7,7 +7,7 @@ from rdflib.namespace._RDFS import RDFS
 from uuid import uuid4 as uuid
 
 class PPO(DefinedNamespace):
-    _NS = Namespace("https://purl.org/cwts/ppo/")
+    _NS = Namespace("http://purl.org/cwts/ppo/")
     Accessible: URIRef
     ArticlePublishingCharges: URIRef
     AuthorEditorCommunication: URIRef
@@ -42,6 +42,7 @@ class PPO(DefinedNamespace):
     involves: URIRef
     isOpenAccess: URIRef
     optInBy: URIRef
+    ontology: URIRef
     postPublicationCommenting: URIRef
     postPublicationCommentingClosed: URIRef
     postPublicationCommentingOnInvitation: URIRef
@@ -49,17 +50,7 @@ class PPO(DefinedNamespace):
     publicationCondition: URIRef
     publiclyAccessible: URIRef
 
-class PAD(DefinedNamespace):
-    _NS = Namespace("https://journalobservatory.org/pad/")
-    PAD: URIRef
-    Assertion: URIRef
-    Provenance: URIRef
-    PubInfo: URIRef
-    hasAssertion: URIRef
-    hasSourceAssertion: URIRef
-    hasProvenance: URIRef
-    hasPubInfo: URIRef
-    hasProvenance: URIRef
+PAD = Namespace("https://journalobservatory.org/pad/")
 
 CC = Namespace("http://creativecommons.org/ns#")
 DOAJ = Namespace("https://doaj.org/")

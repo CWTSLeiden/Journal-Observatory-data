@@ -8,9 +8,9 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix fabio: <http://purl.org/spar/fabio/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix ppo: <https://purl.org/cwts/ppo/> .
-@prefix pro: <https://purl.org/spar/pro/> .
-@prefix pso: <https://purl.org/spar/pso/> .
+@prefix ppo: <http://purl.org/cwts/ppo/> .
+@prefix pro: <http://purl.org/spar/pro/> .
+@prefix pso: <http://purl.org/spar/pso/> .
 @prefix loc: <http://id.loc.gov/ontologies/bibframe/> .
 @prefix openalex: <https://openalex.org/> .
 @prefix prism: <http://prismstandard.org/namespaces/basic/2.0/> .
@@ -255,7 +255,7 @@ ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
     rdfs:comment "Summarized content of the peer review of a work by a peer-reviewer."@en .
 
 pro:Society a foaf:Organization ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/publisher> ;
     rdfs:label "Society"@en ;
     rdfs:comment "An organization that exists to promote an academic discipline, profession, or a group of related disciplines."@en .
 
@@ -275,7 +275,7 @@ foaf:Organization a rdfs:Class ;
     rdfs:label "Organization"@en .
 
 pro:PublishingRole a rdfs:Class ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/PublishingRole> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/PublishingRole> ;
     rdfs:label "Publishing Role"@en .
 
 pso:PublicationStatus a rdf:Class ;
@@ -368,19 +368,19 @@ wd:id a rdf:Property ;
     rdfs:label "Wikidata Identifier"@en .
 
 pro:author a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/author> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/author> ;
     rdfs:label "Author"@en .
 
 pro:editor a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/editor> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/editor> ;
     rdfs:label "Editor"@en .
 
 pro:peer-reviewer a pro:PublishingRole ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/peer-reviewer> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/peer-reviewer> ;
     rdfs:label "Peer Reviewer"@en .
 
 pro:publisher a pro:PublishingRole ; a foaf:Organization ;
-    rdfs:isDefinedBy <https://purl.org/spar/pro/publisher> ;
+    rdfs:isDefinedBy <http://purl.org/spar/pro/publisher> ;
     rdfs:label "Publisher"@en .
 
 pso:accepted-for-publication a pso:PublicationStatus ;
@@ -395,10 +395,10 @@ pso:submitted a pso:PublicationStatus ;
     rdfs:label "Submitted version"@en ;
     rdfs:comment "The status of a work (for example a document or a dataset) that has been submitted for publication by the author to a publisher or a data repository, prior to its being accepted or rejected."@en .
 
-<https://creativecommons.org/publicdomain/zero/1.0> owl:sameAs <https://creativecommons.org/publicdomain/zero/1.0/>
-<https://creativecommons.org/licenses/by/4.0>       owl:sameAs <https://creativecommons.org/licenses/by/4.0/>
-<https://creativecommons.org/licenses/by-nc/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nc/4.0/>
-<https://creativecommons.org/licenses/by-nc-nd/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-nd/4.0/>
-<https://creativecommons.org/licenses/by-nc-sa/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-sa/4.0/>
-<https://creativecommons.org/licenses/by-nd/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nd/4.0/>
-<https://creativecommons.org/licenses/by-sa/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-sa/4.0/>
+<https://creativecommons.org/publicdomain/zero/1.0> owl:sameAs <https://creativecommons.org/publicdomain/zero/1.0/> .
+<https://creativecommons.org/licenses/by/4.0>       owl:sameAs <https://creativecommons.org/licenses/by/4.0/> .
+<https://creativecommons.org/licenses/by-nc/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nc/4.0/> .
+<https://creativecommons.org/licenses/by-nc-nd/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-nd/4.0/> .
+<https://creativecommons.org/licenses/by-nc-sa/4.0> owl:sameAs <https://creativecommons.org/licenses/by-nc-sa/4.0/> .
+<https://creativecommons.org/licenses/by-nd/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-nd/4.0/> .
+<https://creativecommons.org/licenses/by-sa/4.0>    owl:sameAs <https://creativecommons.org/licenses/by-sa/4.0/> .

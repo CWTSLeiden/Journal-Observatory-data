@@ -5,7 +5,7 @@
 #+begin_src ttl
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix pro: <https://purl.org/spar/pro/> .
+@prefix pro: <http://purl.org/spar/pro/> .
 #+end_src
 
 * DOAJ
@@ -34,6 +34,13 @@
 #+begin_src ttl
 <https://openalex.org> a dcterms:Agent ;
     rdfs:label "OpenAlex" .
+#+end_src
+
+* ISSN
+
+#+begin_src ttl
+<https://issn.org> a dcterms:Agent ;
+    rdfs:label "ISSN" .
 #+end_src
 
 * IEEE

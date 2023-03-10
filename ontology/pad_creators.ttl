@@ -1,6 +1,6 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix pro: <https://purl.org/spar/pro/> .
+@prefix pro: <http://purl.org/spar/pro/> .
 
 <https://doaj.org> a dcterms:Agent ;
     rdfs:label "DOAJ" .
@@ -13,6 +13,9 @@
 
 <https://openalex.org> a dcterms:Agent ;
     rdfs:label "OpenAlex" .
+
+<https://issn.org> a dcterms:Agent ;
+    rdfs:label "ISSN" .
 
 <https://www.ieee.org> a pro:publisher ;
     rdfs:label "IEEE" .

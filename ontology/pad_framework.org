@@ -28,7 +28,7 @@
 <<<pad>>>
 
 #+begin_src ttl
-@prefix pad: <https://purl.org/cwts/pad/> .
+@prefix pad: <http://purl.org/cwts/pad/> .
 #+end_src
 
 ** XSD
