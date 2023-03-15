@@ -9,6 +9,7 @@ from store.convert import read_query_file
 from store.convert_json import file_to_json, json_files_convert
 from utils import pad_config as config
 from utils.print import print_verbose
+from utils.store import clear_by_creator
 
 def convert_openalex(db : Dataset, debug=False):
     print_verbose("Convert dataset: openalex")
@@ -32,10 +33,12 @@ def convert_openalex(db : Dataset, debug=False):
         from store.test import dataset_convert_test
         item = dataset_config.getint("test_item", fallback=0)
         return dataset_convert_test("openalex", files, context, queries, item, docinfo)
-    json_files_convert(db, files, context, queries, batchsize, docinfo)
+    json_files_convert(db, files, context, queries, batchsize, docinfo, name="OpenAlex")
     return True
 
 if __name__ == "__main__":
     from utils.store import sparql_store_config
     debug = config.getboolean("main", "debug", fallback=False)
-    convert_openalex(sparql_store_config(config, update=True), debug)
+    store = sparql_store_config(config, update=True)
+    # clear_by_creator(store, "https://openalex.org")
+    convert_openalex(store, debug)

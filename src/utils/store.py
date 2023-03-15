@@ -60,6 +60,30 @@ def clear_default_graph(graph, confirm=False):
         print_verbose(f"Graph {graph.identifier} has no triples.")
 
 
+def clear_pads(graph, pads=[]):
+    update = ""
+    for n, pad in enumerate(pads):
+        update = f"clear graph <{pad}/provenance>; "
+        update += f"clear graph <{pad}/assertion>; "
+        update += f"clear graph <{pad}/docinfo>; "
+        graph.update(update)
+        print("clear")
+
+
+def clear_by_creator(graph, creator):
+    query = f"""
+    SELECT ?pad
+    WHERE {{
+        graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
+        graph ?provenance {{ ?assertion dcterms:creator <{creator}> . }}
+    }}
+    """
+    result = graph.query(query)
+    pads = [p.pad for p in result]
+    print_verbose(f"clear {len(pads)} PADs")
+    clear_pads(graph, pads)
+
+
 def add_ontology(graph : ConjunctiveGraph):
     print_verbose("Add ontology")
     batchgraph = PADGraph()

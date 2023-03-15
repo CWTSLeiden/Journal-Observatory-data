@@ -58,7 +58,7 @@ def convert_issnl(db : Dataset, debug=False):
             pad = issnl_tuple_to_pad(issnl, issn, date)
             pad = pad_add_docinfo(pad, docinfo)
             return pad
-        batch_convert(db, bulk, record_to_pad, batchsize)
+        batch_convert(db, bulk, record_to_pad, batchsize, name="ISSN")
     except FileNotFoundError:
         print(f"No file found at {file}")
         return False

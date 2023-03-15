@@ -21,11 +21,11 @@ def sparql_journal_to_pad(journal : str, queries : list):
     return graph_to_pad(PADGraph(), journal_queries)
         
 
-def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, docinfo={}):
+def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, docinfo={}, name=None):
     queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
     def record_to_pad(record : str):
         pad = sparql_journal_to_pad(record, queries)
         pad = pad_add_docinfo(pad, docinfo)
         return pad
-    batch_convert(db, journals, record_to_pad, batchsize=batchsize)
+    batch_convert(db, journals, record_to_pad, batchsize=batchsize, name=name)
 

@@ -32,7 +32,7 @@ def convert_doaj(db : Dataset, debug=False):
         from store.test import dataset_convert_test
         item = dataset_config.getint("test_item", fallback=0)
         return dataset_convert_test("doaj", files, context, queries, item, docinfo)
-    json_files_convert(db, files, context, queries, batchsize, docinfo)
+    json_files_convert(db, files, context, queries, batchsize, docinfo, name="DOAJ")
     return True
 
 if __name__ == "__main__":

@@ -3,7 +3,6 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from tqdm import tqdm
 from store.convert_doaj import convert_doaj
 from store.convert_issnl import convert_issnl
 from store.convert_openalex import convert_openalex
@@ -14,15 +13,15 @@ from rdflib import Dataset
 from utils.print import print_verbose
 from utils.graphdb import graphdb_setup
 from utils import pad_config
-from threading import Thread
+from multiprocessing import Process
 
 
 def run(processes, db, debug=False, multithread=True):
     if multithread:
-        threads = [Thread(target=p, args=[db, debug]) for p in processes]
+        threads = [Process(target=p, args=[db, debug]) for p in processes]
         for t in threads:
             t.start()
-        for t in tqdm(threads):
+        for t in threads:
             t.join()
     else:
         for process in processes:
