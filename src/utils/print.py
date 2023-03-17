@@ -50,8 +50,9 @@ def print_list(l):
 
 def print_progress(name, n, total, disable=False):
     if (not disable):
+        label = f"{name:15}: " if name else ""
         if n < total:
             p = round(n / total * 100)
-            print_verbose(f"{name:15}: {p:3}% ({n}/{total})")
+            print_verbose(f"{label}{p:3}% ({n}/{total})")
         else:
-            print_verbose(f"{name:15}: 100% DONE")
+            print_verbose(f"{label}100% DONE")

@@ -4,6 +4,8 @@ services:
   graphdb:
     image: khaller/graphdb-free
     container_name: graphdb
+    environment:
+      - GDB_HEAP_SIZE=3g
     volumes:
       - ./ontology:/opt/graphdb/ontology
       - ./config/graphdb:/opt/graphdb/conf
