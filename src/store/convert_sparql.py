@@ -1,7 +1,7 @@
 from rdflib import Graph, Dataset
 from utils.pad import PADGraph
 from utils.print import print_verbose
-from store.convert import batch_convert, graph_to_pad, pad_add_creation_docinfo, queries_replace
+from store.convert import batch_convert, graph_to_pad, pad_add_docinfo, queries_replace
 
 
 def sparql_platform_list(query, limit=None, offset=None):
@@ -21,11 +21,11 @@ def sparql_journal_to_pad(journal : str, queries : list):
     return graph_to_pad(PADGraph(), journal_queries)
         
 
-def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, creator_id=""):
+def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, docinfo={}, name=None):
     queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
     def record_to_pad(record : str):
         pad = sparql_journal_to_pad(record, queries)
-        pad = pad_add_creation_docinfo(pad, creator_id)
+        pad = pad_add_docinfo(pad, docinfo)
         return pad
-    batch_convert(db, journals, record_to_pad, batchsize=batchsize)
+    batch_convert(db, journals, record_to_pad, batchsize=batchsize, name=name)
 

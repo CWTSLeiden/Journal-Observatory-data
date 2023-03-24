@@ -88,12 +88,12 @@ def display_pad(pad_id, db):
         }
         where {
             graph ?a {
-                ?platform a ppo:Platform ; ppo:hasOrganization ?org .
+                ?platform a ppo:Platform ; dcterms:relation ?org .
                 ?org ?p ?o .
             } .
             optional { 
                 graph ?g {
-                    ?platform a ppo:Platform ; ppo:hasOrganization ?org .
+                    ?platform a ppo:Platform ; dcterms:relation ?org .
                 }
                 ?g dcterms:creator ?creator
             } .

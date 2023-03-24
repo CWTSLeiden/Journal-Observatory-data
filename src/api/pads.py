@@ -188,7 +188,7 @@ class PADsView(ApiResource):
             graph ?assertion {{ ?platform a ppo:Platform }}
             {"?platform dcterms:identifier ?p_identifier ." if "?p_identifier" in query_filter else ""}
             {"?platform schema:name ?p_name ." if "?p_name" in query_filter else ""}
-            {"?platform ppo:hasOrganization [ schema:name ?p_organization_name ] ." if "?p_organization_name" in query_filter else ""}
+            {"?platform dcterms:relation [ schema:name ?p_organization_name ] ." if "?p_organization_name" in query_filter else ""}
             {query_filter}
         """
         query = f"""

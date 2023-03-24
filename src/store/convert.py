@@ -2,12 +2,14 @@ from pyparsing.exceptions import ParseException
 from rdflib import DCTERMS, Dataset, URIRef, Literal, XSD
 from rdflib.graph import ConjunctiveGraph
 from tqdm import tqdm as progress
-import threading
+from multiprocessing import parent_process
 from typing import TypeVar, Callable
 from utils.namespace import PADNamespaceManager, PAD
 from utils.pad import PADGraph
 import datetime
 import re
+
+from utils.print import print_progress, print_verbose
 
 
 def read_query_file(file : str) -> list[str]:
@@ -59,22 +61,24 @@ def graph_to_pad(graph : ConjunctiveGraph, queries : list[str], clean=True) -> C
     return graph
 
 
-def pad_add_creation_docinfo(pad : ConjunctiveGraph, creator_id : str="") -> ConjunctiveGraph:
+def pad_add_docinfo(pad : ConjunctiveGraph, docinfo : dict={}) -> ConjunctiveGraph:
     """
     Add dcterms:created and dcterms:creator to a PAD
     """
     date = datetime.date.today()
     THIS = pad.namespace_manager.THIS[""]
     SUB = pad.namespace_manager.SUB
-    if creator_id:
+    if creator_id := docinfo.get("creator"):
         pad.add((THIS, DCTERMS.creator, URIRef(creator_id), SUB.docinfo))
+    if sourcecode_id := docinfo.get("sourcecode"):
+        pad.add((THIS, PAD.sourceCode, URIRef(sourcecode_id), SUB.docinfo))
     pad.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.docinfo))
     pad.add((THIS, PAD.hasDocInfo, SUB.docinfo, SUB.docinfo))
     return pad
         
 
 R = TypeVar('R')
-def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100):
+def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100, name=None):
     """
     Meta function to upload data to the SPARQL store.
     Because every addN call to the store is a single HTTP request,
@@ -87,10 +91,15 @@ def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Call
     """
     total = len(records)
     if batchsize > total: batchsize = total
-    noprogress = threading.current_thread() is not threading.main_thread()
-    for n in progress(range(0, total, batchsize), unit_scale=batchsize, disable=noprogress):
+    is_thread = parent_process() is not None
+    for n in progress(range(0, total, batchsize), unit_scale=batchsize, disable=is_thread):
         batchgraph = PADGraph()
         for record in records[n:n+batchsize]:
-            pad = record_to_pad(record)
-            batchgraph.addN(pad.quads())
+            try:
+                pad = record_to_pad(record)
+                batchgraph.addN(pad.quads())
+            except Exception as e:
+                print(f"ERROR: parsing record: {record}")
+                print(e)
         sparqlstore.addN(batchgraph.quads())
+        print_progress(name, n+batchsize, total, disable=(not is_thread))

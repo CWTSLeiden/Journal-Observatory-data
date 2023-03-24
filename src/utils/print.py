@@ -47,3 +47,12 @@ def print_namespaces(graph):
 def print_list(l):
     for n, item in enumerate(list(l)):
         print(f"{n}: {item}")
+
+def print_progress(name, n, total, disable=False):
+    if (not disable):
+        label = f"{name:15}: " if name else ""
+        if n < total:
+            p = round(n / total * 100)
+            print_verbose(f"{label}{p:3}% ({n}/{total})")
+        else:
+            print_verbose(f"{label}100% DONE")

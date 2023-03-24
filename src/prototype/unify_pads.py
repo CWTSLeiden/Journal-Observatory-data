@@ -7,10 +7,10 @@ from rdflib import Dataset
 from rdflib.graph import ConjunctiveGraph
 from rdflib.term import URIRef
 from store.convert import batch_convert
-from utils.graphdb import graphdb_add_namespaces, graphdb_setup_repository
+from utils.graphdb import graphdb_setup
 from utils.pad import PADGraph
 from utils.print import print_verbose
-from utils.store import clear_default_graph, sparql_store_config, add_ontology
+from utils.store import sparql_store_config
 from utils.namespace import PAD, RDF
 from utils import ROOT_DIR, job_config, pad_config
 
@@ -18,7 +18,7 @@ from utils import ROOT_DIR, job_config, pad_config
 def cluster_pairs(pad_pairs):
     clusters = []
     stop = False
-    xor = lambda p, q : bool(p) ^ bool(q)
+    def xor(p, q): return bool(p) ^ bool(q)
     def cluster_find(pad1, pad2):
         for cluster in clusters:
             if xor(pad1 in cluster, pad2 in cluster):
@@ -83,7 +83,7 @@ def pad_clusters(db : Dataset):
     return cluster_pairs(pairs)
 
 
-def store_unipads(source_db, target_db, debug=False):
+def store_pads(source_db, target_db, debug=False):
     def cluster_to_pad(cluster) -> ConjunctiveGraph:
         return unify_pads(source_db, cluster, include_source=False)
     clusters = pad_clusters(source_db)
@@ -98,21 +98,6 @@ def store_unipads(source_db, target_db, debug=False):
 
 if __name__ == "__main__":
     debug = job_config.getboolean("main", "debug", fallback=False)
-
-    graphdb_host = job_config.get("store", "host", fallback="http://localhost:7200")
-    graphdb_config = job_config.getpath("store", "config", fallback="config/graphdb-pad-config.ttl")
-    graphdb_username = job_config.get("store", "username", fallback="")
-    graphdb_password = job_config.get("store", "password", fallback="")
-    graphdb_auth = {}
-    if graphdb_username and graphdb_password:
-        graphdb_auth = {"username": graphdb_username, "password": graphdb_password}
-    graphdb_setup_repository(graphdb_host, "job", graphdb_config, auth=graphdb_auth)
-    graphdb_add_namespaces(graphdb_host, "job", auth=graphdb_auth)
-
+    job_db = graphdb_setup(job_config, "job")
     pad_db = sparql_store_config(pad_config, update=False)
-    job_db = sparql_store_config(job_config, update=True)
-    clear_default_graph(job_db, confirm=True)
-    add_ontology(job_db)
-
-    store_unipads(pad_db, job_db, debug=True)
-    store_unipads(pad_db, job_db)
+    store_pads(pad_db, job_db, debug=debug)

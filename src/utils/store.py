@@ -54,7 +54,7 @@ def clear_default_graph(graph, confirm=False):
             confirm = r in ("y", "Y", "yes", "Yes")
         if confirm:
             print_verbose(f"Clear graph {graph.identifier}...", end="")
-            graph.update(f"drop all")
+            graph.update("drop all")
             print_verbose("done")
     else:
         print_verbose(f"Graph {graph.identifier} has no triples.")
@@ -62,20 +62,20 @@ def clear_default_graph(graph, confirm=False):
 
 def clear_pads(graph, pads=[]):
     update = ""
-    for pad in pads:
-        update = f"drop graph <{pad}/provenance>; "
-        update += f"drop graph <{pad}/assertion>; "
-        update += f"drop graph <{pad}/docinfo>; "
-    graph.update(update)
+    for n, pad in enumerate(pads):
+        update = f"clear graph <{pad}/provenance>; "
+        update += f"clear graph <{pad}/assertion>; "
+        update += f"clear graph <{pad}/docinfo>; "
+        graph.update(update)
+        print("clear")
 
 
-def clear_by_creator(graph, creators):
+def clear_by_creator(graph, creator):
     query = f"""
     SELECT ?pad
     WHERE {{
         graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
-        graph ?provenance {{ ?assertion dcterms:creator ?creator . }}
-        filter (?creator in {", ".join(creators)})
+        graph ?provenance {{ ?assertion dcterms:creator <{creator}> . }}
     }}
     """
     result = graph.query(query)
@@ -95,6 +95,10 @@ def add_ontology(graph : ConjunctiveGraph):
     graph.update(f"clear graph <{PAD.ontology}>")
     batchgraph.parse(
         source=config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
+        publicID=PAD.ontology
+    )
+    batchgraph.parse(
+        source=config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl"),
         publicID=PAD.ontology
     )
     graph.addN(batchgraph.quads())

@@ -22,10 +22,13 @@ insert {
             pad:hasProvenance sub:provenance ;
             pad:hasAssertion sub:assertion ;
             pad:hasDocInfo sub:docinfo .
+        sub:provenance a pad:Provenance .
+        sub:assertion a pad:Assertion .
+        sub:docinfo a pad:DocInfo .
     }
 
     graph sub:provenance {
-        sub:assertion cc:license ?license ;
+        sub:assertion dcterms:license ?license ;
             dcterms:created ?date ;
             dcterms:creator ?creator .
     }
@@ -35,7 +38,7 @@ where {
     ?record ppo:provenance ?provenance .
     ?provenance dcterms:created ?date ;
         dcterms:creator ?creator ;
-        cc:license ?license .
+        dcterms:license ?license .
 }
 
 # Metadata
@@ -43,7 +46,7 @@ insert {
     graph sub:assertion {
         ?journal a ppo:Platform ;
             schema:name ?name ;
-            ppo:hasOrganization ?publisher ;
+            dcterms:publisher ?publisher ;
             ?hasissn ?issn .
         ?publisher a pro:publisher .
     }
@@ -66,10 +69,11 @@ insert {
             ppo:hasPolicy ?policy .
 
         ?policy a ppo:EvaluationPolicy ;
-            ppo:postPublicationCommenting ?ppc_value .
+            ppo:covers ?ppc .
+        ?ppc a ppo:postPublicationCommenting .
 
         ?policy ppo:involves sub:author .
-        sub:author a pro:Author ;
+        sub:author a pro:author ;
             ?author_an_reviewer sub:reviewer ;
             ?author_an_curator sub:curator .
 
@@ -85,27 +89,27 @@ insert {
         ?reviewer_published ppo:optInBy ?reviewer_published_reviewer .
 
         ?policy ppo:involves sub:curator .
-        sub:curator a ppo:Editor .
+        sub:curator a pro:editor .
         sub:curator ppo:identityPubliclyAccessible ?editor_published .
 
-        ?reviewreport a ppo:PeerReviewReport .
+        ?reviewreport a ppo:ReviewReport .
         ?policy ppo:covers ?reviewreport .
-        ?reviewreport ppo:publiclyAccessible ?rr_published .
+        ?reviewreport ppo:workPubliclyAccessible ?rr_published .
         ?rr_published ppo:optInBy ?rr_published_author .
         ?rr_published ppo:optInBy ?rr_published_reviewer .
 
         ?submittedmanuscript a ppo:SubmittedManuscript .
         ?policy ppo:covers ?submittedmanuscript .
-        ?submittedmanuscript ppo:publiclyAccessible ?sm_published .
+        ?submittedmanuscript ppo:workPubliclyAccessible ?sm_published .
         ?sm_published ppo:optInBy ?sm_published_author .
 
-        ?reviewsummaries a ppo:ReviewSummaries .
+        ?reviewsummaries a ppo:ReviewSummary .
         ?policy ppo:covers ?reviewsummaries .
-        ?reviewsummaries ppo:publiclyAccessible ?rs_published .
+        ?reviewsummaries ppo:workPubliclyAccessible ?rs_published .
 
         ?authoreditorcommunication a ppo:AuthorEditorCommunication .
         ?policy ppo:covers ?authoreditorcommunication .
-        ?authoreditorcommunication ppo:publiclyAccessible ?aec_published .
+        ?authoreditorcommunication ppo:workPubliclyAccessible ?aec_published .
     }
 }
 where {
@@ -141,9 +145,12 @@ where {
         bind(ppo:identifiedTo as ?author_an_curator) .
     }
 
-    optional { ?record stm:postPublicationCommenting ?ppc . }
-    optional { ?ppc stm:onInvitation true . bind("On invitation" as ?ppc_value) }
-    optional { ?ppc stm:open true . bind("Open" as ?ppc_value) }
+    optional { ?record stm:postPublicationCommenting [ stm:onInvitation true ] .
+        bind(ppo:postPublicationCommentingOnInvitation as ?ppc) }
+    optional { ?record stm:postPublicationCommenting [ stm:open true ] .
+        bind(ppo:postPublicationCommentingOpen as ?ppc) }
+    optional { ?record stm:postPublicationCommenting [ stm:open false; stm:onInvitation false ] .
+        bind(ppo:postPublicationCommentingClosed as ?ppc) }
 
     optional { ?record stm:reviewerInteractsWith ?riw . }
     optional { ?riw stm:authors true .

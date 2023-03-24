@@ -2,7 +2,11 @@ insert {
     graph sub:docinfo {
         this: a pad:PAD ;
             pad:hasProvenance sub:provenance ;
-            pad:hasAssertion sub:assertion .
+            pad:hasAssertion sub:assertion ;
+            pad:hasDocInfo sub:docinfo .
+        sub:provenance a pad:Provenance .
+        sub:assertion a pad:Assertion .
+        sub:docinfo a pad:DocInfo .
     }
 
     graph sub:provenance {
@@ -16,9 +20,9 @@ insert {
             schema:name ?title ;
             schema:url ?platform_url ;
             ?pidtype ?pid ;
-            ppo:hasWikidataId ?journal ;
-            ppo:hasPaywall ?paywall ;
-            ppo:hasOrganization ?publisher .
+            wd:id ?journal ;
+            ppo:isOpenAccess ?openaccess ;
+            dcterms:publisher ?publisher .
         ?publisher a pro:publisher ;
             schema:name ?publisher_name ;
             schema:url ?pubilsher_url .
@@ -35,7 +39,6 @@ WHERE {
             values (?idtype ?pidtype) {
                 (wdt:P236 prism:issn)
                 (wdt:P7363 fabio:hasIssnL)
-                (wdt:P1662 ppo:hasDoiPrefix)
                 (wdt:P10283 ppo:hasOpenalexId)
                 (wdt:P8375 ppo:hasCrossrefId)
                 (wdt:P6180 ppo:hasDimensionsId)
@@ -48,15 +51,15 @@ WHERE {
         optional {
             ?journal wdt:P123 ?publisher .
             ?publisher wdt:P31 wd:Q2085381 .
-            optional { ?publisher wdt:P1448 ?publisher_name . } .
+            optional { ?publisher rdfs:label ?publisher_name . filter(langMatches(lang(?publisher_name), "en"))} .
             optional { ?publisher wdt:P856 ?publisher_url . } .
         } .
         optional {
             ?journal wdt:6954 ?onlineaccessstatus .
-            values ( ?onlineaccessstatus ?paywall ) {
-                (wd:Q910845 true)
-                (wd:Q24707952 false)
-                (wd:Q232932 false)
+            values ( ?onlineaccessstatus ?openaccess ) {
+                (wd:Q910845 false)
+                (wd:Q24707952 true)
+                (wd:Q232932 true)
             }
         }
         filter (?journal = <$journal_id>)

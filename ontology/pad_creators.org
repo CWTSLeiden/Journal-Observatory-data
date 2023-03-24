@@ -1,0 +1,73 @@
+#+property: header-args :tangle pad_creators.ttl
+
+* Prefix
+
+#+begin_src ttl
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix pro: <http://purl.org/spar/pro/> .
+#+end_src
+
+* DOAJ
+
+#+begin_src ttl
+<https://doaj.org> a dcterms:Agent ;
+    rdfs:label "DOAJ" .
+#+end_src
+
+* Sherpa-Romeo
+
+#+begin_src ttl
+<https://v2.sherpa.ac.uk/romeo> a dcterms:Agent ;
+    rdfs:label "Sherpa-Romeo" .
+#+end_src
+
+* Wikidata
+
+#+begin_src ttl
+<https://www.wikidata.org> a dcterms:Agent ;
+    rdfs:label "Wikidata" .
+#+end_src
+
+* OpenAlex
+
+#+begin_src ttl
+<https://openalex.org> a dcterms:Agent ;
+    rdfs:label "OpenAlex" .
+#+end_src
+
+* ISSN
+
+#+begin_src ttl
+<https://issn.org> a dcterms:Agent ;
+    rdfs:label "ISSN" .
+#+end_src
+
+* IEEE
+
+#+begin_src ttl
+<https://www.ieee.org> a pro:publisher ;
+    rdfs:label "IEEE" .
+#+end_src
+
+* Springer
+
+#+begin_src ttl
+<https://springernature.com> a pro:publisher ;
+    rdfs:label "Springer" .
+#+end_src
+
+* Wiley
+
+#+begin_src ttl
+<https://www.wiley.com> a pro:publisher ;
+    rdfs:label "Wiley" .
+#+end_src
+
+* eLife
+
+#+begin_src ttl
+<https://elifesciences.org> a pro:publisher ;
+    rdfs:label "eLife" .
+#+end_src
+

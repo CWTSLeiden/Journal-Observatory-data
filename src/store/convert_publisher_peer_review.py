@@ -21,6 +21,8 @@ def convert_publisher_peer_review(db : Dataset, debug=False):
     limit = dataset_config.getint("limit", fallback=None)
     batchsize = dataset_config.getint("batchsize", fallback=100)
     creator_id = config.get("main", "identifier", fallback="")
+    sourcecode_id = config.get("main", "sourcecode", fallback="")
+    docinfo = {"creator": creator_id, "sourcecode": sourcecode_id}
 
     if len(files) == 0:
         raise ValueError(f"No json records found at {data_path}/data/")
@@ -29,8 +31,8 @@ def convert_publisher_peer_review(db : Dataset, debug=False):
     if debug:
         from store.test import dataset_convert_test
         item = dataset_config.getint("test_item", fallback=0)
-        return dataset_convert_test("publisher_peer_review", files, context, queries, item, creator_id)
-    json_files_convert(db, files, context, queries, batchsize, creator_id)
+        return dataset_convert_test("publisher_peer_review", files, context, queries, item, docinfo)
+    json_files_convert(db, files, context, queries, batchsize, docinfo, "Publishers")
     return True
 
 

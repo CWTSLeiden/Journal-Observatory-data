@@ -1,6 +1,6 @@
 {
     "@base": "https://doaj.org/",
-    "ppo": "https://purl.org/cwts/ppo/",
+    "ppo": "http://purl.org/cwts/ppo/",
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "doaj": "https://doaj.org/",
@@ -64,7 +64,7 @@
         "@id": "doaj:Publisher"
     },
     "apc": {
-        "@id": "doaj:hasArticlePublishingCharges",
+        "@id": "ppo:hasArticlePublishingCharges",
         "@context": {
             "has_apc": {
                 "@id": "doaj:ArticlePublishingChargesApply",

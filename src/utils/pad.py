@@ -1,5 +1,4 @@
 from rdflib import ConjunctiveGraph, Graph, Dataset
-
 from utils.namespace import PADNamespaceManager
 
 
