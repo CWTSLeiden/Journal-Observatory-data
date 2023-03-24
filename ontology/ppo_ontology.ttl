@@ -204,7 +204,13 @@ ppo:publicationCondition a rdf:Property ;
     rdfs:domain ppo:PublicationElsewhereAllowedPolicy ;
     rdfs:range xsd:string ;
     rdfs:label "Publication Condition"@en ;
-    rdfs:comment "Relation describing a condition for allowing publication of a work on other platforms."@en .
+    rdfs:comment "Relation describing a condition for publication of a work on other platforms."@en .
+
+ppo:publicationLocation a rdf:Property ;
+    rdfs:domain ppo:PublicationElsewhereAllowedPolicy ;
+    rdfs:range xsd:string ;
+    rdfs:label "Publication Location"@en ;
+    rdfs:comment "Relation describing a location condition for publication of a work on other platforms."@en .
 
 ppo:publiclyAccessible a rdf:Property ;
     rdfs:domain fabio:Work ;
