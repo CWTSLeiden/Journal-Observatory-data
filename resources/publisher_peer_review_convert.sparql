@@ -94,22 +94,22 @@ insert {
 
         ?reviewreport a ppo:ReviewReport .
         ?policy ppo:covers ?reviewreport .
-        ?reviewreport ppo:publiclyAccessible ?rr_published .
+        ?reviewreport ppo:workPubliclyAccessible ?rr_published .
         ?rr_published ppo:optInBy ?rr_published_author .
         ?rr_published ppo:optInBy ?rr_published_reviewer .
 
         ?submittedmanuscript a ppo:SubmittedManuscript .
         ?policy ppo:covers ?submittedmanuscript .
-        ?submittedmanuscript ppo:publiclyAccessible ?sm_published .
+        ?submittedmanuscript ppo:workPubliclyAccessible ?sm_published .
         ?sm_published ppo:optInBy ?sm_published_author .
 
         ?reviewsummaries a ppo:ReviewSummary .
         ?policy ppo:covers ?reviewsummaries .
-        ?reviewsummaries ppo:publiclyAccessible ?rs_published .
+        ?reviewsummaries ppo:workPubliclyAccessible ?rs_published .
 
         ?authoreditorcommunication a ppo:AuthorEditorCommunication .
         ?policy ppo:covers ?authoreditorcommunication .
-        ?authoreditorcommunication ppo:publiclyAccessible ?aec_published .
+        ?authoreditorcommunication ppo:workPubliclyAccessible ?aec_published .
     }
 }
 where {
