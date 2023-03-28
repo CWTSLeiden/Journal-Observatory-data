@@ -10,38 +10,23 @@ from store.convert_publisher_peer_review import convert_publisher_peer_review
 from store.convert_sherpa_romeo import convert_sherpa_romeo
 from store.convert_wikidata import convert_wikidata
 from rdflib import Dataset
-from utils.print import print_verbose
 from utils.graphdb import graphdb_setup
 from utils import pad_config
-from multiprocessing import Process
+from utils.store import clear_default_graph, sparql_store_config
 
 
-def run(processes, db, debug=False, multithread=True):
-    if multithread:
-        threads = [Process(target=p, args=[db, debug]) for p in processes]
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-    else:
-        for process in processes:
-            process(db, debug)
-    print_verbose("Done")
-
-    
 def convert_all(db: Dataset, debug=False):
-    processes = (
-        convert_doaj,
-        convert_openalex,
-        convert_publisher_peer_review,
-        convert_sherpa_romeo,
-        convert_issnl,
-        convert_wikidata,
-    )
-    run(processes, db, debug)
+    convert_doaj(db, debug)
+    convert_openalex(db, debug)
+    convert_publisher_peer_review(db, debug)
+    convert_sherpa_romeo(db, debug)
+    convert_wikidata(db, debug)
+    # convert_issnl(db, debug)
 
 
 if __name__ == "__main__":
     debug = pad_config.getboolean("main", "debug", fallback=False)
-    pad_db = graphdb_setup(pad_config, "pad")
+    pad_db = graphdb_setup(pad_config, "test")
+    # pad_db = sparql_store_config(pad_config, update=True)
+    # clear_default_graph(pad_db, confirm=True)
     convert_all(pad_db, debug)

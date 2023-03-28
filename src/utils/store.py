@@ -53,9 +53,8 @@ def clear_default_graph(graph, confirm=False):
             r = input(f"Clear graph {graph.identifier} with {n} triples? y/[n]")
             confirm = r in ("y", "Y", "yes", "Yes")
         if confirm:
-            print_verbose(f"Clear graph {graph.identifier}...", end="")
+            print_verbose(f"Clear graph {graph.identifier}")
             graph.update("drop all")
-            print_verbose("done")
     else:
         print_verbose(f"Graph {graph.identifier} has no triples.")
 

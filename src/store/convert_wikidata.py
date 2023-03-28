@@ -5,6 +5,7 @@ if __name__ == "__main__":
 
 from rdflib import Dataset
 from utils.print import print_verbose
+from utils.pad import PADGraph
 from store.convert import read_query_file, queries_replace
 from store.convert_sparql import sparql_journal_convert, sparql_journal_to_pad, sparql_platform_list
 from utils import pad_config as config
@@ -29,7 +30,7 @@ def convert_wikidata(db : Dataset, debug=False):
     sparql_endpoint = dataset_config.get("data_location", fallback="https://query.wikidata.org/bigdata/namespace/wdq/sparql")
     limit = dataset_config.getint("limit", fallback=None)
     queries = read_query_file(dataset_config.getpath("convert_file", fallback="resources/wikidata_convert.sparql"))
-    batchsize = dataset_config.getint("batchsize", fallback=100)
+    batchsize = dataset_config.getint("batch_size", fallback=100)
     creator_id = config.get("main", "identifier", fallback="")
     sourcecode_id = config.get("main", "sourcecode", fallback="")
     docinfo = {"creator": creator_id, "sourcecode": sourcecode_id}
@@ -40,7 +41,7 @@ def convert_wikidata(db : Dataset, debug=False):
         journal = wikidata_journal_list(sparql_endpoint, limit=1, offset=item)[0]
         queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
         if journal:
-            pad = sparql_journal_to_pad(journal, queries)
+            pad = sparql_journal_to_pad(PADGraph(), journal, queries)
             dataset_convert_test_write("wikidata", pad=pad)
             return pad
         return False

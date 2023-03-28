@@ -79,7 +79,9 @@ def pad_clusters(db : Dataset):
         # filter(?pad1 != ?pad2)
     }
     """
+    print_verbose("Get all PADs")
     pairs = list(result.graph.query(pad_same_query))
+    print_verbose("Cluster PADs")
     return cluster_pairs(pairs)
 
 
@@ -92,7 +94,7 @@ def store_pads(source_db, target_db, debug=False):
         unipad.serialize(f"{ROOT_DIR}/test/unipad.trig", format="trig")
         unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
     else:
-        print_verbose("Store unipads")
+        print_verbose("Store PADs")
         batch_convert(target_db, clusters, cluster_to_pad, 100)
 
 
