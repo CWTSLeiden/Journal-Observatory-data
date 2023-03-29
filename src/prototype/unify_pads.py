@@ -3,6 +3,7 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+from tqdm import tqdm as progress
 from rdflib import Dataset
 from rdflib.graph import ConjunctiveGraph
 from rdflib.term import URIRef
@@ -11,44 +12,39 @@ from utils.graphdb import graphdb_setup
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils.store import sparql_store_config
-from utils.namespace import PAD, RDF
+from utils.namespace import PAD, RDF, PPO
 from utils import ROOT_DIR, job_config, pad_config
 
 
 def cluster_pairs(pad_pairs):
+    pad_sets = dict()
+    print_verbose("Cluster PADs")
+    for pad1, pad2 in progress(pad_pairs):
+        if pad_sets.get(pad1) is None:
+            pad_sets[pad1] = { pad1 }
+        pad_sets[pad1].add(pad2)
     clusters = []
-    stop = False
-    def xor(p, q): return bool(p) ^ bool(q)
-    def cluster_find(pad1, pad2):
-        for cluster in clusters:
-            if xor(pad1 in cluster, pad2 in cluster):
-                cluster.update({pad1, pad2})
-                return True, True
-            elif pad1 in cluster and pad2 in cluster:
-                return True, False
-        return False, False
-    while not stop:
-        stop = True
-        for pad1, pad2 in pad_pairs:
-            found, update = cluster_find(pad1, pad2)
-            if update: stop = False
-            if not found: clusters.append({pad1, pad2})
+    pad_done = set()
+    print_verbose("De-duplicate PADs")
+    for named_pad, pad_set in progress(pad_sets.items()):
+        if named_pad not in pad_done:
+            clusters.append(pad_set)
+            pad_done = pad_done.union(pad_set)
     return clusters
 
-def unify_pads(db : Dataset, pad_ids : set[URIRef], include_source=True):
+
+def unify_pads(db : Dataset, pad_ids : set[URIRef]):
     unipad = PADGraph()
     THIS = unipad.THIS
     SUB = unipad.SUB
     unipad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))
     unipad.add((THIS, PAD.hasAssertion, SUB.assertion, SUB.docinfo))
     unipad.add((THIS, PAD.hasProvenance, SUB.provenance, SUB.docinfo))
+    unipad.add((SUB.platform, RDF.type, PPO.Platform, SUB.assertion))
     for pad_id in pad_ids:
         assertion = db.get_context(f"{pad_id}/assertion")
         unipad.add_context(assertion, SUB.assertion)
-        if include_source:
-            unipad.add_context(assertion)
-            unipad.add_context(db.get_context(f"{pad_id}/provenance"))
-            unipad.add_context(db.get_context(f"{pad_id}/docinfo"))
+        unipad.add_context(db.get_context(f"{pad_id}/provenance"))
         unipad.add((SUB.assertion, PAD.hasSourceAssertion, assertion.identifier, SUB.provenance))
     unipad.update("""
         delete { ?platform ?p ?o . }
@@ -76,18 +72,16 @@ def pad_clusters(db : Dataset):
     select ?pad1 ?pad2 where
     {
         ?pad1 pad:assertsSamePlatform+ ?pad2
-        # filter(?pad1 != ?pad2)
     }
     """
     print_verbose("Get all PADs")
     pairs = list(result.graph.query(pad_same_query))
-    print_verbose("Cluster PADs")
     return cluster_pairs(pairs)
 
 
-def store_pads(source_db, target_db, debug=False):
+def store_pads(source_db, target_db, batch_size=50, debug=False):
     def cluster_to_pad(cluster) -> ConjunctiveGraph:
-        return unify_pads(source_db, cluster, include_source=False)
+        return unify_pads(source_db, cluster)
     clusters = pad_clusters(source_db)
     if debug:
         unipad = cluster_to_pad(clusters[0])
@@ -95,11 +89,11 @@ def store_pads(source_db, target_db, debug=False):
         unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
     else:
         print_verbose("Store PADs")
-        batch_convert(target_db, clusters, cluster_to_pad, 100)
+        batch_convert(target_db, clusters[:1000], cluster_to_pad, batch_size)
 
 
 if __name__ == "__main__":
     debug = job_config.getboolean("main", "debug", fallback=False)
-    job_db = graphdb_setup(job_config, "job")
+    job_db = graphdb_setup(job_config, "job", recreate=True)
     pad_db = sparql_store_config(pad_config, update=False)
     store_pads(pad_db, job_db, debug=debug)

@@ -12,7 +12,6 @@ from store.convert_wikidata import convert_wikidata
 from rdflib import Dataset
 from utils.graphdb import graphdb_setup
 from utils import pad_config
-from utils.store import clear_default_graph, sparql_store_config
 
 
 def convert_all(db: Dataset, debug=False):
@@ -26,7 +25,5 @@ def convert_all(db: Dataset, debug=False):
 
 if __name__ == "__main__":
     debug = pad_config.getboolean("main", "debug", fallback=False)
-    pad_db = graphdb_setup(pad_config, "test")
-    # pad_db = sparql_store_config(pad_config, update=True)
-    # clear_default_graph(pad_db, confirm=True)
+    pad_db = graphdb_setup(pad_config, "test", recreate=True)
     convert_all(pad_db, debug)

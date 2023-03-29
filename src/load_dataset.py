@@ -6,7 +6,7 @@ from utils import job_config, pad_config
 
 if __name__ == "__main__":
     debug = job_config.getboolean("main", "debug", fallback=False)
-    pad_db = graphdb_setup(pad_config, "pad")
-    job_db = graphdb_setup(job_config, "job")
+    pad_db = graphdb_setup(pad_config, "pad", recreate=True)
+    job_db = graphdb_setup(job_config, "job", recreate=True)
     convert_all(pad_db, debug)
     store_pads(pad_db, job_db, debug)
