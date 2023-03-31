@@ -64,7 +64,6 @@ def pad_clusters(db : Dataset):
         graph ?assertion2 { ?platform2 a ppo:Platform }
         ?pad1 pad:hasAssertion ?assertion1 .
         ?pad2 pad:hasAssertion ?assertion2 .
-        # filter(?pad1 != ?pad2) .
     }
     """
     result = db.query(pad_eq_query)
@@ -79,7 +78,7 @@ def pad_clusters(db : Dataset):
     return cluster_pairs(pairs)
 
 
-def store_pads(source_db, target_db, batch_size=50, debug=False):
+def store_pads(source_db, target_db, batch_size=25, debug=False):
     def cluster_to_pad(cluster) -> ConjunctiveGraph:
         return unify_pads(source_db, cluster)
     clusters = pad_clusters(source_db)
@@ -89,7 +88,7 @@ def store_pads(source_db, target_db, batch_size=50, debug=False):
         unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
     else:
         print_verbose("Store PADs")
-        batch_convert(target_db, clusters[:1000], cluster_to_pad, batch_size)
+        batch_convert(target_db, clusters, cluster_to_pad, batch_size)
 
 
 if __name__ == "__main__":
