@@ -139,7 +139,7 @@
 *** ppo:ArticlePublishingCharges
 
 #+begin_src ttl
-ppo:ArticlePublishingCharges a rdf:Class ;
+ppo:ArticlePublishingCharges a owl:Class ;
     rdfs:label "Article Publishing Charges"@en ;
     rdfs:comment "Article processing charges (APCs) are publication fees charged to authors of works during the publication process."@en .
 #+end_src
@@ -155,7 +155,7 @@ ppo:EvaluationPolicy rdfs:subClassOf ppo:Policy ;
 *** ppo:OptIn
 
 #+begin_src ttl
-ppo:OptIn a rdfs:Class ;
+ppo:OptIn a owl:Class ;
     rdfs:label "Opt-In"@en ;
     rdfs:comment "The work is made publicly available with the permission of all persons holding a publishing role that has an ppo:optInBy relation with this individual."@en .
 #+end_src
@@ -163,7 +163,7 @@ ppo:OptIn a rdfs:Class ;
 *** ppo:Platform
 
 #+begin_src ttl
-ppo:Platform a rdfs:Class ;
+ppo:Platform a owl:Class ;
     rdfs:label "Platform"@en ;
     rdfs:comment "A scholarly communication platform that plays some role in the publishing process (e.g. publication, hosting, reviewing, etc.)."@en .
 #+end_src
@@ -171,7 +171,7 @@ ppo:Platform a rdfs:Class ;
 *** ppo:PlatformType
 
 #+begin_src ttl
-ppo:PlatformType a rdfs:Class ;
+ppo:PlatformType a owl:Class ;
     rdfs:label "Platform Type"@en ;
     rdfs:comment "The role that a platform can fulfill during the publication process."@en .
 #+end_src
@@ -179,7 +179,7 @@ ppo:PlatformType a rdfs:Class ;
 *** ppo:Policy
 
 #+begin_src ttl
-ppo:Policy a rdfs:Class ;
+ppo:Policy a owl:Class ;
     rdfs:label "Policy"@en ;
     rdfs:comment "A collection of rules and allowances that a platform maintains."@en .
 #+end_src
@@ -187,7 +187,7 @@ ppo:Policy a rdfs:Class ;
 *** ppo:PublicAccessibility
 
 #+begin_src ttl
-ppo:PublicAccessibility a rdfs:Class ;
+ppo:PublicAccessibility a owl:Class ;
     rdfs:label "Public Accessibility"@en ;
     rdfs:comment "Object that describes the public accessibility of an entity."@en .
 #+end_src
@@ -229,6 +229,14 @@ ppo:PublicationElsewhereMandatoryPolicy rdfs:subClassOf ppo:PublicationElsewhere
 #+begin_src ttl
 ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
     rdfs:label "Publication Policy"@en ;
+    rdfs:comment "A collection of rules and allowances that a platform maintains during the publication of a work."@en .
+#+end_src
+
+*** ppo:Work
+
+#+begin_src ttl
+ppo_ontology:Work a owl:Class ;
+    rdfs:label "Work"@en ;
     rdfs:comment "A collection of rules and allowances that a platform maintains during the publication of a work."@en .
 #+end_src
 
@@ -444,7 +452,7 @@ ppo:optInBy a rdf:Property ;
 *** ppo:postPublicationCommenting
 
 #+begin_src ttl
-ppo:postPublicationCommenting rdfs:subClassOf fabio:Work ;
+ppo:postPublicationCommenting rdfs:subClassOf ppo:Work ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
     rdfs:label "Post Publication Commenting"@en ;
     rdfs:comment "Allowance of comments on the online published version of the version of record."@en .
@@ -474,7 +482,7 @@ ppo:publicationLocation a rdf:Property ;
 
 #+begin_src ttl
 ppo:publiclyAccessible a rdf:Property ;
-    rdfs:domain fabio:Work ;
+    rdfs:domain ppo:Work ;
     rdfs:range ppo:PublicAccessibility ;
     rdfs:label "publicly Accessible"@en ;
     rdfs:comment "Relation that signifies the public availability of a work."@en .
@@ -492,10 +500,8 @@ ppo:Accessible a ppo:PublicAccessibility; a owl:NamedIndividual ;
 *** ppo:AuthorEditorCommunication
 
 #+begin_src ttl
-ppo:AuthorEditorCommunication a fabio:Work ; a owl:NamedIndividual ;
+ppo:AuthorEditorCommunication a ppo:Work ; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    owl:sameAs fabio:Reply ;
-    owl:sameAs fabio:Letter ;
     rdfs:label "Author-Editor Communication"@en ;
     rdfs:comment "Communication between the author and editor of a work, including editor decision letter and reviewer responses (rebuttals)."@en .
 #+end_src
@@ -538,9 +544,8 @@ ppo:postPublicationCommentingOnInvitation a ppo:postPublicationCommenting; a owl
 *** ppo:ReviewReport
 
 #+begin_src ttl
-ppo:ReviewReport a fabio:Work; a owl:NamedIndividual ;
+ppo:ReviewReport a ppo:Work; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    owl:sameAs fabio:Review ;
     rdfs:label "Review Report"@en ;
     rdfs:comment "Full content of the peer review of a work by a peer-reviewer."@en .
 #+end_src
@@ -548,9 +553,8 @@ ppo:ReviewReport a fabio:Work; a owl:NamedIndividual ;
 *** ppo:ReviewSummary
 
 #+begin_src ttl
-ppo:ReviewSummary a fabio:Work; a owl:NamedIndividual ;
+ppo:ReviewSummary a ppo:Work; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    owl:sameAs fabio:ExecutiveSummary ;
     rdfs:label "Review Summary"@en ;
     rdfs:comment "Summarized content of the peer review of a work by a peer-reviewer."@en .
 #+end_src
@@ -567,28 +571,26 @@ pro:Society a foaf:Organization ;
 *** ppo:SubmittedManuscript
 
 #+begin_src ttl
-ppo:SubmittedManuscript a fabio:Work; a owl:NamedIndividual ;
+ppo:SubmittedManuscript a ppo:Work; a owl:NamedIndividual ;
     rdfs:isDefinedBy <https://osf.io/7j6ck> ;
-    owl:sameAs fabio:Manuscript ;
-    owl:sameAs pso:submitted ;
     rdfs:label "Submitted Manuscript"@en ;
     rdfs:comment "The version of the work submitted for peer-review."@en .
 #+end_src
 
 * Other ontologies
 ** Classes
-*** fabio:Work
+*** dcterms:LicenseDocument
 
 #+begin_src ttl
-fabio:Work a rdfs:Class ;
-    rdfs:isDefinedBy <http://purl.org/spar/fabio/Work> ;
-    rdfs:label "Work"@en .
+dcterms:LicenseDocument a owl:Class ;
+    rdfs:label "License"@en ;
+    rdfs:comment "A legal document giving official permission to do something with the resource."@en .
 #+end_src
 
 *** foaf:Organization
 
 #+begin_src ttl
-foaf:Organization a rdfs:Class ;
+foaf:Organization a owl:Class ;
     rdfs:isDefinedBy <http://xmlns.com/foaf/0.1/Organization> ;
     rdfs:label "Organization"@en .
 #+end_src
@@ -596,7 +598,7 @@ foaf:Organization a rdfs:Class ;
 *** pro:PublishingRole
 
 #+begin_src ttl
-pro:PublishingRole a rdfs:Class ;
+pro:PublishingRole a owl:Class ;
     rdfs:isDefinedBy <http://purl.org/spar/pro/PublishingRole> ;
     rdfs:label "Publishing Role"@en .
 #+end_src
@@ -625,7 +627,7 @@ dcterms:identifier a rdf:Property ;
 #+begin_src ttl
 dcterms:license a rdf:Property ;
     rdfs:domain ppo:Assertion ;
-    rdfs:range xsd:anyURI ;
+    rdfs:range dcterms:LicenseDocument ;
     rdfs:isDefinedBy <http://purl.org/dc/elements/1.1/license> ;
     rdfs:label "License"@en .
 #+end_src
