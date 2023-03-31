@@ -69,15 +69,18 @@ def graphdb_authorize(host: str, auth: dict, headers={}):
     return headers
 
 
-def graphdb_setup(config, name, clear=True):
-    graphdb_host = config.get("store", "host", fallback="http://localhost:7200")
-    graphdb_config = config.getpath("store", "config")
-    graphdb_username = config.get("store", "username", fallback="")
-    graphdb_password = config.get("store", "password", fallback="")
-    graphdb_auth = {"username": graphdb_username, "password": graphdb_password}
-    graphdb_setup_repository(graphdb_host, name, graphdb_config, auth=graphdb_auth)
-    graphdb_add_namespaces(graphdb_host, name, auth=graphdb_auth)
+def graphdb_setup(config, name, recreate=True):
+    if recreate:
+        graphdb_host = config.get("store", "host", fallback="http://localhost:7200")
+        graphdb_config = config.getpath("store", "config")
+        graphdb_username = config.get("store", "username", fallback="")
+        graphdb_password = config.get("store", "password", fallback="")
+        graphdb_auth = {"username": graphdb_username, "password": graphdb_password}
+        graphdb_setup_repository(graphdb_host, name, graphdb_config, auth=graphdb_auth)
+        graphdb_add_namespaces(graphdb_host, name, auth=graphdb_auth)
+        db = sparql_store_config(config, update=True)
+        clear_default_graph(db, confirm=True)
+        add_ontology(db)
+        return db
     db = sparql_store_config(config, update=True)
-    if clear: clear_default_graph(db, confirm=True)
-    add_ontology(db)
     return db

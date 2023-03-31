@@ -1,16 +1,17 @@
 from pyparsing.exceptions import ParseException
 from rdflib import DCTERMS, Dataset, URIRef, Literal, XSD
 from rdflib.graph import ConjunctiveGraph
-from tqdm import tqdm as progress
-from multiprocessing import parent_process
+from tqdm import tqdm
+from multiprocessing import Pool
+from functools import partial
 from typing import TypeVar, Callable
-from utils.namespace import PADNamespaceManager, PAD
-from utils.pad import PADGraph
+from time import sleep
 import datetime
 import re
 
-from utils.print import print_progress, print_verbose
-
+from utils.namespace import PADNamespaceManager, PAD
+from utils.pad import PADGraph
+from utils.print import print_graph
 
 def read_query_file(file : str) -> list[str]:
     """
@@ -75,9 +76,36 @@ def pad_add_docinfo(pad : ConjunctiveGraph, docinfo : dict={}) -> ConjunctiveGra
     pad.add((THIS, DCTERMS.created, Literal(date ,datatype=XSD.date), SUB.docinfo))
     pad.add((THIS, PAD.hasDocInfo, SUB.docinfo, SUB.docinfo))
     return pad
-        
+
 
 R = TypeVar('R')
+
+def batch_add(sparqlstore: Dataset, graph: ConjunctiveGraph):
+    tries = 0
+    maxtries = 10
+    while tries <= maxtries:
+        try:
+            sparqlstore.addN(graph.quads())
+        except Exception as e:
+            if tries == maxtries:
+                print_graph(graph)
+                raise(e)
+            print(e, flush=True)
+            sleep(3)
+        finally:
+            tries = maxtries + 1
+
+def batch_convert_run(records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph]):
+    batchgraph = PADGraph()
+    for record in records:
+        try:
+            pad = record_to_pad(record)
+            batchgraph.addN(pad.quads())
+        except Exception as e:
+            print(f"ERROR: parsing record: {record}", flush=True)
+            print(e, flush=True)
+    return batchgraph
+
 def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100, name=None):
     """
     Meta function to upload data to the SPARQL store.
@@ -89,17 +117,26 @@ def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Call
     - limit: total number of records to be converted
     - batchsize: number of pads contained in a batch
     """
+    # Workaround for passing a local function to pickle
+    global convert_func
+    def convert_func(record): return record_to_pad(record)
+
     total = len(records)
     if batchsize > total: batchsize = total
-    is_thread = parent_process() is not None
-    for n in progress(range(0, total, batchsize), unit_scale=batchsize, disable=is_thread):
-        batchgraph = PADGraph()
-        for record in records[n:n+batchsize]:
-            try:
-                pad = record_to_pad(record)
-                batchgraph.addN(pad.quads())
-            except Exception as e:
-                print(f"ERROR: parsing record: {record}")
-                print(e)
-        sparqlstore.addN(batchgraph.quads())
-        print_progress(name, n+batchsize, total, disable=(not is_thread))
+    if total == 0:
+        print("No records")
+        return False
+
+    # Separate records into batches
+    batches = [records[n:n+batchsize] for n in range(0, total, batchsize)]
+    process_batch = partial(batch_convert_run, record_to_pad=convert_func)
+    progress = partial(tqdm, unit_scale=batchsize, total=len(batches))
+
+    # Use imap_unordered to send results to SPARQL endpoint as soon as
+    # results are available, disregarding order of call
+    with Pool() as pool:
+        for graph in progress(pool.imap_unordered(process_batch, batches)):
+            batch_add(sparqlstore, graph)
+            sleep(0.5)
+
+    return True
