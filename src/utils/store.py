@@ -62,11 +62,10 @@ def clear_default_graph(graph, confirm=False):
 def clear_pads(graph, pads=[]):
     update = ""
     for n, pad in enumerate(pads):
-        update = f"clear graph <{pad}/provenance>; "
+        update += f"clear graph <{pad}/provenance>; "
         update += f"clear graph <{pad}/assertion>; "
         update += f"clear graph <{pad}/docinfo>; "
-        graph.update(update)
-        print("clear")
+    graph.update(update)
 
 
 def clear_by_creator(graph, creator):
@@ -84,7 +83,6 @@ def clear_by_creator(graph, creator):
 
 
 def add_ontology(graph : ConjunctiveGraph):
-    print_verbose("Add ontology")
     batchgraph = PADGraph()
     graph.update(f"clear graph <{PPO.ontology}>")
     batchgraph.parse(

@@ -9,6 +9,7 @@ from utils.pad import PADGraph
 from store.convert import read_query_file, queries_replace
 from store.convert_sparql import sparql_journal_convert, sparql_journal_to_pad, sparql_platform_list
 from utils import pad_config as config
+from utils.store import clear_by_creator
 
 
 def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
@@ -23,7 +24,10 @@ def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
     return sparql_platform_list(journal_query, limit, offset)
 
 
-def convert_wikidata(db : Dataset, debug=False):
+def convert_wikidata(db : Dataset, debug=False, clear=False):
+    if clear:
+        print_verbose("Clear dataset: wikidata")
+        clear_by_creator(job_db, "https://www.wikidata.org")
     print_verbose("Convert dataset: wikidata")
     dataset_config = config["wikidata"]
 
@@ -54,4 +58,5 @@ def convert_wikidata(db : Dataset, debug=False):
 if __name__ == "__main__":
     from utils.store import sparql_store_config
     debug = config.getboolean("main", "debug", fallback=False)
-    convert_wikidata(sparql_store_config(config, update=True), debug)
+    job_db = sparql_store_config(config, update=True)
+    convert_wikidata(job_db, debug=debug, clear=True)
