@@ -24,7 +24,7 @@
 
             # Indexing
             graphdb:entity-id-size "32" ;
-            graphdb:enable-context-index "false" ;
+            graphdb:enable-context-index "true" ;
             graphdb:enablePredicateList "true" ;
             graphdb:enable-fts-index "false" ;
             graphdb:fts-indexes ("default" "iri") ;
@@ -38,8 +38,6 @@
 
             # Settable in the file but otherwise hidden in the UI and in the RDF4J console
             graphdb:base-URL "http://example.org/owlim#" ;
-            # graphdb:defaultNS "http://purl.org/cwts/ppo;https://purl.org/cwts/pad" ;
-            # graphdb:imports "/opt/graphdb/ontology/ppo_ontology.ttl;/opt/graphdb/ontology/pad_framework.ttl" ;
             graphdb:repository-type "file-repository" ;
             graphdb:storage-folder "storage" ;
             graphdb:entity-index-size "10000000" ;
