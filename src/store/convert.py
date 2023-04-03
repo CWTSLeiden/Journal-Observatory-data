@@ -5,13 +5,12 @@ from tqdm import tqdm
 from multiprocessing import Pool
 from functools import partial
 from typing import TypeVar, Callable
-from time import sleep
+from time import sleep, time
 import datetime
 import re
 
 from utils.namespace import PADNamespaceManager, PAD
-from utils.pad import PADGraph
-from utils.print import print_graph
+from utils.pad import PADGraph, platform_id
 
 def read_query_file(file : str) -> list[str]:
     """
@@ -84,16 +83,16 @@ def batch_add(sparqlstore: Dataset, graph: ConjunctiveGraph):
     tries = 0
     maxtries = 10
     while tries <= maxtries:
+        tries += 1
         try:
             sparqlstore.addN(graph.quads())
+            tries = maxtries + 1
         except Exception as e:
             if tries == maxtries:
-                print_graph(graph)
-                raise(e)
-            print(e, flush=True)
-            sleep(3)
-        finally:
-            tries = maxtries + 1
+                print(f"Error proccessing batch with platforms: {platform_id(graph)}", flush=True)
+                print(e, flush=True)
+            sleep(1)
+
 
 def batch_convert_run(records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph]):
     batchgraph = PADGraph()
@@ -104,6 +103,7 @@ def batch_convert_run(records : list[R], record_to_pad : Callable[[R], Conjuncti
         except Exception as e:
             print(f"ERROR: parsing record: {record}", flush=True)
             print(e, flush=True)
+            raise(e)
     return batchgraph
 
 def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100, name=None):
@@ -126,7 +126,7 @@ def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Call
 
     # Separate records into batches
     batches = [records[n:n+batchsize] for n in range(0, total, batchsize)]
-    process_batch = partial(batch_convert_run, record_to_pad=convert_func)
+    process_batch = partial(batch_convert_run, record_to_pad=record_to_pad)
     progress = partial(tqdm, unit_scale=batchsize, total=len(batches))
 
     # Use imap_unordered to send results to SPARQL endpoint as soon as

@@ -1,5 +1,5 @@
 from rdflib import ConjunctiveGraph, Graph, Dataset
-from utils.namespace import PADNamespaceManager
+from utils.namespace import PADNamespaceManager, RDF, PPO
 
 
 class PADGraph(ConjunctiveGraph):
@@ -55,3 +55,8 @@ class PADGraph(ConjunctiveGraph):
     def docinfo(self, g : Graph):
         self.remove_context(self.docinfo_id)
         self.add_context(g, self.docinfo_id)
+
+
+def platform_id(pad: ConjunctiveGraph):
+    return [str(id) for id in pad.subjects(RDF.type, PPO.Platform)]
+
