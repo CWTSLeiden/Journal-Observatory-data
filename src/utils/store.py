@@ -78,7 +78,7 @@ def clear_by_creator(graph, creator):
     """
     result = graph.query(query)
     pads = [p.pad for p in result]
-    print_verbose(f"clear {len(pads)} PADs")
+    print_verbose(f"clear {len(pads)} PADs for creator: {creator}")
     clear_pads(graph, pads)
 
 

@@ -9,8 +9,12 @@ from store.convert import read_query_file
 from store.convert_json import file_to_json, json_files_convert
 from utils import pad_config as config
 from utils.print import print_verbose
+from utils.store import clear_by_creator
 
-def convert_sherpa_romeo(db : Dataset, debug=False):
+def convert_sherpa_romeo(db : Dataset, debug=False, clear=False):
+    if clear:
+        print_verbose("Clear dataset: sherpa romeo")
+        clear_by_creator(db, "https://v2.sherpa.ac.uk/romeo")
     print_verbose("Convert dataset: sherpa_romeo")
     dataset_config = config["sherpa_romeo"]
 
@@ -38,4 +42,5 @@ def convert_sherpa_romeo(db : Dataset, debug=False):
 if __name__ == "__main__":
     from utils.store import sparql_store_config
     debug = config.getboolean("main", "debug", fallback=False)
-    convert_sherpa_romeo(sparql_store_config(config, update=True), debug)
+    job_db = sparql_store_config(config, update=True)
+    convert_sherpa_romeo(job_db, debug=debug, clear=True)

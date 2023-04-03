@@ -11,7 +11,10 @@ from utils import pad_config as config
 from utils.print import print_verbose
 from utils.store import clear_by_creator
 
-def convert_openalex(db : Dataset, debug=False):
+def convert_openalex(db : Dataset, debug=False, clear=False):
+    if clear:
+        print_verbose("Clear dataset: openalex")
+        clear_by_creator(db, "https://openalex.org")
     print_verbose("Convert dataset: openalex")
     dataset_config = config["openalex"]
 
@@ -39,6 +42,5 @@ def convert_openalex(db : Dataset, debug=False):
 if __name__ == "__main__":
     from utils.store import sparql_store_config
     debug = config.getboolean("main", "debug", fallback=False)
-    store = sparql_store_config(config, update=True)
-    # clear_by_creator(store, "https://openalex.org")
-    convert_openalex(store, debug)
+    job_db = sparql_store_config(config, update=True)
+    convert_openalex(job_db, debug, clear=True)

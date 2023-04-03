@@ -9,8 +9,12 @@ from store.convert import read_query_file
 from store.convert_json import file_to_json, json_files_convert
 from utils import pad_config as config
 from utils.print import print_verbose
+from utils.store import clear_by_creator
 
-def convert_doaj(db : Dataset, debug=False):
+def convert_doaj(db : Dataset, debug=False, clear=False):
+    if clear:
+        print_verbose("Clear dataset: doaj")
+        clear_by_creator(db, "https://doaj.org")
     print_verbose("Convert dataset: doaj")
     dataset_config = config["doaj"]
 
@@ -38,4 +42,5 @@ def convert_doaj(db : Dataset, debug=False):
 if __name__ == "__main__":
     from utils.store import sparql_store_config
     debug = config.getboolean("main", "debug", fallback=False)
-    convert_doaj(sparql_store_config(config, update=True), debug)
+    job_db = sparql_store_config(config, update=True)
+    convert_doaj(job_db, debug=debug, clear=True)

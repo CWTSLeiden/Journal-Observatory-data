@@ -27,7 +27,7 @@ def wikidata_journal_list(sparql_endpoint, limit=None, offset=None):
 def convert_wikidata(db : Dataset, debug=False, clear=False):
     if clear:
         print_verbose("Clear dataset: wikidata")
-        clear_by_creator(job_db, "https://www.wikidata.org")
+        clear_by_creator(db, "https://www.wikidata.org")
     print_verbose("Convert dataset: wikidata")
     dataset_config = config["wikidata"]
 
