@@ -3,6 +3,7 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+from functools import partial
 from tqdm import tqdm as progress
 from rdflib import Dataset
 from rdflib.graph import ConjunctiveGraph
@@ -79,8 +80,7 @@ def pad_clusters(db : Dataset):
 
 
 def store_pads(source_db, target_db, batch_size=25, debug=False):
-    def cluster_to_pad(cluster) -> ConjunctiveGraph:
-        return unify_pads(source_db, cluster)
+    cluster_to_pad = partial(unify_pads, db=source_db)
     clusters = pad_clusters(source_db)
     if debug:
         unipad = cluster_to_pad(clusters[0])

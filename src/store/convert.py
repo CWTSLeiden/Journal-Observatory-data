@@ -117,9 +117,6 @@ def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Call
     - limit: total number of records to be converted
     - batchsize: number of pads contained in a batch
     """
-    # Workaround for passing a local function to pickle
-    global convert_func
-    def convert_func(record): return record_to_pad(record)
 
     total = len(records)
     if batchsize > total: batchsize = total

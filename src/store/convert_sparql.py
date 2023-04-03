@@ -1,4 +1,6 @@
+from functools import partial
 from time import sleep
+from random import uniform as random
 from rdflib import Dataset, ConjunctiveGraph
 from utils.pad import PADGraph
 from utils.print import print_verbose
@@ -11,10 +13,11 @@ def sparql_platform_list(query, limit=None, offset=None):
     query = f"{query} {limit_str} {offset_str}"
 
     g = PADGraph()
-    print_verbose("Querying journal list...", end="", flush=True)
+    print_verbose("Querying journal list...", flush=True)
     query_result = g.query(query)
-    print_verbose("Done!")
-    return [item.get('platform') for item in query_result]
+    platforms = [item.get('platform') for item in query_result]
+    print_verbose(f"Process {len(platforms)} journals")
+    return platforms
 
 
 def sparql_journal_to_pad(graph: ConjunctiveGraph, journal : str, queries : list):
@@ -22,23 +25,17 @@ def sparql_journal_to_pad(graph: ConjunctiveGraph, journal : str, queries : list
     return graph_to_pad(graph, journal_queries)
         
 
+def sparql_record_to_pad(record : str, queries : list, docinfo={}):
+    # Don't overload the sparql-endpoint
+    sleep(random(0,2))
+    pad = PADGraph()
+    pad = sparql_journal_to_pad(pad, record, queries)
+    pad = pad_add_docinfo(pad, docinfo)
+    return pad
+
+
 def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, docinfo={}, name=None):
     queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
-    def record_to_pad(record : str):
-        pad = PADGraph()
-        tries = 0
-        maxtries = 10
-        while tries <= maxtries:
-            try:
-                pad = sparql_journal_to_pad(pad, record, queries)
-                pad = pad_add_docinfo(pad, docinfo)
-            except Exception as e:
-                if tries == maxtries:
-                    print(f"ERROR: parsing record: {record}", flush=True)
-                    raise(e)
-                sleep(3)
-            finally:
-                tries = maxtries + 1
-        return pad
+    record_to_pad = partial(sparql_record_to_pad, queries=queries, docinfo=docinfo)
     batch_convert(db, journals, record_to_pad, batchsize=batchsize, name=name)
 

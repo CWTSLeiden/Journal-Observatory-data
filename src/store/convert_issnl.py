@@ -3,6 +3,7 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+from functools import partial
 from bulk.bulk_issnl import get_issnl_file, issnl_parse_bulk_file
 from os import path
 from rdflib import Literal, URIRef, Dataset
@@ -32,6 +33,13 @@ def issnl_tuple_to_pad(issnl, issn, date):
     return pad
 
 
+def issnl_record_to_pad(record : tuple[str, str], date : str, docinfo : dict):
+    issnl, issn = record
+    pad = issnl_tuple_to_pad(issnl, issn, date)
+    pad = pad_add_docinfo(pad, docinfo)
+    return pad
+
+
 def convert_issnl(db : Dataset, debug=False):
     print_verbose("Convert dataset: issnl")
     dataset_config = config["issnl"]
@@ -49,15 +57,11 @@ def convert_issnl(db : Dataset, debug=False):
         return False
     file_base = path.basename(file)
     date = f"{file_base[:4]}-{file_base[4:6]}-{file_base[6:8]}"
+    record_to_pad = partial(issnl_record_to_pad, date=date, docinfo=docinfo)
     try:
         bulk = issnl_parse_bulk_file(file, identicals=False)
         if limit:
             bulk = bulk[:limit]
-        def record_to_pad(record : tuple[str, str]):
-            issnl, issn = record
-            pad = issnl_tuple_to_pad(issnl, issn, date)
-            pad = pad_add_docinfo(pad, docinfo)
-            return pad
         batch_convert(db, bulk, record_to_pad, batchsize, name="ISSN")
     except FileNotFoundError:
         print(f"No file found at {file}")
