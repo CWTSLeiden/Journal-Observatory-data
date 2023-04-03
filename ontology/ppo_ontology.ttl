@@ -67,7 +67,7 @@ ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
     rdfs:label "Publication Policy"@en ;
     rdfs:comment "A collection of rules and allowances that a platform maintains during the publication of a work."@en .
 
-ppo_ontology:Work a owl:Class ;
+ppo:Work a owl:Class ;
     rdfs:label "Work"@en ;
     rdfs:comment "A collection of rules and allowances that a platform maintains during the publication of a work."@en .
 

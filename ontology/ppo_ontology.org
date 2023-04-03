@@ -235,7 +235,7 @@ ppo:PublicationPolicy rdfs:subClassOf ppo:Policy ;
 *** ppo:Work
 
 #+begin_src ttl
-ppo_ontology:Work a owl:Class ;
+ppo:Work a owl:Class ;
     rdfs:label "Work"@en ;
     rdfs:comment "A collection of rules and allowances that a platform maintains during the publication of a work."@en .
 #+end_src
