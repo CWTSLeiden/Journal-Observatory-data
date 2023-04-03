@@ -18,14 +18,14 @@ insert {
     graph sub:assertion {
         ?journal a ppo:Platform ;
             schema:name ?title ;
-            schema:url ?platform_url ;
+            schema:url ?platform_url_str ;
             ?pidtype ?pid ;
             wd:id ?journal ;
             ppo:isOpenAccess ?openaccess ;
             dcterms:publisher ?publisher .
         ?publisher a pro:publisher ;
             schema:name ?publisher_name ;
-            schema:url ?pubilsher_url .
+            schema:url ?publisher_url_str .
     }
 }
 WHERE {
@@ -34,7 +34,7 @@ WHERE {
         ?journal schema1:dateModified ?date .
 
         optional { ?journal wdt:P1476 ?title } .
-        optional { ?journal wdt:P856 ?platform_url } .
+        optional { ?journal wdt:P856 ?platform_url . bind(str(?platform_url) as ?platform_url_str) . } .
         optional { ?journal ?idtype ?id .
             values (?idtype ?pidtype) {
                 (wdt:P236 prism:issn)
@@ -52,7 +52,7 @@ WHERE {
             ?journal wdt:P123 ?publisher .
             ?publisher wdt:P31 wd:Q2085381 .
             optional { ?publisher rdfs:label ?publisher_name . filter(langMatches(lang(?publisher_name), "en"))} .
-            optional { ?publisher wdt:P856 ?publisher_url . } .
+            optional { ?publisher wdt:P856 ?publisher_url  . bind(str(?publisher_url) as ?publisher_url_str) . } .
         } .
         optional {
             ?journal wdt:6954 ?onlineaccessstatus .
