@@ -46,7 +46,7 @@ PADs are stored directly in a compatible triple store via a SPARQL-endpoint.
 
 ** Unification
 
-A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =ppo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =ppo:hasSourceAssertion= property. The resulting pads are stored in a compatible triple store via a SPARQL-endpoint. This triple store is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
+A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =ppo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =pad:hasSourceAssertion= property. The resulting pads are stored in a compatible triple store via a SPARQL-endpoint. This triple store is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
 
 * Design decisions
 ** =@context=
