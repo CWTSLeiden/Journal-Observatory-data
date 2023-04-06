@@ -1,4 +1,5 @@
 import os
+from re import match
 from configparser import ConfigParser
 
 ROOT_DIR = os.getenv('APP_ROOT')
@@ -13,9 +14,11 @@ class CustomConfigParser(ConfigParser):
         base = os.getenv('APP_ROOT', self.get("main", "root_dir", fallback=ROOT_DIR))
         path = self.get(section, option, **kwargs)
         if len(path) > 0:
-            if not path[0] in ("/", "~", "$"):
-                path = f"{base}/{path}"
-        return path
+            if path[0] in ("/", "~", "$"):
+                return path
+            if match("^https?://", path)
+                return path
+        return f"{base}/{path}"
 
 
 pad_config = CustomConfigParser()
