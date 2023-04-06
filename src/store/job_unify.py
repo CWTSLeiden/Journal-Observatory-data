@@ -6,7 +6,6 @@ if __name__ == "__main__":
 from functools import partial
 from tqdm import tqdm as progress
 from rdflib import Dataset
-from rdflib.graph import ConjunctiveGraph
 from rdflib.term import URIRef
 from store.convert import batch_convert
 from utils.graphdb import graphdb_setup
@@ -34,7 +33,7 @@ def cluster_pairs(pad_pairs):
     return clusters
 
 
-def unify_pads(db : Dataset, pad_ids : set[URIRef]):
+def cluster_to_pad(db : Dataset, pad_ids : set[URIRef]):
     unipad = PADGraph()
     THIS = unipad.THIS
     SUB = unipad.SUB
@@ -79,8 +78,8 @@ def pad_clusters(db : Dataset):
     return cluster_pairs(pairs)
 
 
-def store_pads(source_db, target_db, batch_size=25, debug=False):
-    cluster_to_pad = partial(unify_pads, db=source_db)
+def unify_pads(source_db, target_db, batch_size=25, debug=False):
+    cluster_to_pad_partial = partial(cluster_to_pad, db=source_db)
     clusters = pad_clusters(source_db)
     if debug:
         unipad = cluster_to_pad(clusters[0])
@@ -88,11 +87,11 @@ def store_pads(source_db, target_db, batch_size=25, debug=False):
         unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
     else:
         print_verbose("Store PADs")
-        batch_convert(target_db, clusters, cluster_to_pad, batch_size)
+        batch_convert(target_db, clusters, cluster_to_pad_partial, batch_size)
 
 
 if __name__ == "__main__":
     debug = job_config.getboolean("main", "debug", fallback=False)
     job_db = graphdb_setup(job_config, "job", recreate=True)
     pad_db = sparql_store_config(pad_config, update=False)
-    store_pads(pad_db, job_db, debug=debug)
+    unify_pads(pad_db, job_db, debug=debug)
