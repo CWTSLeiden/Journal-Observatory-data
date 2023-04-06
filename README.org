@@ -42,88 +42,13 @@ CSV data is currently handled by converting the data into JSON using a custom sc
 
 Data sources which provide a SPARQL endpoint only need a list of platform identifiers and a SPARQL query to convert the data.
 
-** Api
+PADs are stored directly in a compatible triple store via a SPARQL-endpoint.
 
-The API module serves PADs over a REST Api endpoint. It is meant to provide simple access to the PADs stored in the triple store, as a limited alternative to the SPARQL endpoint. 
+** Unification
 
-[[file:docs/img/job_prototype-PAD_Service.drawio.png]]
-
-The API serves two types of information:
-1. A list of PADs, which can be constructed using some basic filters.
-2. A single PAD, which can be displayed in JSON-LD format, TRIG format, or a simple graphical representation.
-
-The API is constructed using [[https://flask.palletsprojects.com][Flask]].
-
-It can be run from source in a Linux environment:
-#+begin_src sh
-pip install -r requirements.txt
-APP_ENVIRONMENT=production /bin/sh flask/start.sh
-#+end_src
-
-As a docker application:
-#+begin_src sh
-APP="pad_api"
-APP_PORT=5000
-APP_CONFIG_DIR="./config"
-APP_ENVIRONMENT="production"
-APP_SPARQL_HOST="http://localhost:7200"
-APP_SPARQL_QUERY_PATH="/repositories/job"
-APP_SPARQL_UPDATE_PATH="/repositories/job/statements"
-
-docker build -f pad_api/Dockerfile -t "${APP}"
-docker run -d \
-    --name "${APP}" \
-    --env "APP_ENVIRONMENT=${APP_ENVIRONMENT}" \
-    --env "APP_PORT=${APP_PORT}" \
-    --env "APP_SPARQL_HOST=${APP_SPARQL_HOST}" \
-    --env "APP_SPARQL_QUERY_PATH=${APP_SPARQL_QUERY_PATH}" \
-    --env "APP_SPARQL_UPDATE_PATH=${APP_SPARQL_UPDATE_PATH}" \
-    --volume "${APP_CONFIG_DIR}:/app/config" \
-    --publish "${APP_PORT}:${APP_PORT}" 
-#+end_src
-
-Or as a docker application using docker-compose:
-#+begin_src sh
-docker-compose up pad_api
-#+end_src
+A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =ppo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =ppo:hasSourceAssertion= property. The resulting pads are stored in a compatible triple store via a SPARQL-endpoint. This triple store is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
 
 * Design decisions
-
-** PAD ID
-
-PADs are not designed to be used independently of each other, as they describe some aspects of a platform. This platform has an identifier, which we picked as the ISSN-L. However, there can be multiple PADs that describe a single platform, therefore the ISSN-L is not suitable for identifying a PAD. There are a few options for PAD identifiers:
-
-*** 1. Blank nodes
-In RDF, an object or subject in a triple can be a 'blank node', this is a unique identifier that is only usable within the context of that triple store. Most serialization formats obfuscate the actual identifier. Blank nodes are mostly used for the purposes of nesting and ordering of items.
-
-*Pros*:
-- Blank nodes can be generated within the SPARQL query that converts the data into PADs. The query stays relatively simple.
-*Cons*:
-- Because identifiers are generated at random at each step of the query, poorly defined queries can lead to duplication of data. Queries can get relatively complex when trying to work around this duplication.
-- When serializing, the data can become hard to read.
-- Identifiers do not carry over outside of linked data. There is no url-scheme to refer to the PAD outside of the RDF store.
-
-*** 2. UUIDs
-A UUID is a random string of letters and numbers, which is extremely unlikely to produce collisions. Combining this with an url-scheme like <https://journalobservatory.org/[UUID]> gives us both a proper identifier and a url to incorporate into the Journal Observatory API.
-
-*Pros*:
-- The UUID carries over outside of the context of RDF. The identifier can be used in other data formats.
-- The identifier can be generated using SPARQL.
-*Cons*:
-- The UUID has no semantic value.
-- The UUID needs to be generated before constructing the PAD and injected during the SPARQL query. This can be done using prefixes, but makes constructing the RDF store slightly problematic. Alternatively, the UUID can be generated within the SPARQL query, but this makes constructing the query properly more complex.
-
-*** 3. Identifier scheme
-When converting the data, we have some properties that are mandatory for creating a PAD: The ISSN-L of the journal that is being asserted, the name of the data-source of the assertion and the timestamp at which moment the assertion was created. Combining this in the following url-schema: <https://journalobservatory.org/[issn-l]/[data-source]/[timestamp]> gives us a proper identifier.
-
-*Pros*:
-- The identifier has a semantic value.
-- The identifier creates an hierarchical schema for the Journal Observatory API.
-- The identifier can be generated using SPARQL.
-*Cons*:
-- There is a chance of identifier collisions.
-- The identifier is dependent on the quality of its parts (malformed timestamps/issn/etc).
-- Adds complexity to the SPARQL query.
 ** =@context=
 
 To transform JSON into RDF, generally the only thing that is needed is to add a context. In JSON-LD, this context is just syntactic sugar, it provides short names for identifiers. We can use it to transform JSON into JSON-LD by defining the JSON keys as shortcuts for proper identifiers.
@@ -338,6 +263,7 @@ GraphDB is an enterprise grade semantic graph database.
 Pros:
 - Easy setup
 - Extensive modern web-interface
+- Rest API
 - Extensive documentation
 
 Cons:
