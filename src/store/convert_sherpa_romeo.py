@@ -12,7 +12,7 @@ from utils.print import print_verbose
 from utils.store import clear_by_creator
 
 def convert_sherpa_romeo(db : Dataset, debug=False, clear=False):
-    if clear:
+    if clear and not debug:
         print_verbose("Clear dataset: sherpa romeo")
         clear_by_creator(db, "https://v2.sherpa.ac.uk/romeo")
     print_verbose("Convert dataset: sherpa_romeo")

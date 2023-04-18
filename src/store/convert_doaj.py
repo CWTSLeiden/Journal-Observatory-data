@@ -12,7 +12,7 @@ from utils.print import print_verbose
 from utils.store import clear_by_creator
 
 def convert_doaj(db : Dataset, debug=False, clear=False):
-    if clear:
+    if clear and not debug:
         print_verbose("Clear dataset: doaj")
         clear_by_creator(db, "https://doaj.org")
     print_verbose("Convert dataset: doaj")

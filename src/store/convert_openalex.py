@@ -12,7 +12,7 @@ from utils.print import print_verbose
 from utils.store import clear_by_creator
 
 def convert_openalex(db : Dataset, debug=False, clear=False):
-    if clear:
+    if clear and not debug:
         print_verbose("Clear dataset: openalex")
         clear_by_creator(db, "https://openalex.org")
     print_verbose("Convert dataset: openalex")

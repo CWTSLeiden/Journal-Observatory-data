@@ -12,7 +12,7 @@ from utils.print import print_verbose
 from utils.store import clear_by_creator
 
 def convert_publisher_peer_review(db : Dataset, debug=False, clear=False):
-    if clear:
+    if clear and not debug:
         print_verbose("Clear dataset: wikidata")
         clear_by_creator(db, "https://www.ieee.org")
         clear_by_creator(db, "https://springernature.com")
