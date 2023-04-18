@@ -82,20 +82,37 @@ def clear_by_creator(graph, creator):
     clear_pads(graph, pads)
 
 
+def format_from_path(path: str):
+    formats = {"ttl": "ttl", "json": "jsonld", "trig": "trig"}
+    split = path.split('.')
+    if len(split) > 0:
+        return formats.get("ttl")
+    return formats.get(split[-1], "ttl")
+    
+
 def add_ontology(graph : ConjunctiveGraph):
     batchgraph = PADGraph()
+
+    ppo_ontology = config.getpath("store", "ppo_ontology", fallback="ontology/ppo_ontology.ttl")
     graph.update(f"clear graph <{PPO.ontology}>")
     batchgraph.parse(
-        source=config.getpath("store", "ppo_ontology", fallback="ontology/ppo_ontology.ttl"),
-        publicID=PPO.ontology
+        source=str(ppo_ontology),
+        publicID=PPO.ontology,
+        format=format_from_path(str(ppo_ontology))
     )
+
+    pad_ontology = config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
     graph.update(f"clear graph <{PAD.ontology}>")
     batchgraph.parse(
-        source=config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
-        publicID=PAD.ontology
+        source=str(pad_ontology),
+        publicID=PAD.ontology,
+        format=format_from_path(str(pad_ontology))
     )
+
+    pad_creators = config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl"),
     batchgraph.parse(
-        source=config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl"),
-        publicID=PAD.ontology
+        source=str(pad_creators),
+        publicID=PAD.ontology,
+        format=format_from_path(str(pad_creators))
     )
     graph.addN(batchgraph.quads())
