@@ -157,31 +157,34 @@ insert {
     }
 }
 where {
-    ?journal a rdfg:Graph .
-    ?journal romeo:hasMetadata ?romeo_id .
-    ?journal romeo:hasPublisherPolicy ?publisher_policy .
-    ?publisher_policy romeo:hasPermittedOA ?policy .
-    ?policy romeo:articleVersion "published" .
-    bind(bnode() as ?publicationpolicy)
+    select (bnode() as ?publicationpolicy) ?romeo_id ?oaallowed ?oafee ?license ?copyright_owner ?embargoduration ?copyright_owner ?copyright_owner_type
+    where {
+        ?journal a rdfg:Graph .
+        ?journal romeo:hasMetadata ?romeo_id .
+        ?journal romeo:hasPublisherPolicy ?publisher_policy .
+        ?publisher_policy romeo:hasPermittedOA ?policy .
+        ?policy romeo:articleVersion "published" .
 
-    optional { ?policy romeo:oaProhibited ?oaprohibited
-        values (?oaprohibited ?oaallowed) {
-            ("yes" false)
-            ("no" true)
-            (undef true)
+        optional { ?policy romeo:oaProhibited ?oaprohibited
+            values (?oaprohibited ?oaallowed) {
+                ("yes" false)
+                ("no" true)
+                (undef true)
+            }
         }
-    }
-    optional { ?policy romeo:hasAdditionalFee ?_oafee
-        values (?_oafee ?oafee) {
-            ("no" false)
-            ("yes" true)
+        optional { ?policy romeo:hasAdditionalFee ?_oafee
+            values (?_oafee ?oafee) {
+                ("no" false)
+                ("yes" true)
+            }
         }
+        optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
+            ?copyright_owner a ?copyright_owner_type .
+        } .
+        optional { ?policy dcterms:license ?license } .
+        optional { ?policy fabio:hasEmbargoDuration ?embargoduration } .
     }
-    optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
-        ?copyright_owner a ?copyright_owner_type .
-    } .
-    optional { ?policy dcterms:license ?license } .
-    optional { ?policy fabio:hasEmbargoDuration ?embargoduration } .
+    group by ?romeo_id ?oaallowed ?oafee ?license ?copyright_owner ?embargoduration ?copyright_owner ?copyright_owner_type
 }
 
 # Publication Elsewhere Policy
