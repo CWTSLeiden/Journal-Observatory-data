@@ -64,10 +64,10 @@
         "@id": "doaj:Publisher"
     },
     "apc": {
-        "@id": "ppo:hasArticlePublishingCharges",
+        "@id": "ppo:hasArticleProcessingCharge",
         "@context": {
             "has_apc": {
-                "@id": "doaj:ArticlePublishingChargesApply",
+                "@id": "doaj:ArticleProcessingChargeApplies",
                 "@type": "xsd:boolean"
             },
             "max": {

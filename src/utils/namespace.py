@@ -9,7 +9,7 @@ from uuid import uuid4 as uuid
 class PPO(DefinedNamespace):
     _NS = Namespace("http://purl.org/cwts/ppo/")
     Accessible: URIRef
-    ArticlePublishingCharges: URIRef
+    ArticleProcessingCharge: URIRef
     AuthorEditorCommunication: URIRef
     EvaluationPolicy: URIRef
     NotAccessible: URIRef
@@ -29,7 +29,7 @@ class PPO(DefinedNamespace):
     anonymousTo: URIRef
     appliesToVersion: URIRef
     covers: URIRef
-    hasArticlePublishingCharges: URIRef
+    hasArticleProcessingCharge: URIRef
     hasCopyrightOwner: URIRef
     hasFatcatId: URIRef
     hasInitiator: URIRef

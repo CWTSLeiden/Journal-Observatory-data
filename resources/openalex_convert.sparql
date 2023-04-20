@@ -74,9 +74,9 @@ insert {
     graph sub:assertion {
         ?journal ppo:hasPolicy sub:publicationPolicy .
         sub:publicationPolicy a ppo:PublicationPolicy ;
-            ppo:hasArticlePublishingCharges ?apc .
+            ppo:hasArticleProcessingCharge ?apc .
         
-        ?apc a ppo:ArticlePublishingCharges ;
+        ?apc a ppo:ArticleProcessingCharge ;
             schema:price ?apc_price ;
             schema:priceCurrency "USD" .
     }

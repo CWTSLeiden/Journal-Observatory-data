@@ -72,12 +72,12 @@ insert {
         ?journal ppo:hasPolicy sub:publicationPolicy .
         sub:publicationPolicy a ppo:PublicationPolicy ;
             ppo:isOpenAccess true ;
-            ppo:hasArticlePublishingCharges ?apc ;
+            ppo:hasArticleProcessingCharge ?apc ;
             ppo:hasCopyrightOwner ?copyright_owner ;
             dcterms:license ?license ;
             ppo:appliesToVersion pso:published .
         
-        ?apc a ppo:ArticlePublishingCharges ;
+        ?apc a ppo:ArticleProcessingCharge ;
             schema:url ?apc_url ;
             schema:price ?apc_price ;
             ?apc_p ?apc_o .
@@ -88,10 +88,10 @@ insert {
 where {
     ?journal a rdfg:Graph .
 
-    optional { ?journal ppo:hasArticlePublishingCharges ?apc } .
+    optional { ?journal ppo:hasArticleProcessingCharge ?apc } .
     optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
     optional { ?apc schema:url ?apc_url } .
-    optional { ?apc doaj:ArticlePublishingChargesApply false . bind(0 as ?apc_price) } .
+    optional { ?apc doaj:ArticleProcessingChargeApplies false . bind(0 as ?apc_price) } .
 
     optional {
         ?journal doaj:Copyright ?oa_copyright .
