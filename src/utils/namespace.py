@@ -6,7 +6,7 @@ from rdflib.namespace._RDF import RDF
 from rdflib.namespace._RDFS import RDFS
 from uuid import uuid4 as uuid
 
-PPO = Namespace("http://purl.org/cwts/ppo/")
+SCPO = Namespace("http://purl.org/cwts/scpo/")
 PAD = Namespace("https://journalobservatory.org/pad/")
 
 CC = Namespace("http://creativecommons.org/ns#")
@@ -43,7 +43,7 @@ class PADNamespaceManager(NamespaceManager):
         self.bind("fc", FC)
         self.bind("issn", ISSN)
         self.bind("pad", PAD)
-        self.bind("ppo", PPO)
+        self.bind("scpo", SCPO)
         self.bind("loc", LOC)
         self.bind("openalex", OPENALEX)
         self.bind("prism", PRISM)

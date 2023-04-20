@@ -24,7 +24,7 @@ where {
 # Metadata
 insert {
     graph sub:assertion {
-        ?journal a ppo:Platform ;
+        ?journal a scpo:Platform ;
             schema:name ?name .
     }
 }
@@ -40,7 +40,7 @@ insert {
         ?publisher a pro:publisher ;
             schema:name ?publisher_name . 
         ?journal dcterms:relation ?society .
-        ?society a ppo:Society ;
+        ?society a scpo:Society ;
             schema:name ?society_name ;
             schema:url ?society_url .
     }
@@ -60,23 +60,23 @@ where {
 insert {
     graph sub:assertion {
         ?journal ?idtype ?pid .
-        ?journal ppo:hasOpenalexId ?journal .
+        ?journal scpo:hasOpenalexId ?journal .
     }
 }
 where {
     ?journal a rdfg:Graph ;
         openalex:external_identifier [ ?idtype ?id ] .
-    bind(if(?idtype in (wd:id, ppo:hasFatcatId, ppo:hasOpenalexId), iri(?id), ?id) as ?pid) .
+    bind(if(?idtype in (wd:id, scpo:hasFatcatId, scpo:hasOpenalexId), iri(?id), ?id) as ?pid) .
 }
 
 # Publication Policy
 insert {
     graph sub:assertion {
-        ?journal ppo:hasPolicy sub:publicationPolicy .
-        sub:publicationPolicy a ppo:PublicationPolicy ;
-            ppo:hasArticleProcessingCharge ?apc .
+        ?journal scpo:hasPolicy sub:publicationPolicy .
+        sub:publicationPolicy a scpo:PublicationPolicy ;
+            scpo:hasArticleProcessingCharge ?apc .
         
-        ?apc a ppo:ArticleProcessingCharge ;
+        ?apc a scpo:ArticleProcessingCharge ;
             schema:price ?apc_price ;
             schema:priceCurrency "USD" .
     }
@@ -89,9 +89,9 @@ where {
 
 insert {
     graph sub:assertion {
-        ?journal ppo:hasPolicy sub:publicationPolicy .
-        sub:publicationPolicy a ppo:PublicationPolicy ;
-            ppo:isOpenAccess ?openaccess .
+        ?journal scpo:hasPolicy sub:publicationPolicy .
+        sub:publicationPolicy a scpo:PublicationPolicy ;
+            scpo:isOpenAccess ?openaccess .
     }
 }
 where {

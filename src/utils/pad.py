@@ -1,5 +1,5 @@
 from rdflib import ConjunctiveGraph, Graph, Dataset
-from utils.namespace import PADNamespaceManager, RDF, PPO
+from utils.namespace import PADNamespaceManager, RDF, SCPO
 
 
 class PADGraph(ConjunctiveGraph):
@@ -58,5 +58,5 @@ class PADGraph(ConjunctiveGraph):
 
 
 def platform_id(pad: ConjunctiveGraph):
-    return [str(id) for id in pad.subjects(RDF.type, PPO.Platform)]
+    return [str(id) for id in pad.subjects(RDF.type, SCPO.Platform)]
 

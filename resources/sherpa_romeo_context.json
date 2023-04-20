@@ -1,6 +1,6 @@
 {
     "@base": "https://v2.sherpa.ac.uk/id/",
-    "ppo": "http://purl.org/cwts/ppo/",
+    "scpo": "http://purl.org/cwts/scpo/",
     "schema": "https://schema.org/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "romeo": "https://v2.sherpa.ac.uk/id/",

@@ -3,7 +3,7 @@ import os
 from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
-from utils.namespace import PAD, PPO, PADNamespaceManager
+from utils.namespace import PAD, SCPO, PADNamespaceManager
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils import pad_config as config
@@ -93,12 +93,12 @@ def format_from_path(path: str):
 def add_ontology(graph : ConjunctiveGraph):
     batchgraph = PADGraph()
 
-    ppo_ontology = config.getpath("store", "ppo_ontology", fallback="ontology/ppo_ontology.ttl")
-    graph.update(f"clear graph <{PPO.ontology}>")
+    scpo_ontology = config.getpath("store", "scpo_ontology", fallback="ontology/scpo_ontology.ttl")
+    graph.update(f"clear graph <{SCPO.ontology}>")
     batchgraph.parse(
-        source=str(ppo_ontology),
-        publicID=PPO.ontology,
-        format=format_from_path(str(ppo_ontology))
+        source=str(scpo_ontology),
+        publicID=SCPO.ontology,
+        format=format_from_path(str(scpo_ontology))
     )
 
     pad_ontology = config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),

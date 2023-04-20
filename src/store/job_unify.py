@@ -12,7 +12,7 @@ from utils.graphdb import graphdb_setup
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils.store import sparql_store_config
-from utils.namespace import PAD, RDF, PPO
+from utils.namespace import PAD, RDF, SCPO
 from utils import ROOT_DIR, job_config, pad_config
 
 
@@ -40,7 +40,7 @@ def cluster_to_pad(db : Dataset, pad_ids : set[URIRef]):
     unipad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))
     unipad.add((THIS, PAD.hasAssertion, SUB.assertion, SUB.docinfo))
     unipad.add((THIS, PAD.hasProvenance, SUB.provenance, SUB.docinfo))
-    unipad.add((SUB.platform, RDF.type, PPO.Platform, SUB.assertion))
+    unipad.add((SUB.platform, RDF.type, SCPO.Platform, SUB.assertion))
     for pad_id in pad_ids:
         assertion = db.get_context(f"{pad_id}/assertion")
         unipad.add_context(assertion, SUB.assertion)
@@ -49,7 +49,7 @@ def cluster_to_pad(db : Dataset, pad_ids : set[URIRef]):
     unipad.update("""
         delete { ?platform ?p ?o . }
         insert { graph ?g { sub:platform ?p ?o . } }
-        where  { graph ?g { ?platform a ppo:Platform ; ?p ?o . } }
+        where  { graph ?g { ?platform a scpo:Platform ; ?p ?o . } }
     """)
     return unipad
 
@@ -60,8 +60,8 @@ def pad_clusters(db : Dataset):
     {
         ?platform1 dcterms:identifier ?id .
         ?platform2 dcterms:identifier ?id .
-        graph ?assertion1 { ?platform1 a ppo:Platform }
-        graph ?assertion2 { ?platform2 a ppo:Platform }
+        graph ?assertion1 { ?platform1 a scpo:Platform }
+        graph ?assertion2 { ?platform2 a scpo:Platform }
         ?pad1 pad:hasAssertion ?assertion1 .
         ?pad2 pad:hasAssertion ?assertion2 .
     }
