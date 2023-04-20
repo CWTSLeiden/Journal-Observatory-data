@@ -191,6 +191,7 @@ where {
 insert {
     graph sub:assertion {
         ?romeo_id ppo:hasPolicy ?publicationelsewhereprohibited .
+        ?romeo_id ppo:hasDefaultPolicy ?publicationelsewhereprohibited .
         ?publicationelsewhereprohibited a ppo:PublicationElsewhereProhibitedPolicy .
 
         ?romeo_id ppo:hasPolicy ?publicationelsewhereallowed .
