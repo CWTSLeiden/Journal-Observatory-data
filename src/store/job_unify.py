@@ -12,7 +12,7 @@ from utils.graphdb import graphdb_setup
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils.store import sparql_store_config
-from utils.namespace import PAD, RDF, SCPO
+from utils.namespace import JOB, PAD, RDF, SCPO
 from utils import ROOT_DIR, job_config, pad_config
 
 
@@ -34,7 +34,7 @@ def cluster_pairs(pad_pairs):
 
 
 def cluster_to_pad(db : Dataset, pad_ids : set[URIRef]):
-    unipad = PADGraph()
+    unipad = PADGraph(prefix=JOB)
     THIS = unipad.THIS
     SUB = unipad.SUB
     unipad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))
@@ -82,7 +82,7 @@ def unify_pads(source_db, target_db, batch_size=25, debug=False):
     cluster_to_pad_partial = partial(cluster_to_pad, db=source_db)
     clusters = pad_clusters(source_db)
     if debug:
-        unipad = cluster_to_pad(clusters[0])
+        unipad = cluster_to_pad_partial(clusters[0])
         unipad.serialize(f"{ROOT_DIR}/test/unipad.trig", format="trig")
         unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
     else:
