@@ -6,50 +6,7 @@ from rdflib.namespace._RDF import RDF
 from rdflib.namespace._RDFS import RDFS
 from uuid import uuid4 as uuid
 
-class PPO(DefinedNamespace):
-    _NS = Namespace("http://purl.org/cwts/ppo/")
-    Accessible: URIRef
-    ArticleProcessingCharge: URIRef
-    AuthorEditorCommunication: URIRef
-    EvaluationPolicy: URIRef
-    NotAccessible: URIRef
-    OptIn: URIRef
-    Platform: URIRef
-    PlatformType: URIRef
-    Policy: URIRef
-    PublicAccessability: URIRef
-    PublicationElsewhereAllowedPolicy: URIRef
-    PublicationElsewhereMandatoryPolicy: URIRef
-    PublicationElsewherePolicy: URIRef
-    PublicationElsewhereProhibitedPolicy: URIRef
-    PublicationPolicy: URIRef
-    ReviewReport: URIRef
-    ReviewSummary: URIRef
-    SubmittedManuscript: URIRef
-    anonymousTo: URIRef
-    appliesToVersion: URIRef
-    covers: URIRef
-    hasArticleProcessingCharge: URIRef
-    hasCopyrightOwner: URIRef
-    hasFatcatId: URIRef
-    hasInitiator: URIRef
-    hasOpenalexId: URIRef
-    hasPlatformType: URIRef
-    hasPolicy: URIRef
-    hasSherpaRomeoId: URIRef
-    identityPubliclyAccessible: URIRef
-    interactsWith: URIRef
-    involves: URIRef
-    isOpenAccess: URIRef
-    optInBy: URIRef
-    ontology: URIRef
-    postPublicationCommenting: URIRef
-    postPublicationCommentingClosed: URIRef
-    postPublicationCommentingOnInvitation: URIRef
-    postPublicationCommentingOpen: URIRef
-    publicationCondition: URIRef
-    publiclyAccessible: URIRef
-
+PPO = Namespace("http://purl.org/cwts/ppo/")
 PAD = Namespace("https://journalobservatory.org/pad/")
 
 CC = Namespace("http://creativecommons.org/ns#")

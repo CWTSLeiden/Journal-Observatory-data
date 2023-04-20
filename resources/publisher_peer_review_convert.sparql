@@ -69,8 +69,8 @@ insert {
             ppo:hasPolicy ?policy .
 
         ?policy a ppo:EvaluationPolicy ;
-            ppo:covers ?ppc .
-        ?ppc a ppo:postPublicationCommenting .
+            ppo:hasPostPublicationCommenting ?ppc .
+        ?ppc a ppo:PostPublicationCommenting .
 
         ?policy ppo:involves sub:author .
         sub:author a pro:author ;
@@ -146,11 +146,11 @@ where {
     }
 
     optional { ?record stm:postPublicationCommenting [ stm:onInvitation true ] .
-        bind(ppo:postPublicationCommentingOnInvitation as ?ppc) }
+        bind(ppo:PostPublicationCommentingOnInvitation as ?ppc) }
     optional { ?record stm:postPublicationCommenting [ stm:open true ] .
-        bind(ppo:postPublicationCommentingOpen as ?ppc) }
+        bind(ppo:PostPublicationCommentingOpen as ?ppc) }
     optional { ?record stm:postPublicationCommenting [ stm:open false; stm:onInvitation false ] .
-        bind(ppo:postPublicationCommentingClosed as ?ppc) }
+        bind(ppo:PostPublicationCommentingClosed as ?ppc) }
 
     optional { ?record stm:reviewerInteractsWith ?riw . }
     optional { ?riw stm:authors true .
