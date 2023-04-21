@@ -18,12 +18,10 @@ def add_context(record : dict, context : dict) -> dict :
     """
     Add the @context from the context file to the record
     """
-    context_record = {}
-    graph = record.copy()
+    context_record = record.copy()
     for prefix, namespace in PADNamespaceManager().namespaces():
         if not context.get(prefix):
             context[prefix] = str(namespace)
-    context_record["@graph"] = graph
     context_record["@context"] = context
     context_record["@type"] = "http://www.w3.org/2004/03/trix/rdfg-1/Graph"
     return context_record

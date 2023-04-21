@@ -42,5 +42,5 @@ def convert_sherpa_romeo(db : Dataset, debug=False, clear=False):
 if __name__ == "__main__":
     from utils.store import sparql_store_config
     debug = config.getboolean("main", "debug", fallback=False)
-    job_db = sparql_store_config(config, update=True)
-    convert_sherpa_romeo(job_db, debug=debug, clear=True)
+    pad_db = sparql_store_config(config, update=True)
+    convert_sherpa_romeo(pad_db, debug=debug, clear=True)

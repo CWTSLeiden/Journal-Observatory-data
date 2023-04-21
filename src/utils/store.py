@@ -63,32 +63,32 @@ def clear_default_graph(graph, confirm=False):
         print_verbose(f"Graph {graph.identifier} has no triples.")
 
 
-def clear_pads(graph, pads=[]):
-    update = ""
+def clear_pads(db, pads=[]):
     batchsize = 1000
     batches = [pads[n:n+batchsize] for n in range(0, len(pads), batchsize)]
     progress = partial(tqdm, unit_scale=batchsize, total=len(batches))
     for batch in progress(batches):
+        update = ""
         for pad in batch:
             update += f"clear graph <{pad}/provenance>; "
             update += f"clear graph <{pad}/assertion>; "
             update += f"clear graph <{pad}/docinfo>; "
-        graph.update(update)
-        sleep(5)
+        db.update(update)
 
 
-def clear_by_creator(graph, creator):
+def clear_by_creator(db, creator):
     query = f"""
-    SELECT ?pad
+    SELECT DISTINCT ?pad
     WHERE {{
         graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
         graph ?provenance {{ ?assertion dcterms:creator <{creator}> . }}
     }}
     """
-    result = graph.query(query)
+    result = db.query(query)
     pads = [p.pad for p in result]
-    print_verbose(f"clear {len(pads)} PADs for creator: {creator}")
-    clear_pads(graph, pads)
+    if len(pads) > 0:
+        print_verbose(f"clear {len(pads)} PADs for creator: {creator}")
+        clear_pads(db, pads)
 
 
 def format_from_path(path: str):
