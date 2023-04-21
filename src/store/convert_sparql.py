@@ -27,15 +27,15 @@ def sparql_journal_to_pad(graph: ConjunctiveGraph, journal : str, queries : list
 
 def sparql_record_to_pad(record : str, queries : list, docinfo={}):
     # Don't overload the sparql-endpoint
-    sleep(random(0,2))
+    sleep(random(0,1))
     pad = PADGraph()
     pad = sparql_journal_to_pad(pad, record, queries)
     pad = pad_add_docinfo(pad, docinfo)
     return pad
 
 
-def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, docinfo={}, name=None):
+def sparql_journal_convert(db : Dataset, journals : list, queries : list, sparql_endpoint, batchsize, docinfo={}, processes=None):
     queries = queries_replace(queries, {"sparql_endpoint": sparql_endpoint})
     record_to_pad = partial(sparql_record_to_pad, queries=queries, docinfo=docinfo)
-    batch_convert(db, journals, record_to_pad, batchsize=batchsize, name=name)
+    batch_convert(db, journals, record_to_pad, batchsize=batchsize, processes=processes)
 

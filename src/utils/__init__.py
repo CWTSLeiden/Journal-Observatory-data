@@ -16,7 +16,7 @@ class CustomConfigParser(ConfigParser):
         if len(path) > 0:
             if path[0] in ("/", "~", "$"):
                 return path
-            if match("^https?://", path)
+            if match("^https?://", path):
                 return path
         return f"{base}/{path}"
 

@@ -3,10 +3,14 @@ import os
 from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
+from urllib.error import HTTPError
 from utils.namespace import PAD, SCPO, PADNamespaceManager
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils import pad_config as config
+from tqdm import tqdm
+from functools import partial
+from time import sleep
 
 
 def bnode_to_sparql(node):
@@ -61,11 +65,16 @@ def clear_default_graph(graph, confirm=False):
 
 def clear_pads(graph, pads=[]):
     update = ""
-    for n, pad in enumerate(pads):
-        update += f"clear graph <{pad}/provenance>; "
-        update += f"clear graph <{pad}/assertion>; "
-        update += f"clear graph <{pad}/docinfo>; "
-    graph.update(update)
+    batchsize = 1000
+    batches = [pads[n:n+batchsize] for n in range(0, len(pads), batchsize)]
+    progress = partial(tqdm, unit_scale=batchsize, total=len(batches))
+    for batch in progress(batches):
+        for pad in batch:
+            update += f"clear graph <{pad}/provenance>; "
+            update += f"clear graph <{pad}/assertion>; "
+            update += f"clear graph <{pad}/docinfo>; "
+        graph.update(update)
+        sleep(5)
 
 
 def clear_by_creator(graph, creator):
@@ -93,7 +102,7 @@ def format_from_path(path: str):
 def add_ontology(graph : ConjunctiveGraph):
     batchgraph = PADGraph()
 
-    scpo_ontology = config.getpath("store", "scpo_ontology", fallback="ontology/scpo_ontology.ttl")
+    scpo_ontology = config.getpath("store", "scpo_ontology")
     graph.update(f"clear graph <{SCPO.ontology}>")
     batchgraph.parse(
         source=str(scpo_ontology),
@@ -101,7 +110,7 @@ def add_ontology(graph : ConjunctiveGraph):
         format=format_from_path(str(scpo_ontology))
     )
 
-    pad_ontology = config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
+    pad_ontology = config.getpath("store", "pad_ontology")
     graph.update(f"clear graph <{PAD.ontology}>")
     batchgraph.parse(
         source=str(pad_ontology),
@@ -109,10 +118,10 @@ def add_ontology(graph : ConjunctiveGraph):
         format=format_from_path(str(pad_ontology))
     )
 
-    pad_creators = config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl"),
+    pad_creators = config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl")
     batchgraph.parse(
         source=str(pad_creators),
-        publicID=PAD.ontology,
+        publicID=PAD.creators,
         format=format_from_path(str(pad_creators))
     )
     graph.addN(batchgraph.quads())

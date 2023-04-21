@@ -11,7 +11,7 @@ insert {
     }
 
     graph sub:provenance {
-        sub:assertion dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+        sub:assertion dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
             dcterms:created ?date ;
             dcterms:creator <https://doaj.org> .
     }
