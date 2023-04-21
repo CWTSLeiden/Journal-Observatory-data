@@ -33,7 +33,7 @@ def cluster_pairs(pad_pairs):
     return clusters
 
 
-def cluster_to_pad(db : Dataset, pad_ids : set[URIRef]):
+def cluster_to_pad(pad_ids : set[URIRef], db : Dataset):
     unipad = PADGraph(prefix=JOB)
     THIS = unipad.THIS
     SUB = unipad.SUB
@@ -51,7 +51,9 @@ def cluster_to_pad(db : Dataset, pad_ids : set[URIRef]):
         insert { graph ?g { sub:platform ?p ?o . } }
         where  { graph ?g { ?platform a scpo:Platform ; ?p ?o . } }
     """)
-    return unipad
+    if unipad.query("ask where { ?platform scpo:hasPolicy ?policy }"):
+        return unipad
+    return None
 
 
 def pad_clusters(db : Dataset):
@@ -82,9 +84,12 @@ def unify_pads(source_db, target_db, batch_size=25, debug=False):
     cluster_to_pad_partial = partial(cluster_to_pad, db=source_db)
     clusters = pad_clusters(source_db)
     if debug:
-        unipad = cluster_to_pad_partial(clusters[0])
-        unipad.serialize(f"{ROOT_DIR}/test/unipad.trig", format="trig")
-        unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
+        while True:
+            unipad = cluster_to_pad_partial(clusters[0])
+            if unipad is not None:
+                unipad.serialize(f"{ROOT_DIR}/test/unipad.trig", format="trig")
+                unipad.serialize(f"{ROOT_DIR}/test/unipad.json", format="json-ld", auto_compact=True)
+                break
     else:
         print_verbose("Store PADs")
         batch_convert(target_db, clusters, cluster_to_pad_partial, batch_size)
