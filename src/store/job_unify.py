@@ -12,7 +12,7 @@ from utils.graphdb import graphdb_setup
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils.store import sparql_store_config
-from utils.namespace import JOB, PAD, RDF, SCPO
+from utils.namespace import JOB_PREFIX, PAD, RDF, SCPO
 from utils import ROOT_DIR, job_config, pad_config
 
 
@@ -34,7 +34,7 @@ def cluster_pairs(pad_pairs):
 
 
 def cluster_to_pad(pad_ids : set[URIRef], db : Dataset):
-    unipad = PADGraph(prefix=JOB)
+    unipad = PADGraph(prefix=JOB_PREFIX)
     THIS = unipad.THIS
     SUB = unipad.SUB
     unipad.add((THIS, RDF.type, PAD.PAD, SUB.docinfo))

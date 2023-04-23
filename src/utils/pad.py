@@ -1,9 +1,9 @@
 from rdflib import ConjunctiveGraph, Graph, Dataset
-from utils.namespace import PAD, PADNamespaceManager, RDF, SCPO
+from utils.namespace import PAD_PREFIX, PADNamespaceManager, RDF, SCPO
 
 
 class PADGraph(ConjunctiveGraph):
-    def __init__(self, identifier=None, prefix=PAD):
+    def __init__(self, identifier=None, prefix=PAD_PREFIX):
         namespace_manager = PADNamespaceManager(this=identifier, prefix=prefix)
         self.THIS = namespace_manager.THIS[""]
         self.SUB = namespace_manager.SUB

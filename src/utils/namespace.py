@@ -6,9 +6,10 @@ from rdflib.namespace._RDF import RDF
 from rdflib.namespace._RDFS import RDFS
 from uuid import uuid4 as uuid
 
-SCPO = Namespace("http://purl.org/cwts/scpo/")
-PAD = Namespace("https://journalobservatory.org/pad/")
-JOB = Namespace("https://journalobservatory.org/job/pad/")
+SCPO = Namespace("http://purl.org/job/scpo/")
+PAD = Namespace("http://purl.org/job/pad/")
+PAD_PREFIX = Namespace("https://journalobservatory.org/pad/")
+JOB_PREFIX = Namespace("https://journalobservatory.org/job/pad/")
 
 CC = Namespace("http://creativecommons.org/ns#")
 DOAJ = Namespace("https://doaj.org/")
@@ -35,7 +36,7 @@ RDFS = RDFS
 
 
 class PADNamespaceManager(NamespaceManager):
-    def __init__(self, this=None, prefix=PAD):
+    def __init__(self, this=None, prefix=PAD_PREFIX):
         super().__init__(Graph())
         self.PREFIX = prefix
         self.bind("cc", CC)
@@ -44,7 +45,8 @@ class PADNamespaceManager(NamespaceManager):
         self.bind("fabio", FABIO)
         self.bind("fc", FC)
         self.bind("issn", ISSN)
-        self.bind("job", JOB)
+        self.bind("jobid", JOB_PREFIX)
+        self.bind("padid", PAD_PREFIX)
         self.bind("pad", PAD)
         self.bind("scpo", SCPO)
         self.bind("loc", LOC)
