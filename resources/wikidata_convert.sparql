@@ -16,12 +16,12 @@ insert {
     }
 
     graph sub:assertion {
-        ?journal a ppo:Platform ;
+        ?journal a scpo:Platform ;
             schema:name ?title ;
             schema:url ?platform_url_str ;
             ?pidtype ?pid ;
             wd:id ?journal ;
-            ppo:isOpenAccess ?openaccess ;
+            scpo:isOpenAccess ?openaccess ;
             dcterms:publisher ?publisher .
         ?publisher a pro:publisher ;
             schema:name ?publisher_name ;
@@ -39,12 +39,12 @@ WHERE {
             values (?idtype ?pidtype) {
                 (wdt:P236 prism:issn)
                 (wdt:P7363 fabio:hasIssnL)
-                (wdt:P10283 ppo:hasOpenalexId)
-                (wdt:P8375 ppo:hasCrossrefId)
-                (wdt:P6180 ppo:hasDimensionsId)
-                (wdt:P1156 ppo:hasScopusId)
-                (wdt:P8608 ppo:hasFatcatId)
-                (wdt:P6366 ppo:hasMagId)
+                (wdt:P10283 scpo:hasOpenalexId)
+                (wdt:P8375 scpo:hasCrossrefId)
+                (wdt:P6180 scpo:hasDimensionsId)
+                (wdt:P1156 scpo:hasScopusId)
+                (wdt:P8608 scpo:hasFatcatId)
+                (wdt:P6366 scpo:hasMagId)
             } .
             bind(if(?idtype in (wdt:P10283), iri(concat("https://openalex.org/", ?id)), ?id) as ?pid) .
         }

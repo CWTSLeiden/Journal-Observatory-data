@@ -5,12 +5,22 @@ from tqdm import tqdm
 from multiprocessing import Pool
 from functools import partial
 from typing import TypeVar, Callable
-from time import sleep, time
+from time import sleep
 import datetime
 import re
+from utils import ROOT_DIR
 
 from utils.namespace import PADNamespaceManager, PAD
 from utils.pad import PADGraph, platform_id
+
+
+def log(message : str | Exception, file=None):
+    if not file:
+        date = datetime.date.today().strftime("%Y-%m-%d")
+        file = f"{ROOT_DIR}/log/{date}.log"
+    with open(file, "a") as f:
+        f.write(str(message))
+
 
 def read_query_file(file : str) -> list[str]:
     """
@@ -54,7 +64,7 @@ def graph_to_pad(graph : ConjunctiveGraph, queries : list[str], clean=True) -> C
             graph.update(query)
         except(ParseException) as e:
             print(f"Error during parsing:\n\n{query}\n")  # TODO: for debugging
-            raise(e)
+            log(e)
     if clean:
         for original_graph in original_graphs:
             graph.remove_context(original_graph)
@@ -94,19 +104,19 @@ def batch_add(sparqlstore: Dataset, graph: ConjunctiveGraph):
             sleep(1)
 
 
-def batch_convert_run(records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph]):
+def batch_convert_run(records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph | None]):
     batchgraph = PADGraph()
     for record in records:
         try:
             pad = record_to_pad(record)
+            if pad is None: return None
             batchgraph.addN(pad.quads())
         except Exception as e:
             print(f"ERROR: parsing record: {record}", flush=True)
-            print(e, flush=True)
-            raise(e)
+            log(f"ERROR: parsing record: {record}\n{e}")
     return batchgraph
 
-def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph], batchsize=100, name=None):
+def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Callable[[R], ConjunctiveGraph | None], batchsize=100, processes=None):
     """
     Meta function to upload data to the SPARQL store.
     Because every addN call to the store is a single HTTP request,
@@ -131,9 +141,10 @@ def batch_convert(sparqlstore : Dataset, records : list[R], record_to_pad : Call
 
     # Use imap_unordered to send results to SPARQL endpoint as soon as
     # results are available, disregarding order of call
-    with Pool() as pool:
+    with Pool(processes) as pool:
         for graph in progress(pool.imap_unordered(process_batch, batches)):
-            batch_add(sparqlstore, graph)
-            sleep(0.5)
+            if graph is not None:
+                batch_add(sparqlstore, graph)
+                sleep(0.5)
 
     return True

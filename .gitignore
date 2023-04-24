@@ -6,3 +6,4 @@ data/*
 !data/publisher_peer_review
 data/publisher_peer_review/*
 !data/publisher_peer_review/xlsx/
+*.log

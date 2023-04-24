@@ -9,7 +9,7 @@ from os import path
 from rdflib import Literal, URIRef, Dataset
 from store.convert import batch_convert, pad_add_docinfo
 from utils import pad_config as config
-from utils.namespace import PAD, PPO, DCTERMS, FABIO, PRISM, XSD, RDF
+from utils.namespace import PAD, SCPO, DCTERMS, FABIO, PRISM, XSD, RDF
 from utils.pad import PADGraph
 from utils.print import print_verbose
 
@@ -27,7 +27,7 @@ def issnl_tuple_to_pad(issnl, issn, date):
     pad.add((SUB.assertion, DCTERMS.created, Literal(date, datatype=XSD.date), SUB.provenance))
     pad.add((SUB.assertion, DCTERMS.creator, URIRef("https://issn.org"), SUB.provenance))
     
-    pad.add((platform, RDF.type, PPO.Platform, SUB.assertion))
+    pad.add((platform, RDF.type, SCPO.Platform, SUB.assertion))
     pad.add((platform, PRISM.issn, Literal(issn), SUB.assertion))
     pad.add((platform, FABIO.hasIssnL, Literal(issnl), SUB.assertion))
     return pad

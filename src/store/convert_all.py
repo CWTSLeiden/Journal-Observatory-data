@@ -25,6 +25,6 @@ def convert_all(db: Dataset, debug=False):
 
 if __name__ == "__main__":
     debug = pad_config.getboolean("main", "debug", fallback=False)
-    pad_db = graphdb_setup(pad_config, "test", recreate=True)
+    pad_db = graphdb_setup(pad_config, "pad", recreate=True)
     print("Done")
     convert_all(pad_db, debug)

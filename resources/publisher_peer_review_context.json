@@ -7,12 +7,12 @@
     "fabio": "http://purl.org/spar/fabio/",
     "dcterms": "http://purl.org/dc/terms/",
     "journal_name": "schema:name",
-    "publisher": "ppo:hasPublisher",
+    "publisher": "scpo:hasPublisher",
     "pissn": "prism:issn",
     "eissn": "prism:eIssn",
     "issn-l": "fabio:hasIssnL",
     "provenance": {
-        "@id": "ppo:provenance",
+        "@id": "scpo:provenance",
         "@context": {
             "creator": {
                 "@id": "dcterms:creator"

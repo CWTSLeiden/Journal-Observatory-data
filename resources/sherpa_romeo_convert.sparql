@@ -24,7 +24,7 @@ where {
 # Metadata
 insert {
     graph sub:assertion {
-        ?romeo_id a ppo:Platform ;
+        ?romeo_id a scpo:Platform ;
             schema:name ?journal_title ;
             schema:url ?journal_url .
     }
@@ -39,7 +39,7 @@ where {
 # Identifier
 insert {
     graph sub:assertion {
-        ?romeo_id ppo:hasSherpaRomeoId ?romeo_id ;
+        ?romeo_id scpo:hasSherpaRomeoId ?romeo_id ;
             prism:issn ?pissn ;
             prism:eIssn ?eissn .
     }
@@ -108,7 +108,7 @@ where {
 
 insert {
     graph ?graph {
-        ?policy ppo:hasCopyrightOwner ?copyright_owner .
+        ?policy scpo:hasCopyrightOwner ?copyright_owner .
         ?copyright_owner a ?copyright_owner_type .
     }
 }
@@ -135,9 +135,9 @@ where {
         bind(if(contains(?_copyright_owner, "publisher"), ?publisher, ?_) as ?copyright_owner) .
         bind(if(contains(?_copyright_owner, "publisher"), pro:publisher, ?_) as ?copyright_owner_type) .
         bind(if(contains(?_copyright_owner, "society"), ?society, ?_) as ?copyright_owner) .
-        bind(if(contains(?_copyright_owner, "society"), ppo:society, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "society"), scpo:society, ?_) as ?copyright_owner_type) .
         bind(if(contains(?_copyright_owner, "institution"), ?institution, ?_) as ?copyright_owner) .
-        bind(if(contains(?_copyright_owner, "institution"), ppo:authors-institution, ?_) as ?copyright_owner_type) .
+        bind(if(contains(?_copyright_owner, "institution"), scpo:authors-institution, ?_) as ?copyright_owner_type) .
     }
 }
 
@@ -145,13 +145,13 @@ where {
 # Publication Policy
 insert {
     graph sub:assertion {
-        ?romeo_id ppo:hasPolicy ?publicationpolicy .
-        ?publicationpolicy a ppo:PublicationPolicy ;
-            ppo:openAccessAllowed ?oaallowed ;
-            ppo:hasOpenAccessFee ?oafee ;
-            ppo:appliesToVersion pso:published ;
+        ?romeo_id scpo:hasPolicy ?publicationpolicy .
+        ?publicationpolicy a scpo:PublicationPolicy ;
+            scpo:openAccessAllowed ?oaallowed ;
+            scpo:hasOpenAccessFee ?oafee ;
+            scpo:appliesToVersion pso:published ;
             dcterms:license ?license ;
-            ppo:hasCopyrightOwner ?copyright_owner ;
+            scpo:hasCopyrightOwner ?copyright_owner ;
             fabio:hasEmbargoDuration ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
@@ -178,7 +178,7 @@ where {
                 ("yes" true)
             }
         }
-        optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
+        optional { ?policy scpo:hasCopyrightOwner ?copyright_owner .
             ?copyright_owner a ?copyright_owner_type .
         } .
         optional { ?policy dcterms:license ?license } .
@@ -190,17 +190,18 @@ where {
 # Publication Elsewhere Policy
 insert {
     graph sub:assertion {
-        ?romeo_id ppo:hasPolicy ?publicationelsewhereprohibited .
-        ?publicationelsewhereprohibited a ppo:PublicationElsewhereProhibitedPolicy .
+        ?romeo_id scpo:hasPolicy ?publicationelsewhereprohibited .
+        ?romeo_id scpo:hasDefaultPolicy ?publicationelsewhereprohibited .
+        ?publicationelsewhereprohibited a scpo:PublicationElsewhereProhibitedPolicy .
 
-        ?romeo_id ppo:hasPolicy ?publicationelsewhereallowed .
-        ?publicationelsewhereallowed a ppo:PublicationElsewhereAllowedPolicy ;
+        ?romeo_id scpo:hasPolicy ?publicationelsewhereallowed .
+        ?publicationelsewhereallowed a scpo:PublicationElsewhereAllowedPolicy ;
             dcterms:creator ?publisher ;
-            ppo:appliesToVersion ?articleversion ;
+            scpo:appliesToVersion ?articleversion ;
             dcterms:license ?license ;
-            ppo:hasCopyrightOwner ?copyright_owner ;
-            ppo:condition ?condition ;
-            ppo:publicationLocation ?location ;
+            scpo:hasCopyrightOwner ?copyright_owner ;
+            scpo:condition ?condition ;
+            scpo:publicationLocation ?location ;
             fabio:hasEmbargoDuration ?embargoduration .
         ?copyright_owner a ?copyright_owner_type .
     }
@@ -224,7 +225,7 @@ where {
             ("published" pso:published)
         }
     } .
-    optional { ?policy ppo:hasCopyrightOwner ?copyright_owner .
+    optional { ?policy scpo:hasCopyrightOwner ?copyright_owner .
         ?copyright_owner a ?copyright_owner_type .
     } .
     optional { ?policy romeo:condition ?condition } .

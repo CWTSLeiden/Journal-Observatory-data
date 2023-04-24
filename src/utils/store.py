@@ -3,10 +3,14 @@ import os
 from rdflib import BNode
 from rdflib import ConjunctiveGraph, Dataset
 from rdflib.plugins.stores.sparqlstore import SPARQLUpdateStore, SPARQLStore
-from utils.namespace import PAD, PPO, PADNamespaceManager
+from urllib.error import HTTPError
+from utils.namespace import PAD, SCPO, PADNamespaceManager
 from utils.pad import PADGraph
 from utils.print import print_verbose
 from utils import pad_config as config
+from tqdm import tqdm
+from functools import partial
+from time import sleep
 
 
 def bnode_to_sparql(node):
@@ -59,27 +63,32 @@ def clear_default_graph(graph, confirm=False):
         print_verbose(f"Graph {graph.identifier} has no triples.")
 
 
-def clear_pads(graph, pads=[]):
-    update = ""
-    for n, pad in enumerate(pads):
-        update += f"clear graph <{pad}/provenance>; "
-        update += f"clear graph <{pad}/assertion>; "
-        update += f"clear graph <{pad}/docinfo>; "
-    graph.update(update)
+def clear_pads(db, pads=[]):
+    batchsize = 1000
+    batches = [pads[n:n+batchsize] for n in range(0, len(pads), batchsize)]
+    progress = partial(tqdm, unit_scale=batchsize, total=len(batches))
+    for batch in progress(batches):
+        update = ""
+        for pad in batch:
+            update += f"clear graph <{pad}/provenance>; "
+            update += f"clear graph <{pad}/assertion>; "
+            update += f"clear graph <{pad}/docinfo>; "
+        db.update(update)
 
 
-def clear_by_creator(graph, creator):
+def clear_by_creator(db, creator):
     query = f"""
-    SELECT ?pad
+    SELECT DISTINCT ?pad
     WHERE {{
         graph ?docinfo {{ ?pad pad:hasProvenance ?provenance . }}
         graph ?provenance {{ ?assertion dcterms:creator <{creator}> . }}
     }}
     """
-    result = graph.query(query)
+    result = db.query(query)
     pads = [p.pad for p in result]
-    print_verbose(f"clear {len(pads)} PADs for creator: {creator}")
-    clear_pads(graph, pads)
+    if len(pads) > 0:
+        print_verbose(f"clear {len(pads)} PADs for creator: {creator}")
+        clear_pads(db, pads)
 
 
 def format_from_path(path: str):
@@ -93,15 +102,15 @@ def format_from_path(path: str):
 def add_ontology(graph : ConjunctiveGraph):
     batchgraph = PADGraph()
 
-    ppo_ontology = config.getpath("store", "ppo_ontology", fallback="ontology/ppo_ontology.ttl")
-    graph.update(f"clear graph <{PPO.ontology}>")
+    scpo_ontology = config.getpath("store", "scpo_ontology")
+    graph.update(f"clear graph <{SCPO.ontology}>")
     batchgraph.parse(
-        source=str(ppo_ontology),
-        publicID=PPO.ontology,
-        format=format_from_path(str(ppo_ontology))
+        source=str(scpo_ontology),
+        publicID=SCPO.ontology,
+        format=format_from_path(str(scpo_ontology))
     )
 
-    pad_ontology = config.getpath("store", "pad_ontology", fallback="ontology/pad_framework.ttl"),
+    pad_ontology = config.getpath("store", "pad_ontology")
     graph.update(f"clear graph <{PAD.ontology}>")
     batchgraph.parse(
         source=str(pad_ontology),
@@ -109,10 +118,10 @@ def add_ontology(graph : ConjunctiveGraph):
         format=format_from_path(str(pad_ontology))
     )
 
-    pad_creators = config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl"),
+    pad_creators = config.getpath("store", "pad_creators", fallback="ontology/pad_creators.ttl")
     batchgraph.parse(
         source=str(pad_creators),
-        publicID=PAD.ontology,
+        publicID=PAD.creators,
         format=format_from_path(str(pad_creators))
     )
     graph.addN(batchgraph.quads())

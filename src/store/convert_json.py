@@ -21,7 +21,7 @@ def add_context(record : dict, context : dict) -> dict :
     context_record = record.copy()
     for prefix, namespace in PADNamespaceManager().namespaces():
         if not context.get(prefix):
-            context[prefix] = namespace
+            context[prefix] = str(namespace)
     context_record["@context"] = context
     context_record["@type"] = "http://www.w3.org/2004/03/trix/rdfg-1/Graph"
     return context_record
@@ -33,8 +33,11 @@ def json_to_graph(record : dict, context : dict) -> ConjunctiveGraph:
     """
     graph = PADGraph()
     record = add_context(record, context)
-    record = jsonld.compact(record, record["@context"])
-    graph.parse(data=json.dumps(record), format='json-ld')
+    try:
+        record = jsonld.compact(record, record["@context"])
+        graph.parse(data=json.dumps(record), format='json-ld')
+    except Exception as e:
+        print(f"ERROR: parsing record: {record}")
     return graph
 
 
@@ -47,4 +50,4 @@ def json_record_to_pad(record : str, context : dict, queries : list[str], docinf
 
 def json_files_convert(db : Dataset, files : list[str], context : dict, queries : list[str], batchsize=100, docinfo=[], name=None):
     record_to_pad = partial(json_record_to_pad, context=context, queries=queries, docinfo=docinfo)
-    batch_convert(db, files, record_to_pad, batchsize, name=name)
+    batch_convert(db, files, record_to_pad, batchsize)

@@ -46,7 +46,7 @@ PADs are stored directly in a compatible triple store via a SPARQL-endpoint.
 
 ** Unification
 
-A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =ppo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =pad:hasSourceAssertion= property. The resulting pads are stored in a compatible triple store via a SPARQL-endpoint. This triple store is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
+A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =scpo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =pad:hasSourceAssertion= property. The resulting pads are stored in a compatible triple store via a SPARQL-endpoint. This triple store is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
 
 * Design decisions
 ** =@context=
@@ -218,7 +218,7 @@ To minimize the use of blank nodes, as they can complicate the data-structure, i
 *** Mapping
 
 Use the =VALUES= keyword to match variables to new types.
-In this case we translate =schema:eissn= to =ppo:hasEISSN= and =schema:pissn= to =ppo:hasPISSN=.
+In this case we translate =schema:eissn= to =scpo:hasEISSN= and =schema:pissn= to =scpo:hasPISSN=.
 
 #+begin_src sparql
 construct {
@@ -226,8 +226,8 @@ construct {
 where {
     ?journal ?issntype ?issn .
     values (?issntype ?hasissn) {
-        (schema:eissn ppo:hasEISSN)
-        (schema:pissn ppo:hasPISSN)
+        (schema:eissn scpo:hasEISSN)
+        (schema:pissn scpo:hasPISSN)
     }
 }
 #+end_src
@@ -240,7 +240,7 @@ In this case, we define a preference for the eissn of a journal to the pissn. We
 
 #+begin_src sparql
 construct {
-    ?journal ppo:hasISSN ?issn .
+    ?journal scpo:hasISSN ?issn .
 }
 where {
     optional { ?journal schema:pissn ?pissn } .

@@ -13,7 +13,7 @@ from utils.store import clear_by_creator
 
 def convert_publisher_peer_review(db : Dataset, debug=False, clear=False):
     if clear and not debug:
-        print_verbose("Clear dataset: wikidata")
+        print_verbose("Clear dataset: publishers")
         clear_by_creator(db, "https://www.ieee.org")
         clear_by_creator(db, "https://springernature.com")
         clear_by_creator(db, "https://wiley.com")

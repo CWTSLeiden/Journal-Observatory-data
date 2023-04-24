@@ -14,8 +14,8 @@
             "issn_l": "fabio:hasIssnL",
             "issn": "prism:issn",
             "wikidata": "wd:id",
-            "fatcat": "ppo:hasFatcatId",
-            "openalex": "ppo:hasOpenalexId"
+            "fatcat": "scpo:hasFatcatId",
+            "openalex": "scpo:hasOpenalexId"
         }
     },
     "is_oa": "openalex:is_oa",
@@ -26,7 +26,7 @@
     "societies": {
         "@id": "openalex:society",
         "@context": {
-            "url": "@id",
+            "url": "schema:url",
             "organization": "schema:name"
         }
     }

@@ -11,7 +11,7 @@ insert {
     }
 
     graph sub:provenance {
-        sub:assertion dcterms:license <https://creativecommons.org/publicdomain/zero/1.0/> ;
+        sub:assertion dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
             dcterms:created ?date ;
             dcterms:creator <https://doaj.org> .
     }
@@ -24,9 +24,9 @@ where {
 # Metadata
 insert {
     graph sub:assertion {
-        ?journal a ppo:Platform ;
+        ?journal a scpo:Platform ;
             schema:name ?journal_title ;
-            ppo:hasKeyword ?keyword .
+            scpo:hasKeyword ?keyword .
     }
 }
 where {
@@ -69,15 +69,15 @@ where {
 # Publication Policy
 insert {
     graph sub:assertion {
-        ?journal ppo:hasPolicy sub:publicationPolicy .
-        sub:publicationPolicy a ppo:PublicationPolicy ;
-            ppo:isOpenAccess true ;
-            ppo:hasArticlePublishingCharges ?apc ;
-            ppo:hasCopyrightOwner ?copyright_owner ;
+        ?journal scpo:hasPolicy sub:publicationPolicy .
+        sub:publicationPolicy a scpo:PublicationPolicy ;
+            scpo:isOpenAccess true ;
+            scpo:hasArticleProcessingCharge ?apc ;
+            scpo:hasCopyrightOwner ?copyright_owner ;
             dcterms:license ?license ;
-            ppo:appliesToVersion pso:published .
+            scpo:appliesToVersion pso:published .
         
-        ?apc a ppo:ArticlePublishingCharges ;
+        ?apc a scpo:ArticleProcessingCharge ;
             schema:url ?apc_url ;
             schema:price ?apc_price ;
             ?apc_p ?apc_o .
@@ -88,10 +88,11 @@ insert {
 where {
     ?journal a rdfg:Graph .
 
-    optional { ?journal ppo:hasArticlePublishingCharges ?apc } .
-    optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
-    optional { ?apc schema:url ?apc_url } .
-    optional { ?apc doaj:ArticlePublishingChargesApply false . bind(0 as ?apc_price) } .
+    optional { ?journal scpo:hasArticleProcessingCharge ?apc .
+        optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
+        optional { ?apc schema:url ?apc_url } .
+        optional { ?apc doaj:ArticleProcessingChargeApplies false . bind(0 as ?apc_price) } .
+    } .
 
     optional {
         ?journal doaj:Copyright ?oa_copyright .
