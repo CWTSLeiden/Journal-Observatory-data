@@ -3,7 +3,9 @@ if __name__ == "__main__":
     import os
     sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
+import os
 from functools import partial
+import pickle
 from tqdm import tqdm as progress
 from rdflib import Dataset
 from rdflib.term import URIRef
@@ -16,7 +18,24 @@ from utils.namespace import JOB_PREFIX, PAD, RDF, SCPO
 from utils import ROOT_DIR, job_config, pad_config
 
 
+def cluster_pairs_save(path):
+    print_verbose(f"Save clusters to {path}")
+    with open(path, "wb") as f:
+        pickle.dump(path, f)
+
+
+def cluster_pairs_load(path):
+    if os.path.isfile(path):
+        with open(path, 'rb') as f:
+            print_verbose(f"Load clusters from {path}\n(remove to re-run clustering)")
+            return pickle.load(f)
+    return None
+
+
 def cluster_pairs(pad_pairs):
+    dumpfile = f"{ROOT_DIR}/clusters.obj"
+    if clusters := cluster_pairs_save(dumpfile):
+        return clusters
     pad_sets = dict()
     print_verbose("Cluster PADs")
     for pad1, pad2 in progress(pad_pairs):
@@ -30,7 +49,46 @@ def cluster_pairs(pad_pairs):
         if named_pad not in pad_done:
             clusters.append(pad_set)
             pad_done = pad_done.union(pad_set)
+    cluster_pairs_save(dumpfile)
     return clusters
+
+
+def filter_pad(pad: PADGraph):
+    has_policy_query = """
+        ask where { ?platform scpo:hasPolicy ?policy }
+    """
+    has_policy = pad.query(has_policy_query)
+    if not has_policy:
+        return None
+    has_multiple_policies_query = """
+        ask
+        WHERE {
+            ?pad a pad:PAD ; pad:hasAssertion ?assertion .
+            graph ?assertion { ?platform a scpo:Platform } .
+            ?platform scpo:hasPolicy ?pol1 .
+            ?platform scpo:hasPolicy ?pol2 .
+            filter(?pol1 != ?pol2)
+        }
+    """
+    has_non_trivial_pub_policy_query = """
+        ask
+        where {
+            ?pad a pad:PAD ; pad:hasAssertion ?assertion .
+            graph ?assertion { ?platform a scpo:Platform } .
+            ?platform scpo:hasPolicy ?pol .
+            ?pol a scpo:PublicationPolicy .
+            ?pol scpo:isOpenAccess ?oa .
+            ?pol ?polp ?polo .
+            filter(?polp != scpo:isOpenAccess)
+            filter(?polo != scpo:Policy)
+            filter(?polo != scpo:PublicationPolicy)
+        }
+    """
+    has_multiple_policies = pad.query(has_multiple_policies_query)
+    has_non_trivial_pub_policy = pad.query(has_non_trivial_pub_policy_query)
+    if not has_multiple_policies and not has_non_trivial_pub_policy:
+        return None
+    return pad
 
 
 def cluster_to_pad(pad_ids : set[URIRef], db : Dataset):
@@ -51,9 +109,7 @@ def cluster_to_pad(pad_ids : set[URIRef], db : Dataset):
         insert { graph ?g { sub:platform ?p ?o . } }
         where  { graph ?g { ?platform a scpo:Platform ; ?p ?o . } }
     """)
-    if unipad.query("ask where { ?platform scpo:hasPolicy ?policy }"):
-        return unipad
-    return None
+    return filter_pad(unipad)
 
 
 def pad_clusters(db : Dataset):
