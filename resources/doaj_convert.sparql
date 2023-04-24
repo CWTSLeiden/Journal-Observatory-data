@@ -88,10 +88,11 @@ insert {
 where {
     ?journal a rdfg:Graph .
 
-    optional { ?journal scpo:hasArticleProcessingCharge ?apc } .
-    optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
-    optional { ?apc schema:url ?apc_url } .
-    optional { ?apc doaj:ArticleProcessingChargeApplies false . bind(0 as ?apc_price) } .
+    optional { ?journal scpo:hasArticleProcessingCharge ?apc .
+        optional { ?apc schema:PriceSpecification [ ?apc_p ?apc_o ] } .
+        optional { ?apc schema:url ?apc_url } .
+        optional { ?apc doaj:ArticleProcessingChargeApplies false . bind(0 as ?apc_price) } .
+    } .
 
     optional {
         ?journal doaj:Copyright ?oa_copyright .

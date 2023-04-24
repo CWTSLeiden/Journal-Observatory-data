@@ -27,7 +27,7 @@ def sparql_journal_to_pad(graph: ConjunctiveGraph, journal : str, queries : list
 
 def sparql_record_to_pad(record : str, queries : list, docinfo={}):
     # Don't overload the sparql-endpoint
-    sleep(random(0,1))
+    # sleep(random(0,1))
     pad = PADGraph()
     pad = sparql_journal_to_pad(pad, record, queries)
     pad = pad_add_docinfo(pad, docinfo)
