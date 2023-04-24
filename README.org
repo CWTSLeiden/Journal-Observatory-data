@@ -1,37 +1,37 @@
-#+title: JournalObservatory
+#+title: Journal Observatory data
 #+author: Bram van den Boomen
 
-Code for serving information about publishing platforms and conversion data from various data-sources into the Publication Platform Framework format.
+Code developed in the [[https://journalobservatory.org][Journal Observatory project]] for collecting, converting, unifying, and aggregating information about scholarly communication platforms from various data sources using the Scholarly Communication Platform Framework format.
 
-* Modules
+** Modules
 
-To run any python script directly, please add the environment variable =PYTHONPATH= containing the path to the =src/= folder to your environment to make sure that the sub-modules can be found.
+To run any Python script directly, please add the environment variable =PYTHONPATH= containing the path to the =src/= folder to your environment to make sure that the sub-modules can be found.
 
 The application can be configured by providing the =config/job.conf= file. Documentation of this file can be found in =config/template.conf=.
 
-** Bulk
+*** Bulk
 
-The bulk module (=src/bulk/=) contains all the necessary code to download the (latest version of the) data for various sources of journal-information. Currently, the following sources are supported:
+The bulk module (=src/bulk/=) contains all the necessary code to download the (latest version of the) data for various sources of journal information. Currently, the following data sources are supported:
 
-- Openalex
-- Directory of Open Acces Journals (DOAJ)
-- Sherpa Romeo
+- [[https://openalex.org][OpenAlex]]
+- [[https://doaj.org][Directory of Open Acces Journals (DOAJ)]]
+- [[https://sherpa.ac.uk/romeo/][Sherpa Romeo]]
 
-Also provided are a set of excel files (=data/publisher_peer_review/xlsx=), directly obtained from collaborating publishers, containing information about the peer-review policies of their journals in accordance with the [[file:docs/STM_Peer_Review_Terminology (2.1).pdf][STM peer-review terminology]].  
+Also provided are a set of excel files (=data/publisher_peer_review/xlsx=), directly obtained from collaborating publishers, containing information about the peer-review policies of their journals in accordance with the [[https://osf.io/68rnz/][STM peer-review terminology]].  
 
-Additionally, there is support to load ISSN-L information from ISSN, which links ISSN identifiers to ISSN-L identifiers.
+Additionally, there is support to load ISSN-L information from [[https://www.issn.org][ISSN]], which links ISSN identifiers to ISSN-L identifiers.
 
 For each data source, the data can be downloaded by setting the appropriate configuration settings in =config/job.conf= and running =python bulk/bulk_{source}.py=. This will download the data to the folder specified in the =data_path= configuration option of the source.
 
-** Store
+*** Store
 
-The store module converts platform-data from various sources into separate PADs. Currently, the following sources are supported:
+The store module converts platform data from various sources into separate PADs. Currently, the following data sources are supported:
 
-- Openalex (JSON, from bulk module result)
-- Directory of Open Acces Journals (JSON, from bulk module result)
+- OpenAlex (JSON, from bulk module result)
+- DOAJ (JSON, from bulk module result)
 - Sherpa Romeo (JSON, from bulk module result)
 - Publisher Peer Review (JSON, from bulk module result)
-- ISSNL (CSV, from bulk module result)
+- ISSN-L (CSV, from bulk module result)
 - Wikidata (SPARQL, directly from endpoint)
 
 [[file:docs/img/job_prototype-Translation.drawio.png]]
@@ -42,14 +42,14 @@ CSV data is currently handled by converting the data into JSON using a custom sc
 
 Data sources which provide a SPARQL endpoint only need a list of platform identifiers and a SPARQL query to convert the data.
 
-PADs are stored directly in a compatible triple store via a SPARQL-endpoint.
+PADs are stored directly in a compatible triplestore via a SPARQL endpoint.
 
-** Unification
+*** Unification
 
-A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =scpo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =pad:hasSourceAssertion= property. The resulting pads are stored in a compatible triple store via a SPARQL-endpoint. This triple store is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
+A very basic example of unification of PADs can be found in the =store.job_unify= module. This module clusters PADs on any matching object of =dcterms:identifier= for a =scpo:Platform=. These pads are collected, the assertions are unified and the source pads are linked via the =pad:hasSourceAssertion= property. The resulting pads are stored in a compatible triplestore via a SPARQL endpoint. This triplestore is the basis for the [[https://app.journalobservatory.org][JournalObservatory prototype]].
 
-* Design decisions
-** =@context=
+** Design decisions
+*** =@context=
 
 To transform JSON into RDF, generally the only thing that is needed is to add a context. In JSON-LD, this context is just syntactic sugar, it provides short names for identifiers. We can use it to transform JSON into JSON-LD by defining the JSON keys as shortcuts for proper identifiers.
 
@@ -213,9 +213,9 @@ Note that we cannot use the =@nest= keyword to get rid of the blank nodes that a
 
 To minimize the use of blank nodes, as they can complicate the data-structure, it is recommended to use [[approach2]] or [[approach3]] when it does not lead to ambiguity and to use [[approach4]] otherwise.
 
-** SPARQL patterns
+*** SPARQL patterns
 
-*** Mapping
+**** Mapping
 
 Use the =VALUES= keyword to match variables to new types.
 In this case we translate =schema:eissn= to =scpo:hasEISSN= and =schema:pissn= to =scpo:hasPISSN=.
@@ -232,11 +232,11 @@ where {
 }
 #+end_src
 
-*** Preference
+**** Preference
 
 Use the =OPTIONAL=, =COALESCE= and =FILTER= keywords in tandem to define an order of preference for specific terms.
 
-In this case, we define a preference for the eissn of a journal to the pissn. We use the =OPTIONAL= keyword to make sure that records are not duplicated when both eissn and pissn exist (they will both be matched to the same record). We use the =COALESCE= keyword to obtain the first defined term in order of preference. Even though both issn types are optional, we do want to match on either of them, for this we use the =FILTER= keyword.
+In this case, we define a preference for the e-ISSN of a journal to the p-ISSN. We use the =OPTIONAL= keyword to make sure that records are not duplicated when both e-ISSN and p-ISSN exist (they will both be matched to the same record). We use the =COALESCE= keyword to obtain the first defined term in order of preference. Even though both issn types are optional, we do want to match on either of them, for this we use the =FILTER= keyword.
 
 #+begin_src sparql
 construct {
@@ -251,14 +251,14 @@ where {
 }
 #+end_src
 
-*** Assertions in SPARQL
+**** Assertions in SPARQL
 
 It is advisable to split up SPARQL queries that construct a PAD to have a query for different parts of the assertion. Not only does this simplify the query and lead to better readability, it also makes sure that there are no empty assertions and it minimizes the "explosive growth of BNodes".
 
-* Database comparison
-** GraphDB
+** Database comparison
+*** GraphDB
 
-GraphDB is an enterprise grade semantic graph database.
+[[https://graphdb.ontotext.com][GraphDB]] is an enterprise grade semantic graph database.
 
 Pros:
 - Easy setup
@@ -270,9 +270,9 @@ Cons:
 - Free tier is limited
 - Mostly proprietary software
 
-** Apache Jena/Fuseki
+*** Apache Jena/Fuseki
 
-Apache Jena is a set of tools to work with semantic data. Fuseki is the packaged tool to serve a SPARQL endpoint. Jena has its own database-backend, called TDB.
+[[https://jena.apache.org/][Apache Jena]] is a set of tools to work with semantic data. [[https://jena.apache.org/documentation/fuseki2/][Fuseki]] is the packaged tool to serve a SPARQL endpoint. Jena has its own database-backend, called TDB.
 
 Pros:
 - Free and Open Source
@@ -284,12 +284,12 @@ Pros:
 Cons:
 - Almost no configuration via web-interface
 - Cumbersome setup
-- No first-class integration with rdflib (parsing a graph with SPARQLStore backend is very slow)
+- No first-class integration with RDFLib (parsing a graph with SPARQLStore backend is very slow)
 - Bulk import can be difficult
 
-** blazegraph
+*** blazegraph
 
-Blazegraph is a performant SPARQL store. It has been acquired by Amazon.
+[[https://blazegraph.com][Blazegraph]] is a performant SPARQL store. It has been acquired by Amazon.
 
 Pros:
 - Free and Open Source
@@ -299,11 +299,11 @@ Pros:
 Cons:
 - Very little development
 - Little documentation
-- No first-class integration with rdflib
+- No first-class integration with RDFLib
 
-** virtuoso
+*** Virtuoso
 
-Virtuoso is a Graph database that offers SPARQL and SQL endpoints.
+[[https://virtuoso.openlinksw.com][Virtuoso]] is a Graph database that offers SPARQL and SQL endpoints.
 
 Pros:
 - Open Source
@@ -312,21 +312,19 @@ Pros:
 Cons:
 - Not free
 - Difficult setup
-- No first-class integration with rdflib
+- No first-class integration with RDFLib
 
 ** Neo4j/n10s
 
-Neo4j is a popular Graph database. n10s is an extension that adds semantic technologies to the Neo4j database.
+[[https://neo4j.com][Neo4j]] is a popular Graph database. n10s is an extension that adds semantic technologies to the Neo4j database.
 
 Pros:
 - Open Source
 - Flexible, not constrained to SPARQL
 - Popular, active development
 - Extensive documentation
-- First class integration with rdflib
+- First class integration with RDFLib
 
 Cons:
 - No real support for SPARQL
 - n10s is not core functionality
-
-
