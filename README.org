@@ -1,7 +1,7 @@
 #+title: Journal Observatory data
 #+author: Bram van den Boomen
 
-Code developed in the [[https://journalobservatory.org][Journal Observatory project]] for collecting, converting, unifying, and aggregating information about scholarly communication platforms from various data sources using the Scholarly Communication Platform Framework format.
+This repository contains the source code developed in the [[https://journalobservatory.org][Journal Observatory project]] for collecting, converting, unifying, and aggregating information about scholarly communication platforms from various data sources using the Scholarly Communication Platform Framework format.
 
 ** Modules
 
